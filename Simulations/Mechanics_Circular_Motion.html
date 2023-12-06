@@ -36,6 +36,9 @@
         <button id="move-el">PAUSE</button>
         <button id="theorybutton" onClick="theorySite()">THEORY</button>
         <br>
+		<br>
+		<br>
+		<br>
     </div>
     <script>
         function theorySite() {
@@ -266,7 +269,7 @@
 
         function guiControls() {
             let gui = new GUI({ width: 250 });
-            gui.close();
+            // gui.close();
             gui.title('Free Body Diagram');
             gui.add(animations, 'Force').name('Force Vector').onChange(() => {
                 //    addArrows();
