@@ -52,11 +52,15 @@
 
         <button style="background-color: rgb(164, 26, 26);" id="flow">OFF</button>
         <button id="flip">DC VOLTAGE</button>
-        <button id="theorybutton" onClick="theorySite()">THEORY</button>
-        <button id="cal">CAPACITANCE</button>
+        <button id="cal" onClick="extraSite()">CAPACITANCE</button>
 
     </div>
+<script>
+        function extraSite() {
 
+            window.open("Electricity_Understanding_Capacitance.html", "_self")
+        }
+    </script>
     <script type="module">
 
         import * as THREE from '../build/three.module.js'
