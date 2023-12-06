@@ -24,13 +24,12 @@ body {
 #menu {
   position: fixed;
   float: bottom;
-  padding-bottom: 100px;
   left: 5px;
   bottom: 5px;
   width: 100%;
   text-align: left;
   padding: 0;
-  margin: 0;
+  margin: 200px;
   pointer-events: none;
 }
 /* #menu button {
