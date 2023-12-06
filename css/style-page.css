@@ -24,7 +24,7 @@ body {
 #menu {
   position: fixed;
   float: bottom;
-   background-color: #ff0000;
+  background: rgba(0, 0, 0, 0.8);
   left: 5px;
   bottom: 5px;
   width: 100%;
