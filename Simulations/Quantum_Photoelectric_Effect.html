@@ -64,7 +64,7 @@
         <button style="visibility: hidden;" id="plot"> PLOT (K<sub>max</sub>)</button>
 
     </div>
-    <canvas style="visibility: hidden;" id="drawing-canvas" height="300" width="300"></canvas>
+    <canvas style="visibility: hidden;" id="drawing-canvas" height="200" width="200"></canvas>
 
 
     <script>
@@ -85,9 +85,9 @@
 
         //canvas description
         let drawingCanvas, drawingContext;
-        let maxWidth = 300, maxHeight = 300;
+        let maxWidth = 200, maxHeight = 200;
         let halfWidth = maxWidth / 2;
-        let xAxis = 25, yAxis = 250;
+        let xAxis = 25, yAxis = 150;
 
         let emitter, cathode, pos, cone;
         let photon_to, photon_fro, photon_scaleDown, photon_scaleUp;
@@ -581,7 +581,7 @@
 
             setupCanvasDrawing();
 
-            drawAxes(drawingContext, 80, 250, 70)
+            drawAxes(drawingContext, 80, yAxis, 70)
             listLabel(drawingContext, {
                 xlabel: "V (volts)",
                 ylabel: "I (mA)",
@@ -592,12 +592,12 @@
                 col2: 'red',
 
                 label1Posx: maxWidth + 40,
-                label1Posy: 270,
+                label1Posy: maxHeight - 20,
                 label2Posx: maxWidth + 40,
                 label2Posy: 50,
-                xPos: 270,
+                xPos: maxHeight - 20,
                 yPos: 55,
-                x: 150,
+                x: maxHeight / 2,
                 y: 25,
                 length: 2
             });
@@ -610,8 +610,8 @@
             // console.log('till here')
 
             for (let i = 0; i < voltageX.length - 1; i++) {
-                plotGraph(drawingContext, xAxis + 60 + voltageX[i] * 5, yAxis - currentY[i] * 190, 3, 'blue', xAxis + 60 + voltageX[i + 1] * 5, yAxis - currentY[i + 1] * 190);
-                plotGraph(drawingContext, xAxis + 60 + voltageX[i] * 5, yAxis - current1Y[i] * 190, 3, 'red', xAxis + 60 + voltageX[i + 1] * 5, yAxis - current1Y[i + 1] * 190);
+                plotGraph(drawingContext, xAxis + 60 + voltageX[i] * 5, yAxis - currentY[i] * 120, 3, 'blue', xAxis + 60 + voltageX[i + 1] * 5, yAxis - currentY[i + 1] * 120);
+                plotGraph(drawingContext, xAxis + 60 + voltageX[i] * 5, yAxis - current1Y[i] * 160, 3, 'red', xAxis + 60 + voltageX[i + 1] * 5, yAxis - current1Y[i + 1] * 160);
                 plotGraph(drawingContext, xAxis + 60 + voltageX[i] * 5, yAxis - current2Y[i] * 190, 3, 'green', xAxis + 60 + voltageX[i + 1] * 5, yAxis - current2Y[i + 1] * 190);
             }
 
@@ -620,25 +620,25 @@
         function canvasEnergy() {
 
             setupCanvasDrawing();
-            drawAxes(drawingContext, 90, 115, 70)
+            drawAxes(drawingContext, 50, halfWidth - 25, 40)
 
             listLabel(drawingContext, {
                 xlabel: "Freq (Hz)",
                 ylabel: "K.E (eV)",
                 label1: "Al",
                 col1: 'green',
-                label1Posx: halfWidth + 70,
-                label1Posy: 60,
-                xPos: 135,
-                yPos: 55,
-                x: 150,
-                y: 20,
+                label1Posx: halfWidth + 20,
+                label1Posy: 20,
+                xPos: maxHeight / 2,
+                yPos: maxHeight / 2,
+                x: halfWidth + 20,
+                y: 10,
                 length: 5
             });
-            drawingContext.fillText(-4.20 + ' eV ', xAxis + 10, yAxis - 60);
+            drawingContext.fillText(-4.20 + ' eV ', xAxis, yAxis - 10);
             for (let i = 0; i < freqAl.length - 1; i++) {
 
-                plotGraph(drawingContext, xAxis + 100 + freqAl[i] * 4, yAxis - 60 - (kEnergyAl[i] + 20) * 5, 3, 'green', xAxis + 100 + freqAl[i + 1] * 4, yAxis - 60 - (kEnergyAl[i + 1] + 20) * 5);
+                plotGraph(drawingContext, xAxis + 50 + freqAl[i] * 3, yAxis - (kEnergyAl[i] + 20) * 4, 3, 'green', xAxis + 50 + freqAl[i + 1] * 3, yAxis - (kEnergyAl[i + 1] + 20) * 4);
             }
 
         }
