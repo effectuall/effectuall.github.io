@@ -8,13 +8,14 @@
   <link rel="shortcut icon" href="../files/favicon_white.ico" media="(prefers-color-scheme: dark)" />
   <link rel="shortcut icon" href="../files/favicon.ico" media="(prefers-color-scheme: light)" />
   <link rel="stylesheet" type="text/css" href="../css/style-page.css">
-  <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-7VWWT4ZKR6"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-0JWHY29KD2"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag() { dataLayer.push(arguments); }
     gtag('js', new Date());
 
-    gtag('config', 'G-7VWWT4ZKR6');
+    gtag('config', 'G-0JWHY29KD2');
   </script>
   <meta name="google-site-verification" content="mz0TRB59UNqdTxhwzmXmGdgVPh8pB4YqjuUr-aWNGIY">
 
@@ -25,72 +26,98 @@
   <div id="container">
     <div id="topmenu">PROJECTILE MOTION </div>
   </div>
-    <div id="sidemenu">
-      <table id="caltable" >
-        <caption style="font-size: 24px; text-decoration: underline;">Projectile Data</caption>
-        <tr>
-          <td>Launch Height (y<sub>o</sub> ) </td>
-          <td> = </td>
-          <td style="text-align: right;"> 0 </td>
-          <td> m </td>
-        </tr>
+  <div id="sidemenu">
+    <table id="caltable">
+      <!-- <caption style="font-size: 24px; text-decoration: underline;">Projectile Data</caption> -->
+      <tr>
+        <td>Launch Height (y<sub>o</sub> ) </td>
+        <td> = </td>
+        <td style="text-align: right;"> 0 </td>
+        <td> m </td>
+      </tr>
 
-        <tr>
-          <td> Launch Velocity (v<sub>0</sub> ) </td>
-          <td> = </td>
-          <td style="text-align: right;"> 7 </td>
-          <td> m/s</td>
-        </tr>
+      <tr>
+        <td> Launch Velocity (v<sub>0</sub> ) </td>
+        <td> = </td>
+        <td style="text-align: right;"> 7 </td>
+        <td> m/s</td>
+      </tr>
 
-        <tr>
-          <td>Launch Angle (&#952; ) </td>
-          <td> = </td>
-          <td style="text-align: right;"> 45</td>
-          <td> &#176 </td>
-        </tr>
+      <tr>
+        <td>Launch Angle (&#952; ) </td>
+        <td> = </td>
+        <td style="text-align: right;"> 45</td>
+        <td> &#176 </td>
+      </tr>
 
-        <tr>
-          <td>v<sub>0</sub> cos&#952; </td>
-          <td> = </td>
-          <td style="text-align: right;"> __ </td>
-          <td> m/s </td>
-        </tr>
+      <tr>
+        <td>v<sub>0</sub> cos&#952; </td>
+        <td> = </td>
+        <td style="text-align: right;"> __ </td>
+        <td> m/s </td>
+      </tr>
 
-        <tr>
-          <td>v<sub>0</sub> sin&#952; </td>
-          <td> = </td>
-          <td style="text-align: right;"> __</td>
-          <td> m/s </td>
-        </tr>
+      <tr>
+        <td>v<sub>0</sub> sin&#952; </td>
+        <td> = </td>
+        <td style="text-align: right;"> __</td>
+        <td> m/s </td>
+      </tr>
 
-        <tr>
-          <td>Maximum Height</td>
-          <td> = </td>
-          <td style="text-align: right;"> __ </td>
-          <td> m </td>
-        </tr>
-        <tr>
-          <td>Maximum Range</td>
-          <td> = </td>
-          <td style="text-align: right;"> __ </td>
-          <td> m </td>
+      <tr>
+        <td>Maximum Height</td>
+        <td> = </td>
+        <td style="text-align: right;"> __ </td>
+        <td> m </td>
+      </tr>
+      <tr>
+        <td>Maximum Range</td>
+        <td> = </td>
+        <td style="text-align: right;"> __ </td>
+        <td> m </td>
 
-        </tr>
-        <tr>
-          <td>Time of Flight</td>
-          <td> = </td>
-          <td style="text-align: right;"> __ </td>
-          <td> s </td>
+      </tr>
+      <tr>
+        <td>Time of Flight</td>
+        <td> = </td>
+        <td style="text-align: right;"> __ </td>
+        <td> s </td>
 
-        </tr>
+      </tr>
 
-      </table>
-    </div>
+    </table>
+  </div>
 
- 
+
 
   <div id="menu">
-    <div >
+
+    <div>
+      <a><input type="range" id="height" name="height" min="0" max="25" value="0" step="1">
+        <label for="height">Launch Height = </label><a id="heightDisplay"> 0 </a> m<br>
+      </a>
+
+      <a><input type="range" id="velocity" name="velocity" min="0" max="25" value="7" step="0.5">
+        <label for="velocity">Launch Velocity = </label><a id="velocityDisplay"> 7 </a> m/s<br>
+      </a>
+
+      <a> <input type="range" id="angle" name="angle" min="0" max="90" value="45" step="5">
+
+        <label for="angle">Launch Angle = </label><a id="angleDisplay"> 45 </a> <sup>o</sup><br>
+
+      </a>
+
+    </div>
+
+    <div>
+      <input type="checkbox" id="grid" name="grid" value="false" />
+      <label for="grid">GRID</label>
+      <input type="checkbox" id="vector" name="vector" value="true" checked />
+      <label for="velocity">VECTOR</label>
+      <input type="checkbox" id="components" name="components" value="false" />
+      <label for="components">COMPONENTS</label>
+    </div>
+    <div>
       <table style="font-weight: bolder;" id="Vtable">
         <tr>
           <td>v<sub>x</sub> </td>
@@ -106,40 +133,12 @@
         </tr>
       </table>
     </div>
-    <div>
-      <a><input type="range" id="height" name="height" min="0" max="25" value="0" step="1">
-          <label for="height">Launch Height = </label><a id="heightDisplay"> 0 </a> m<br>
-      </a>
-
-      <a><input type="range" id="velocity" name="velocity" min="0" max="25" value="7" step="0.5">
-          <label for="velocity">Launch Velocity = </label><a id="velocityDisplay"> 7 </a> m/s<br>
-      </a>
-
-      <a> <input type="range" id="angle" name="angle" min="0" max="90" value="45" step="5">
-
-        <label for="angle">Launch Angle = </label><a id="angleDisplay"> 45 </a> <sup>o</sup><br>
-
-      </a>
-     
-  </div>
-  
-  <div>
-    <input type="checkbox" id="grid" name="grid" value="false" />
-    <label for="grid">GRID</label>
-    <input type="checkbox" id="vector" name="vector" value="true" checked/>
-    <label for="velocity">VECTOR</label>
-    <input type="checkbox" id="components" name="components" value="false" />
-    <label for="components">COMPONENTS</label>
-  </div>
- 
-    <a id="message-el">
-      Adjust launch height, angle and velocity of the projectile, to visualise the trajectory.
-    </a>
-    <br>
     <button id="shoot-el">SHOOT</button>
     <button id="reset-el">RESET</button>
     <button id="theorybutton" onClick="theorySite()">THEORY</button>
-    <br>
+    <a id="message-el">
+      Adjust launch height, angle and velocity of the projectile, to visualise the trajectory.
+    </a>
   </div>
   <script>
     function theorySite() {
@@ -165,7 +164,7 @@
     let deltaT = 0.07;
     let maxheight = 0, maxrange = 0, timeflight = 0, vyspeed = 0, vxspeed = 0;
     let vertical = new THREE.Group();
-    
+
     let data = {};
     let dirY = new THREE.Vector3(0, 1, 0);
     const g = 9.8;
@@ -206,7 +205,7 @@
 
       scene = new THREE.Scene();
       scene.background = new THREE.Color(0xbfd1e5);
-      
+
       createCamera(40, -4, 3, 20)
       createLights()
       createRenderer()
@@ -230,7 +229,7 @@
         .setPath('./model/')
         .load('projectile.glb', function (gltf) {
           model = gltf.scene;
-         
+
           let base = model.getObjectByName('base');
           launchHeight = model.getObjectByName('launchHeight');
           projector = model.getObjectByName('projector');
@@ -275,106 +274,106 @@
       });
 
       buttonReset.addEventListener('click', function () {
-        reset();        
+        reset();
       });
 
       heightEl.addEventListener("input", function (event) {
 
-          let value = heightEl.valueAsNumber;
-          params.launchHeight = value;
-          heightDisplay.innerText =  params.launchHeight;
-          launchPoint.position.y = value;
-          launchHeight.scale.y = value / 10;
-          projector.position.y = value;
-          setCamera(value);
-          maxheight = 0;
-          maxrange = 0;
-          timeflight = 0;
-          data = {};
-          dataCollection()
+        let value = heightEl.valueAsNumber;
+        params.launchHeight = value;
+        heightDisplay.innerText = params.launchHeight;
+        launchPoint.position.y = value;
+        launchHeight.scale.y = value / 10;
+        projector.position.y = value;
+        setCamera(value);
+        maxheight = 0;
+        maxrange = 0;
+        timeflight = 0;
+        data = {};
+        dataCollection()
       });
-      
+
       angleEl.addEventListener("input", function (event) {
 
-          let value = angleEl.valueAsNumber;
-          params.degree = value;
-          angleDisplay.innerText =  params.degree;
-          a = value * (Math.PI / 180);
-          let velDir = new THREE.Vector3(Math.cos(a), Math.sin(a), 0);
-          projectorRotate(a);
-          angleLabel(a, value)
-          if (params.Velocity) {
-            arrowHelper.setDirection(velDir);
-          }
+        let value = angleEl.valueAsNumber;
+        params.degree = value;
+        angleDisplay.innerText = params.degree;
+        a = value * (Math.PI / 180);
+        let velDir = new THREE.Vector3(Math.cos(a), Math.sin(a), 0);
+        projectorRotate(a);
+        angleLabel(a, value)
+        if (params.Velocity) {
+          arrowHelper.setDirection(velDir);
+        }
 
-          if (params.Components) {
-            velX.setLength(vxSpeed(params.speed, params.degree));
-            velY.setLength(vySpeed(params.speed, params.degree));
-            VxLabel.position.copy(velX.cone.position.add(new THREE.Vector3(0, .3, 0)))
-            VyLabel.position.copy(velY.cone.position.add(new THREE.Vector3(0, .3, 0)))
-          }
-          data = {};
-          maxheight = 0;
-          maxrange = 0;
-          timeflight = 0;
-          velocityVisual(vxSpeed(params.speed, params.degree), vySpeed(params.speed, params.degree));
-          dataCollection()
+        if (params.Components) {
+          velX.setLength(vxSpeed(params.speed, params.degree));
+          velY.setLength(vySpeed(params.speed, params.degree));
+          VxLabel.position.copy(velX.cone.position.add(new THREE.Vector3(0, .3, 0)))
+          VyLabel.position.copy(velY.cone.position.add(new THREE.Vector3(0, .3, 0)))
+        }
+        data = {};
+        maxheight = 0;
+        maxrange = 0;
+        timeflight = 0;
+        velocityVisual(vxSpeed(params.speed, params.degree), vySpeed(params.speed, params.degree));
+        dataCollection()
       });
-      
+
       velocityEl.addEventListener("input", function (event) {
 
-          let value = velocityEl.valueAsNumber;
-          params.speed = value;
-          velocityDisplay.innerText =  params.speed;
-          initialSpeed1 = new THREE.Vector3(0, 0, 0);
-          initialSpeed2 = new THREE.Vector3(0, 0, 0);
-          if (params.Velocity) {
-            arrowHelper.setLength(value);
-            speedLabel.position.copy(arrowHelper.cone.position.add(new THREE.Vector3(0, .3, 0)))
-          }
+        let value = velocityEl.valueAsNumber;
+        params.speed = value;
+        velocityDisplay.innerText = params.speed;
+        initialSpeed1 = new THREE.Vector3(0, 0, 0);
+        initialSpeed2 = new THREE.Vector3(0, 0, 0);
+        if (params.Velocity) {
+          arrowHelper.setLength(value);
+          speedLabel.position.copy(arrowHelper.cone.position.add(new THREE.Vector3(0, .3, 0)))
+        }
 
-          if (params.Components) {
-            velX.setLength(value);
-            velY.setLength(value);
-            VxLabel.position.copy(velX.cone.position.add(new THREE.Vector3(0, .3, 0)))
-            VyLabel.position.copy(velY.cone.position.add(new THREE.Vector3(0, .3, 0)))
-          }
-          data = {};
-          maxheight = 0;
-          maxrange = 0;
-          timeflight = 0;
-          velocityVisual(vxSpeed(params.speed, params.degree), vySpeed(params.speed, params.degree));
-          dataCollection();
+        if (params.Components) {
+          velX.setLength(value);
+          velY.setLength(value);
+          VxLabel.position.copy(velX.cone.position.add(new THREE.Vector3(0, .3, 0)))
+          VyLabel.position.copy(velY.cone.position.add(new THREE.Vector3(0, .3, 0)))
+        }
+        data = {};
+        maxheight = 0;
+        maxrange = 0;
+        timeflight = 0;
+        velocityVisual(vxSpeed(params.speed, params.degree), vySpeed(params.speed, params.degree));
+        dataCollection();
       });
-      
+
       vector.addEventListener("change", function (event) {
 
-          console.log(vector.checked)
-          params.Velocity = vector.checked;
-          speedDisplay(params.speed, params.degree);
-          
+        console.log(vector.checked)
+        params.Velocity = vector.checked;
+        speedDisplay(params.speed, params.degree);
+
       });
-      
+
       grid.addEventListener("change", function (event) {
 
-          console.log(grid.checked)
-          params.Grid = grid.checked;
-          gridDisplay();
-          
+        console.log(grid.checked)
+        params.Grid = grid.checked;
+        gridDisplay();
+
       });
 
       components.addEventListener("change", function (event) {
 
-          console.log( components.checked)
-          params.Components = components.checked;
-          labelDisplay(params.speed, params.degree);
-          
+        console.log(components.checked)
+        params.Components = components.checked;
+        labelDisplay(params.speed, params.degree);
+
       });
-      
+
       velX = new THREE.ArrowHelper(new THREE.Vector3(1, 0, 0), new THREE.Vector3(0, 0, 0), vxSpeed, 0xff0000);
       velY = new THREE.ArrowHelper(new THREE.Vector3(0, 1, 0), new THREE.Vector3(0, 0, 0), vySpeed, 0x00ff00);
 
-     
+
       dataCollection()
       initScene();
       speedDisplay(params.speed, params.degree);
@@ -427,7 +426,7 @@
       labelRenderer.domElement.style.position = 'absolute';
       labelRenderer.domElement.style.top = '0px';
       labelRenderer.domElement.style.pointerEvents = 'none';
-      container.appendChild(labelRenderer.domElement);
+      document.body.appendChild(labelRenderer.domElement);
 
     }
 
@@ -440,7 +439,7 @@
       controls.dampingFactor = 0.5;
       controls.rotateSpeed = 0.1;
       controls.minDistance = .01;
-      controls.maxDistance = 5000;      
+      controls.maxDistance = 5000;
     }
 
     function onWindowResize() {
@@ -465,7 +464,7 @@
 
     function initScene() {
       // create ground
-      plane = new THREE.Mesh(new THREE.BoxGeometry(300, 2, 100).translate(0,-1,0), new THREE.MeshBasicMaterial({
+      plane = new THREE.Mesh(new THREE.BoxGeometry(300, 2, 100).translate(0, -1, 0), new THREE.MeshBasicMaterial({
         color: 0x4F7942, side: THREE.DoubleSide
       }));
       // plane.rotation.x = -0.5 * Math.PI;
@@ -682,22 +681,23 @@
       initialSpeed2.y = initialSpeed1.y;
       // console.log(initialSpeed1,a);
       ball.position.x += deltaT;
-      ball.position.y = params.launchHeight + Math.tan(a) * ball.position.x - (g / 2 * (ball.position.x*ball.position.x)) / ((params.speed * Math.cos(a))*(params.speed * Math.cos(a)));
-      
+      ball.position.y = params.launchHeight + Math.tan(a) * ball.position.x - (g / 2 * (ball.position.x * ball.position.x)) / ((params.speed * Math.cos(a)) * (params.speed * Math.cos(a)));
+
       if (ball.position.y <= 0) {
         let cal = vyspeed - g * (ball.position.x / vxspeed);
         ball.position.y = .1;
         point = new THREE.Mesh(new THREE.CircleGeometry(.06, 8), new THREE.MeshBasicMaterial({ color: 0xffff00 }))
         point.position.set(initialSpeed2.x, .01, initialSpeed2.z);
         root.add(line, point);
-        // Vtable.rows[1].cells[2].innerHTML = -vxspeed.toFixed(2);
-        velocityVisual(vxspeed, cal)
+        Vtable.rows[1].cells[2].innerHTML = -vxspeed.toFixed(2);
+        // velocityVisual(vxspeed, cal)
+
         cancelAnimationFrame(projectileMotion);
 
 
       } else if (ball.position.y > 0) {
         let cal = vyspeed - g * (ball.position.x / vxspeed);
-       
+
         initialSpeed1.x = ball.position.x;
         initialSpeed1.y = ball.position.y;
 
@@ -714,9 +714,10 @@
         point.position.set(initialSpeed2.x, initialSpeed2.y, initialSpeed2.z);
         root.add(line, point);
         velocityVisual(vxspeed, cal)
+
         requestAnimationFrame(projectileMotion);
 
-      } 
+      }
 
     }
 
@@ -731,86 +732,87 @@
       // console.log(ball.position);
       ball.position.copy(launchPoint.position);
       ball.position.add(elevationPoint.position);
-     
+
       scene.add(mass);
       mass.add(ball);
       initialSpeed1.add(ball.position);
-      if (params.degree == 90 ){
+      if (params.degree == 90) {
         launchHeight.visible = true;
         j = 0;
         scene.remove(vertical);
         vertical = new THREE.Group()
-          ballMotion();
-          dataPoints ()
-      } else if(params.degree == 0 && params.speed == 0) {
-          
-          launchHeight.visible = false;
-          ballMotion()
-      } else if (params.launchHeight == 0 && params.degree == 0 ) {
-          launchHeight.visible = true;
-          setTimeout(function() {
+        ballMotion();
+        dataPoints()
+      } else if (params.degree == 0 && params.speed == 0) {
+
+        launchHeight.visible = false;
+        ballMotion()
+      } else if (params.launchHeight == 0 && params.degree == 0) {
+        launchHeight.visible = true;
+        setTimeout(function () {
           Vtable.rows[0].cells[2].innerHTML = 0;
           Vtable.rows[1].cells[2].innerHTML = 0;
-          }, 1000)
+        }, 1000)
 
       } else {
-          launchHeight.visible = true;
-          projectileMotion()
+        launchHeight.visible = true;
+        projectileMotion()
 
       }
-      
+
     }
-   
+
     let j = 0;
-    function dataPoints () {
-      let points= [];
-      let H = (params.speed * params.speed)/(2*9.8);
+    function dataPoints() {
+      let points = [];
+      let H = (params.speed * params.speed) / (2 * 9.8);
       let a = launchPoint.position.y
-      let v = new THREE.Vector3(0,  a, 0);
+      let v = new THREE.Vector3(0, a, 0);
       scene.add(vertical);
-      
-        for (let i = 0; i <= H ; i=i + H/10){
-          v = new THREE.Vector3(0, a+i, 0);
-          points.push(v)
-        }
-        if (j<points.length) {
-          point = new THREE.Mesh(new THREE.CircleGeometry(.06, 8), new THREE.MeshBasicMaterial({ color: 0xff0000 }))
-          point.position.copy(points[j]);
-          vertical.add(point);
-          j += 1;
-          requestAnimationFrame(dataPoints);
-        } else {
-          cancelAnimationFrame(dataPoints);
-        }
-        
+
+      for (let i = 0; i <= H; i = i + H / 10) {
+        v = new THREE.Vector3(0, a + i, 0);
+        points.push(v)
+      }
+      if (j < points.length) {
+        point = new THREE.Mesh(new THREE.CircleGeometry(.06, 8), new THREE.MeshBasicMaterial({ color: 0xff0000 }))
+        point.position.copy(points[j]);
+        vertical.add(point);
+        j += 1;
+        requestAnimationFrame(dataPoints);
+      } else {
+        cancelAnimationFrame(dataPoints);
+      }
+
     }
 
     function ballMotion() {
       mass.add(ball);
-      let H = (params.speed * params.speed)/(2*9.8);
-      if (params.degree == 90 ) {
-                
-                new TWEEN.Tween(ball.position)
-                    .to({ y: H }, params.speed*50)
-                    .easing(TWEEN.Easing.Linear.None)
-                    .start()
-                setTimeout(function() {
-                  new TWEEN.Tween(ball.position)
-                    .to({ y: 0 }, params.speed*50)
-                    .easing(TWEEN.Easing.Linear.None)
-                    .start()
-                   }, params.speed*50)
-                    
-      }else {
-        
+      let H = (params.speed * params.speed) / (2 * 9.8);
+      if (params.degree == 90) {
+
         new TWEEN.Tween(ball.position)
-                    .to({ y: 0.1 }, params.launchHeight*50)
-                    .easing(TWEEN.Easing.Linear.None)
-                    .start()  
-        setTimeout(function() {
+          .to({ y: H }, params.speed * 50)
+          .easing(TWEEN.Easing.Linear.None)
+          .start()
+        setTimeout(function () {
+          new TWEEN.Tween(ball.position)
+            .to({ y: 0 }, params.speed * 50)
+            .easing(TWEEN.Easing.Linear.None)
+            .start()
+        }, params.speed * 50)
+
+      } else {
+
+        new TWEEN.Tween(ball.position)
+          .to({ y: 0.1 }, params.launchHeight * 50)
+          .easing(TWEEN.Easing.Linear.None)
+          .start()
+        setTimeout(function () {
           Vtable.rows[0].cells[2].innerHTML = 0;
-        Vtable.rows[1].cells[2].innerHTML = (g*timeflight).toFixed(2);
-        }, params.launchHeight*52)
+          Vtable.rows[1].cells[2].innerHTML = (g * timeflight).toFixed(2);
+
+        }, params.launchHeight * 52)
       }
 
     }
@@ -854,11 +856,11 @@
       maxrange = 0;
       timeflight = 0;
       heightEl.value = params.launchHeight;
-      heightDisplay.innerText =  params.launchHeight;
+      heightDisplay.innerText = params.launchHeight;
       angleEl.value = params.degree;
-      angleDisplay.innerText =  params.degree;
-      velocityEl.value = params.speed; 
-      velocityDisplay.innerText =  params.speed;
+      angleDisplay.innerText = params.degree;
+      velocityEl.value = params.speed;
+      velocityDisplay.innerText = params.speed;
       launchHeight.visible = true;
       elevationPoint.position.y = params.launchHeight / 2;
       launchPoint.position.y = params.launchHeight;
@@ -866,11 +868,11 @@
       projector.position.y = params.launchHeight;
       launchHeight.scale.y = params.launchHeight / 10;
       launchPoint.position.y = params.launchHeight / 2;
-      
+
       messageEl.style.visibility = 'visible';
       labelDisplay(params.speed, params.degree);
-      velocityVisual(vxSpeed(params.speed, params.degree), vySpeed(params.speed, params.degree)); 
-      
+      velocityVisual(vxSpeed(params.speed, params.degree), vySpeed(params.speed, params.degree));
+
       setCamera(0);
       data = {};
       arrowHelper.setLength(params.speed);
@@ -895,7 +897,7 @@
       Vtable.rows[1].cells[2].innerHTML = b.toFixed(2);
     }
 
-    </script>
+  </script>
 
 
 
