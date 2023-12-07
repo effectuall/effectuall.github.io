@@ -357,7 +357,7 @@
 
             camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
 
-            camera.position.set(-35, 0, 0);
+            camera.position.set(-60, 0, 0);
             // camera.position.set(-10, 3, 40);
         }
 
@@ -521,7 +521,7 @@
             controls = new OrbitControls(camera, renderer.domElement);
             controls.enablePan = true;
             controls.enableZoom = true;
-            controls.target.set(0, 2, -2);
+            controls.target.set(0, 2, 3);
 
             document.body.appendChild(renderer.domElement);
             showLabels();
