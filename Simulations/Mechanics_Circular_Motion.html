@@ -8,15 +8,14 @@
     <link rel="shortcut icon" href="../files/favicon_white.ico" media="(prefers-color-scheme: dark)" />
     <link rel="shortcut icon" href="../files/favicon.ico" media="(prefers-color-scheme: light)" />
     <link rel="stylesheet" type="text/css" href="../css/style-page.css">
-    <!-- Google tag (gtag.js) -->
-	<script async src="https://www.googletagmanager.com/gtag/js?id=G-0JWHY29KD2"></script>
-	<script>
- 		window.dataLayer = window.dataLayer || [];
-  		function gtag(){dataLayer.push(arguments);}
-  		gtag('js', new Date());
+    <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-7VWWT4ZKR6"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
 
-  		gtag('config', 'G-0JWHY29KD2');
-	</script>
+        gtag('config', 'G-7VWWT4ZKR6');
+    </script>
     <meta name="google-site-verification" content="mz0TRB59UNqdTxhwzmXmGdgVPh8pB4YqjuUr-aWNGIY">
 
 </head>
@@ -25,7 +24,7 @@
 
     <div id="container">
         <div id="topmenu">
-            <div >UNIFORM CIRCULAR MOTION - A 3D interactive Simulation</div>
+            <div>UNIFORM CIRCULAR MOTION - A 3D interactive Simulation</div>
         </div>
     </div>
 
@@ -35,7 +34,7 @@
             Motion</a><br>
         <button id="move-el">PAUSE</button>
         <button id="theorybutton" onClick="theorySite()">THEORY</button>
-   
+        <br>
     </div>
     <script>
         function theorySite() {
@@ -108,7 +107,7 @@
                     scene.add(model);
                     modelReady = true;
                     mixer = new THREE.AnimationMixer(model);
-                   
+
                     const animations = gltf.animations;
 
                     mixer = new THREE.AnimationMixer(model);
@@ -126,7 +125,7 @@
                     })
                     console.log(model.children[0].children);
                     for (let i = 0; i < model.children[0].children.length; i++) {
-                         
+
                         if (model.children[0].children[i].type != 'Object3D') {
                             meshObjects.push(model.children[0].children[i]);
                         }
@@ -143,7 +142,7 @@
             normal = addVectors(new THREE.Vector3(1, 0, 0), 'Normal', 0xFFFFFF).vector;
             Nlabel = addVectors(new THREE.Vector3(1, 0, 0), 'N (Normal)', 0xFFFFFF).label;
 
-            
+
             guiControls();
             scaleHorizontal = new THREE.GridHelper(60, 60);
             scene.add(scaleHorizontal);
@@ -184,7 +183,7 @@
 
         function createLights() {
             const ambientLight = new THREE.HemisphereLight(0xddeeff, 0x202020, 0.5);
-            const mainLight = new THREE.DirectionalLight(0xffffff,0.8);
+            const mainLight = new THREE.DirectionalLight(0xffffff, 0.8);
             scene.add(ambientLight);
 
             mainLight.position.set(10, 10, 10);
@@ -248,14 +247,14 @@
             let intersects = raycaster.intersectObjects(meshObjects);
 
             if (intersects.length > 0) {
-                
+
                 INTERSECTED = intersects[0].object;
                 let a = INTERSECTED.name;
                 // console.log(INTERSECTED, a) 
                 if (a === 'car') {
-                    
+
                     messageEl.innerHTML = 'Select vector representation in free-body diagram controls';
-                }else {
+                } else {
                     messageEl.innerHTML = 'Visualize free-body diagram for an object in uniform circular Motion';
                 }
 
@@ -266,7 +265,7 @@
 
         function guiControls() {
             let gui = new GUI({ width: 250 });
-            // gui.close();
+            //gui.close();
             gui.title('Free Body Diagram');
             gui.add(animations, 'Force').name('Force Vector').onChange(() => {
                 //    addArrows();
@@ -339,7 +338,7 @@
                 label.visible = true;
                 vector.visible = true;
                 console.log(vector)
-                messageEl.innerHTML =  'Vector represented for the car';
+                messageEl.innerHTML = 'Vector represented for the car';
             } else {
                 let Vector = vector;
                 let Label = label;
@@ -358,7 +357,7 @@
                 Nlabel.position.copy(axis);
 
             } else {
-                
+
                 normal.setLength(.8)
             }
             requestAnimationFrame(normalMagnitude);
