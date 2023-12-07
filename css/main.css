@@ -56,6 +56,10 @@ h6 {
   .back-to-top {
     bottom: 15px;
   }
+
+  #expandButton {
+    display: block;
+  }
 }
 
 .back-to-top:focus {
@@ -157,6 +161,10 @@ h6 {
     height: 74px;
   }
 
+  #expandButton {
+    display: block;
+  }
+
   #header #logo h1 {
     font-size: 34px;
   }
@@ -208,6 +216,10 @@ h6 {
 @media (max-width: 767px) {
   #intro .intro-content h2 {
     font-size: 34px;
+  }
+
+  #expandButton {
+    display: block;
   }
 }
 
@@ -314,6 +326,24 @@ h6 {
   min-width: 180px;
 }
 
+#expandButton {
+  width: 48px;
+  height: 48px;
+  float: right;
+  margin-right: 4px;
+  margin-left: 4px;
+  display: none;
+  cursor: pointer;
+  background-color: #00b3b3;
+  background-size: 20px;
+  -webkit-mask-image: url(../files/ic_menu_black_24dp.svg);
+  -webkit-mask-position: 50% 50%;
+  -webkit-mask-repeat: no-repeat;
+  mask-image: url(../files/ic_menu_black_24dp.svg);
+  mask-position: 50% 50%;
+  mask-repeat: no-repeat;
+}
+
 /* Nav Menu Arrows */
 .sf-arrows .sf-with-ul {
   padding-right: 22px;
@@ -342,7 +372,13 @@ h6 {
   #nav-menu-container {
     display: none;
   }
+
+  #expandButton {
+    display: block;
+  }
 }
+
+
 
 /* Nav Meu Styling */
 .nav-menu a {
@@ -417,7 +453,13 @@ h6 {
   #mobile-nav-toggle {
     display: inline;
   }
+
+  #expandButton {
+    display: block;
+  }
 }
+
+
 
 /* Mobile Nav Styling */
 #mobile-nav {
@@ -765,5 +807,9 @@ footer {
   .aSlide iframe {
     width: 100%;
     padding: 0px;
+  }
+
+  #expandButton {
+    display: block;
   }
 }
