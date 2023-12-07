@@ -30,14 +30,15 @@
         <!-- <div style="color: red;"><strong>A</strong> = <a id="Ai">2</a><strong>i</strong> + <a id="Aj">10</a><strong>j</strong> + <a id="Ak">0</a><strong>k</strong></div>
         <div style="color: blue;"><strong>B</strong> = <a id="Bi">3</a><strong>i</strong> + <a id="Bj"></a><strong>j</strong> + <a id="Bk">2</a><strong>k</strong></div>
         <div style="color: green; display: none;" ><strong>A + B</strong> = <a id="addi">2</a><strong>i</strong> + <a id="addj">10</a><strong>j</strong> + <a id="addk">0</a><strong>k</strong></div> -->
-        <div id="inputAction"><input type="checkbox" id="xyPlane" name="xyPlane" >
-        <label for="xyPlane">Only XY plane </label>
-        <input type="checkbox" id="yzPlane" name="yzPlane">
-        <label for="yzPlane">Only YZ plane </label>
-        <input type="checkbox" id="zxPlane" name="zxPlane">
-        <label for="zxPlane">Only ZX plane </label> </div>
+        <div id="inputAction"><input type="checkbox" id="xyPlane" name="xyPlane">
+            <label for="xyPlane">Only XY plane </label>
+            <input type="checkbox" id="yzPlane" name="yzPlane">
+            <label for="yzPlane">Only YZ plane </label>
+            <input type="checkbox" id="zxPlane" name="zxPlane">
+            <label for="zxPlane">Only ZX plane </label>
+        </div>
 
-        <button id="random">REGENERATE VECTORS</button> 
+        <button id="random">REGENERATE VECTORS</button>
         <div style="color: red; display: block;"><strong>A</strong> = <a id="vectorA"></a></div>
         <div style="color: green; display: block;"><strong>B</strong> = <a id="vectorB"></a></div>
         <div style="color: blue; display: none;" id="vectorDisplay"><strong>A+B</strong> = <a id="vectorAdd"></a></div>
@@ -70,7 +71,7 @@
 
         let camera, scene, renderer, stats, controls, labelRenderer;
         let vectorToadd, initialPoint, finalPoint, pointLabel, magLabel;
-        let selectA = false;
+        let selectA = true;
         let ARROWS = new THREE.Group();
         let DOTS = new THREE.Group();
         let LABELS = new THREE.Group();
@@ -135,7 +136,7 @@
             createLabelrender()
 
             scene.add(new THREE.Mesh(new THREE.BoxGeometry(50, 0.2, 50).translate(0, -0.1, 0), new THREE.MeshBasicMaterial({ transparent: true, opacity: .4 })))
-            const gridHelper = new THREE.GridHelper(50, 10);
+            const gridHelper = new THREE.GridHelper(100, 10);
             scene.add(gridHelper);
             const planeHelper = gridHelper.clone();
             scene.add(planeHelper);
@@ -239,15 +240,15 @@
                     point = [getRandomInt(1, 15), getRandomInt(1, 15), 0];
                     vectorV = [getRandomInt(-7, 7), getRandomInt(-7, 7), 0];
                 } else if (inputyzPlane.checked) {
-                    
+
                     point = [0, getRandomInt(1, 15), getRandomInt(1, 15)];
                     vectorV = [0, getRandomInt(-7, 7), getRandomInt(-7, 7)];
                 } else if (inputzxPlane.checked) {
-                   
+
                     point = [getRandomInt(1, 15), 0, getRandomInt(1, 15)];
                     vectorV = [getRandomInt(-2, 2), 0, getRandomInt(-7, 7)];
                 }
-                 else {
+                else {
                     point = [getRandomInt(-15, 15), getRandomInt(0, 15), getRandomInt(-15, 15)];
                     vectorV = [getRandomInt(-5, 5), getRandomInt(-2, 5), getRandomInt(-5, 5)];
                 }
@@ -257,17 +258,17 @@
             });
 
             buttonPolar.addEventListener('click', function () {
-                resetVector()
+                // resetVector()
                 PLANES = new THREE.Group();
                 initialPoint.visible = false;
                 polarHelper.visible = true;
-                selectA = !selectA;
-               
+                // selectA = !selectA;
+
                 angleMeasure.visible = true;
-                
+
                 scene.remove(angleMeasure, angleText1, angleText2, angleDisplay)
                 if (selectA) {
-                    buttonPolar.innerHTML = 'PROJECTION ' + ' <strong>B</strong> '
+                    // buttonPolar.innerHTML = 'PROJECTION ' + ' <strong>B</strong> '
                     Bvector.visible = false;
                     Blabel.visible = false;
                     XZplane = initPlane({
@@ -293,33 +294,33 @@
                     scene.remove(magLabel)
 
                 }
-                else {
-                    buttonPolar.innerHTML = 'PROJECTION ' + ' <strong>A</strong> '
-                    Avector.visible = false;
-                    Alabel.visible = false;
-                    XZplane = initPlane({
-                        points: [0, 0, 0, vectorV[0], vectorV[1], vectorV[2], vectorV[0], 0, vectorV[2]],
-                        col: 'yellow'
-                    });
-                    PLANES.add(XZplane)
-                    XYplane = initPlane({
-                        points: [0, 0, 0, vectorV[0], vectorV[1], vectorV[2], vectorV[0], vectorV[1], 0],
-                        col: 'orange'
-                    });
+                // else {
+                //     buttonPolar.innerHTML = 'PROJECTION ' + ' <strong>A</strong> '
+                //     Avector.visible = false;
+                //     Alabel.visible = false;
+                //     XZplane = initPlane({
+                //         points: [0, 0, 0, vectorV[0], vectorV[1], vectorV[2], vectorV[0], 0, vectorV[2]],
+                //         col: 'yellow'
+                //     });
+                //     PLANES.add(XZplane)
+                //     XYplane = initPlane({
+                //         points: [0, 0, 0, vectorV[0], vectorV[1], vectorV[2], vectorV[0], vectorV[1], 0],
+                //         col: 'orange'
+                //     });
 
-                    PLANES.add(XYplane)
-                    ZYplane = initPlane({
-                        points: [0, 0, 0, vectorV[0], vectorV[1], vectorV[2], 0, vectorV[1], vectorV[2]],
-                        col: 'pink'
-                    });
-                    PLANES.add(ZYplane)
-                    scene.add(PLANES)
-                    scene.remove(pointLabel)
-                    pointLabel = addLabel(vectorV[0], vectorV[1], vectorV[2], ' ( ' + vectorV[0] + ', ' + vectorV[1] + ', ' + vectorV[2] + ' ) ')
-                    scene.add(pointLabel)
-                    scene.remove(magLabel)
+                //     PLANES.add(XYplane)
+                //     ZYplane = initPlane({
+                //         points: [0, 0, 0, vectorV[0], vectorV[1], vectorV[2], 0, vectorV[1], vectorV[2]],
+                //         col: 'pink'
+                //     });
+                //     PLANES.add(ZYplane)
+                //     scene.add(PLANES)
+                //     scene.remove(pointLabel)
+                //     pointLabel = addLabel(vectorV[0], vectorV[1], vectorV[2], ' ( ' + vectorV[0] + ', ' + vectorV[1] + ', ' + vectorV[2] + ' ) ')
+                //     scene.add(pointLabel)
+                //     scene.remove(magLabel)
 
-                }
+                // }
 
                 if (inputxyPlane.checked) {
                     Alabel.visible = false;
@@ -332,31 +333,32 @@
                         scene.add(magLabel)
                         angleLabel(theta, point[0], point[1], point[2], theta)
                         scene.add(angleMeasure, angleText1, angleText2, angleDisplay)
-                    } else {
-                        let sum = (vectorV[0] * vectorV[0] + vectorV[1] * vectorV[1] + vectorV[2] * vectorV[2]);
-                        let R = Math.pow(sum, 0.5).toFixed(2);
-                        let theta = Math.atan(vectorV[1] / vectorV[0])
-                        magLabel = addLabel(vectorV[0] / 2, vectorV[1] / 2, vectorV[2] / 2, 'r = ' + R)
-                        scene.add(magLabel)
-                        angleLabel(theta, vectorV[0], vectorV[1], vectorV[2], theta)
-                        scene.add(angleMeasure, angleText1, angleText2, angleDisplay)
                     }
+                    // else {
+                    //     let sum = (vectorV[0] * vectorV[0] + vectorV[1] * vectorV[1] + vectorV[2] * vectorV[2]);
+                    //     let R = Math.pow(sum, 0.5).toFixed(2);
+                    //     let theta = Math.atan(vectorV[1] / vectorV[0])
+                    //     magLabel = addLabel(vectorV[0] / 2, vectorV[1] / 2, vectorV[2] / 2, 'r = ' + R)
+                    //     scene.add(magLabel)
+                    //     angleLabel(theta, vectorV[0], vectorV[1], vectorV[2], theta)
+                    //     scene.add(angleMeasure, angleText1, angleText2, angleDisplay)
+                    // }
                 }
             });
-        
+
             inputAction.addEventListener('click', function () {
-                if (inputyzPlane.checked){
+                if (inputyzPlane.checked) {
                     inputxyPlane.checked = false;
                     inputzxPlane.checked = false;
 
-                } else if (inputzxPlane.checked){
+                } else if (inputzxPlane.checked) {
                     inputxyPlane.checked = false;
                     inputyzPlane.checked = false;
-                }else if (inputxyPlane.checked){
+                } else if (inputxyPlane.checked) {
                     inputyzPlane.checked = false;
                     inputzxPlane.checked = false;
                 }
-                
+
             })
         }
 
