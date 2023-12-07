@@ -37,6 +37,7 @@
     Header
   ============================-->
   <header id="header">
+
     <div class="container">
 
       <div id="logo" class="pull-left">
@@ -44,8 +45,9 @@
         <!-- Uncomment below if you prefer to use an image logo -->
         <!-- <a href="#body"><img src="img/logo.png" alt="" title="" /></a>-->
       </div>
-
+      <div id="expandButton"></div>
       <nav id="nav-menu-container">
+
         <ul class="nav-menu">
           <li class="menu-active"><a href="#body">Home</a></li>
           <li><a href="#about">About Us</a></li>
@@ -53,7 +55,9 @@
           <li><a href="./Theory/index.html">Projects</a></li>
           <li><a href="#contact">Contact</a></li>
         </ul>
+
       </nav><!-- #nav-menu-container -->
+
     </div>
   </header><!-- #header -->
 
@@ -161,7 +165,7 @@
         <input type="hidden" name="hosted_button_id" value="ZTQ5RKXFNFB26" />
         <input type="image" src="https://www.paypalobjects.com/en_GB/i/btn/btn_donate_SM.gif" border="0" name="submit"
           title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
-        <img alt="" border="0" src="https://www.paypal.com/en_IN/i/scr/pixel.gif" width="1.5" height="1.5" />
+        <!-- <img alt="" border="0" src="https://www.paypal.com/en_IN/i/scr/pixel.gif" width="1.5" height="1.5" /> -->
       </form>
 
     </div>
@@ -236,6 +240,19 @@
       return name.join(' ');
 
     }
+    let cont = document.getElementById('nav-menu-container')
+    let expand = document.getElementById('expandButton')
+    let isOpen = false
+    expand.addEventListener('click', function (e) {
+      isOpen = !isOpen
+      console.log(isOpen)
+      if (isOpen) {
+        cont.style.display = 'block'
+      } else {
+        cont.style.display = 'none'
+      }
+
+    });
 
   </script>
 </body>
