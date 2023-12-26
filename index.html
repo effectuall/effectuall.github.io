@@ -51,8 +51,8 @@
         <ul class="nav-menu">
           <li class="menu-active"><a href="#body">Home</a></li>
           <li><a href="#about">About Us</a></li>
-          <li><a href="sims.html">Simulations</a></li>
-          <li><a href="./Theory/index.html">Projects</a></li>
+           <li><a id="logref">Login</a></li>
+          <li><a id="register" href="register.html" style="display: none;">Register</a></li>
           <li><a href="#contact">Contact</a></li>
         </ul>
 
@@ -69,8 +69,8 @@
     <div class="intro-content">
       <h2>Physics <span>Interactive 3D </span><br>Simulations!</h2>
       <div>
-        <a href="sims.html" class="btn-get-started scrollto">Simulations</a>
-        <a href="./Theory/index.html" class="btn-projects scrollto">Projects</a>
+        <a href="sims.html" class="btn-get-started scrollto">Try Simulations</a>
+        <a href="login.html" class="btn-projects scrollto">Learn More</a>
       </div>
     </div>
   </section><!-- #intro -->
@@ -123,10 +123,10 @@
   </section><!-- #services -->
   <article>
     <div id="app" class="app">
-      <div class="aSlide" id="aSlide" style="display: none;">
+<!--       <div class="aSlide" id="aSlide" style="display: none;">
         <iframe src="" name="iframe" id="iframe" title="Iframe"></iframe>
         <a id="viewButton"> <img src="files/ic_code_black_24dp.svg" alt="viewer"></a>
-      </div>
+      </div> -->
     </div>
     <div id="about" class="content">
       <div id="row" class="row">
@@ -254,6 +254,30 @@
 
     });
 
+    let logrefEl = document.getElementById("logref")
+    let registerEl = document.getElementById("register")
+
+    let CheckCred = () => {
+      if (!sessionStorage.getItem("user-creds")) {
+        logrefEl.innerHTML = "Login"
+        registerEl.style.display = 'block'
+        logrefEl.href = "login.html"
+
+
+      } else {
+        logrefEl.innerHTML = "Log Out"
+        registerEl.style.display = 'none'
+        logrefEl.addEventListener('click', SignOut)
+      }
+    }
+
+    let SignOut = () => {
+      sessionStorage.removeItem("user-creds");
+      sessionStorage.removeItem("user-info");
+      window.location.href = 'index.html'
+    }
+
+    window.addEventListener('load', CheckCred)
   </script>
 </body>
 
