@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Effectual Learning-Firebase Auth</title>
+    <!-- Favicons -->
+    <link href="files/favicon.png" rel="icon">
+    <link href="files/apple-touch-icon.png" rel="apple-touch-icon">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <style>
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            align-items: center;
+            overflow-x: hidden;
+        }
+    </style>
+</head>
+
+<body>
+    <section class="h-100 gradient-form" style="background-color: #eee;">
+        <div class="container py-5 h-100">
+            <div class="row d-flex justify-content-center align-items-center h-100">
+                <div class="col-xl-10">
+                    <div class="card rounded-3 text-black">
+                        <div class="row g-0">
+                            <div class="col-lg-6">
+                                <div class="card-body p-md-5 mx-md-4">
+
+                                    <div class="text-center">
+                                        <img src="/files/EffectualL.png" style="width: 185px;" alt="logo">
+                                        <h4 class="mt-1 mb-1 pb-1">
+                                            Effectual Learning</h4>
+                                        <p>Effect of Visual Learning</p>
+
+                                    </div>
+
+                                    <form id="MainForm">
+                                        <p>Please login to your account</p>
+
+                                        <div class="form-outline mb-4">
+                                            <input type="email" id="email" class="form-control"
+                                                placeholder="Email address" />
+                                            <label class="form-label" for="form1">Username</label>
+                                        </div>
+
+                                        <div class="form-outline mb-4">
+                                            <input type="password" id="password" class="form-control"
+                                                placeholder="Password" />
+                                            <label class="form-label" for="form2">Password</label>
+                                        </div>
+
+                                        <div class="text-center pt-1 mb-5 pb-1">
+                                            <button class="btn btn-primary" type="submit">Log
+                                                in</button>
+                                            <a class="text-muted" href="mailto: [effectuallearning@gmail.com]">Not able
+                                                to login? Email Me</a>
+                                        </div>
+
+                                        <div class="d-flex align-items-center justify-content-center pb-4">
+                                            <p class="mb-0 me-2">Don't have an account?</p>
+                                            <a href="register.html"><button type="button"
+                                                    class="btn btn-outline-danger">Create new</button></a>
+                                        </div>
+
+                                    </form>
+
+                                </div>
+                            </div>
+                            <div class="col-lg-6 d-flex align-items-center gradient-custom-2">
+                                <div class=" px-3 py-4 p-md-5 mx-md-4">
+                                    <h4 class="mb-4">We are more than just a learning</h4>
+                                    <img src="/files/login-image.jpg" class="img-fluid" alt="Sample image"
+                                        style="width:fit-content">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, get, ref, child } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCc9YyNEGdrlwhbxkpTR_Tbf0V5JkE_jv8",
+            authDomain: "effectuall-github.firebaseapp.com",
+            projectId: "effectuall-github",
+            storageBucket: "effectuall-github.appspot.com",
+            messagingSenderId: "746032555783",
+            appId: "1:746032555783:web:499502f3bc0b472f82c7a2"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase();
+        const auth = getAuth(app);
+        const dbref = ref(db);
+
+        let emailInp = document.getElementById('email')
+        let passwordInp = document.getElementById('password')
+        let MainForm = document.getElementById('MainForm')
+
+        let SignInUser = (event) => {
+            event.preventDefault();
+            signInWithEmailAndPassword(auth, emailInp.value, passwordInp.value)
+                .then((credentials) => {
+                    get(child(dbref, 'UsersAuthList/' + credentials.user.uid)).then((snapshot) => {
+                        if (snapshot.exists) {
+                            sessionStorage.setItem("user-info", JSON.stringify({
+                                firstname: snapshot.val().firstname,
+                                lastname: snapshot.val().lastname
+                            }))
+                            sessionStorage.setItem("user-creds", JSON.stringify(credentials.user))
+                            window.location.href = 'sims.html';
+                        }
+                    })
+                })
+                .catch((error) => {
+                    alert(error.message)
+                    console.log(error.code)
+                    console.log(error.message)
+                })
+        }
+
+        MainForm.addEventListener('submit', SignInUser)
+    </script>
+</body>
+
+</html>
