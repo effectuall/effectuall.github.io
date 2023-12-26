@@ -22,7 +22,18 @@
 		gtag('config', 'G-7VWWT4ZKR6');
 	</script>
 	<meta name="google-site-verification" content="mz0TRB59UNqdTxhwzmXmGdgVPh8pB4YqjuUr-aWNGIY">
-
+<style>
+		button {
+			color: rgba(253, 251, 251, 0.75);
+			background: rgb(3, 108, 156);
+			outline: 1px solid rgba(131, 10, 36, 0.75);
+			border: 10px;
+			margin: 5px;
+			border-radius: 5px;
+			padding: 5px 10px;
+			cursor: pointer;
+		}
+	</style>
 </head>
 
 <body>
@@ -69,7 +80,33 @@
 
 
 	<script src="script.js"></script>
+<script>
+		let UserCreds = JSON.parse(sessionStorage.getItem("user-creds"));
+		let UserInfo = JSON.parse(sessionStorage.getItem("user-info"))
 
+		// let MsgHead = document.getElementById('msg')
+		let GreetHead = document.getElementById('greet')
+		let SignoutBtn = document.getElementById('signout')
+
+
+
+		let SignOut = () => {
+			sessionStorage.removeItem("user-creds");
+			sessionStorage.removeItem("user-info");
+			window.location.href = 'index.html'
+		}
+
+		let CheckCred = () => {
+			if (!sessionStorage.getItem("user-creds")) {
+				window.location.href = 'login.html'
+			} else {
+				GreetHead.innerText = `Welcome "${UserInfo.firstname + " " + UserInfo.lastname}"!`;
+			}
+		}
+
+		window.addEventListener('load', CheckCred)
+		SignoutBtn.addEventListener('click', SignOut)
+	</script>
 </body>
 
 </html>
