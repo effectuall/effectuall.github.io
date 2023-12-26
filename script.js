@@ -15,15 +15,15 @@ const links = {};
 const validRedirects = new Map();
 const container = document.createElement('div');
 
-let selected = null;
-
+let selected = "Optics_Compound_Microscope";
+viewSrcButton.href = './Simulations/' + selected + '.html';
 init();
 
 async function init() {
 
     content.appendChild(container);
     content.classList.toggle('minimal');
-    
+
 
     const files = await (await fetch('files.json')).json();
     const tags = await (await fetch('tags.json')).json();
@@ -75,15 +75,15 @@ async function init() {
         viewSrcButton.style.display = 'none';
     }
 
-  
+
 
     filterInput.value = extractQuery();
 
     if (filterInput.value !== '') {
 
         panel.classList.add('searchFocused');
-        
-        
+
+
         updateFilter(files, tags);
 
     } else {
@@ -159,7 +159,7 @@ async function init() {
 
 }
 
-  
+
 function createLink(file) {
 
     const template = `
@@ -189,11 +189,11 @@ function createLink(file) {
 
 function selectFile(file) {
 
-    if (selected !== null)  links[selected].classList.remove('selected');
+    if (selected !== null) links[selected].classList.remove('selected');
 
     links[file].classList.add('selected');
 
-    window.location.hash = 'Simulations/' + file ;
+    window.location.hash = 'Simulations/' + file;
     viewer.focus();
     viewer.style.display = 'unset';
 
@@ -203,8 +203,8 @@ function selectFile(file) {
     // console.log(viewer, file)
     // Reveal "View source" button and set attributes to this example
     viewSrcButton.style.display = 'block';
-   
-    viewSrcButton.href = './Simulations/' + selected +'.html';
+
+    viewSrcButton.href = './Simulations/' + selected + '.html';
 
 }
 
