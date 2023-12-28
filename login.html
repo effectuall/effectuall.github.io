@@ -32,7 +32,8 @@
                                 <div class="card-body p-md-5 mx-md-4">
 
                                     <div class="text-center">
-                                        <img src="/files/EffectualL.png" style="width: 185px;" alt="logo">
+                                        <a href="/"><img src="/files/EffectualL.png" style="width: 185px;"
+                                                alt="logo"></a>
                                         <h4 class="mt-1 mb-1 pb-1">
                                             Effectual Learning</h4>
                                         <p>Effect of Visual Learning</p>
@@ -111,6 +112,7 @@
         const auth = getAuth(app);
         const dbref = ref(db);
 
+
         let emailInp = document.getElementById('email')
         let passwordInp = document.getElementById('password')
         let MainForm = document.getElementById('MainForm')
@@ -119,6 +121,7 @@
             event.preventDefault();
             signInWithEmailAndPassword(auth, emailInp.value, passwordInp.value)
                 .then((credentials) => {
+                    // console.log(credentials)
                     get(child(dbref, 'UsersAuthList/' + credentials.user.uid)).then((snapshot) => {
                         if (snapshot.exists) {
                             sessionStorage.setItem("user-info", JSON.stringify({
@@ -138,6 +141,8 @@
         }
 
         MainForm.addEventListener('submit', SignInUser)
+
+
     </script>
 </body>
 
