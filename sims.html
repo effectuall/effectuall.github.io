@@ -22,7 +22,7 @@
 		gtag('config', 'G-7VWWT4ZKR6');
 	</script>
 	<meta name="google-site-verification" content="mz0TRB59UNqdTxhwzmXmGdgVPh8pB4YqjuUr-aWNGIY">
-<style>
+	<style>
 		button {
 			color: rgba(253, 251, 251, 0.75);
 			background: rgb(3, 108, 156);
@@ -45,7 +45,7 @@
 
 			<div id="sections">
 				<a href="./Theory/index.html">Theory</a>
-				<span class="selected">Simulations</span>
+				<span class="selected">Sims</span>
 			</div>
 
 			<div id="expandButton"></div>
@@ -60,12 +60,8 @@
 					spellcheck="false" />
 				<div id="exitSearchButton"></div>
 			</div>
-			<div id="home">
-				<a href="index.html">
-					<img src="./files/ic_home_black_24dp.svg" width="25" height="25" />
-				</a>
-			</div>
-
+			<div id="greet"></div>
+			<button type="button" id="signout">Sign Out</button>
 			<div id="content">
 				<img id="previewsToggler" src="./files/thumbnails.svg" width="20" height="20" />
 			</div>
@@ -78,9 +74,7 @@
 		src="./Simulations/Optics_Compound_Microscope.html"></iframe>
 	<a id="button" target="_blank"><img src="../files/ic_code_black_24dp.svg"></a>
 
-
-	<script src="script.js"></script>
-<script>
+	<script>
 		let UserCreds = JSON.parse(sessionStorage.getItem("user-creds"));
 		let UserInfo = JSON.parse(sessionStorage.getItem("user-info"))
 
@@ -97,9 +91,12 @@
 		}
 
 		let CheckCred = () => {
+			console.log(sessionStorage)
 			if (!sessionStorage.getItem("user-creds")) {
+				console.log(sessionStorage)
 				window.location.href = 'login.html'
 			} else {
+				console.log(sessionStorage)
 				GreetHead.innerText = `Welcome "${UserInfo.firstname + " " + UserInfo.lastname}"!`;
 			}
 		}
@@ -107,6 +104,8 @@
 		window.addEventListener('load', CheckCred)
 		SignoutBtn.addEventListener('click', SignOut)
 	</script>
+	<script src="script.js"></script>
+
 </body>
 
 </html>
