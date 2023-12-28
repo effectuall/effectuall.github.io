@@ -91,12 +91,12 @@
 		}
 
 		let CheckCred = () => {
-			console.log(sessionStorage)
+			// console.log(sessionStorage)
 			if (!sessionStorage.getItem("user-creds")) {
 				console.log(sessionStorage)
 				window.location.href = 'login.html'
 			} else {
-				console.log(sessionStorage)
+				// console.log(sessionStorage)
 				GreetHead.innerText = `Welcome "${UserInfo.firstname + " " + UserInfo.lastname}"!`;
 			}
 		}
