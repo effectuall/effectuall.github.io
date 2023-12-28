@@ -30,7 +30,8 @@
                                 <div class="card-body p-md-5 mx-md-4">
 
                                     <div class="text-center">
-                                        <img src="/files/EffectualL.png" style="width: 185px;" alt="logo">
+                                        <a href="/"><img src="/files/EffectualL.png" style="width: 185px;"
+                                                alt="logo"></a>
                                         <h4 class="mt-1 mb-1 pb-1">
                                             Effectual Learning</h4>
                                         <p>Effect of Visual Learning</p>
@@ -43,7 +44,7 @@
                                         <div class="form-outline mb-4">
                                             <input type="email" id="email" class="form-control"
                                                 placeholder="Email address" />
-                                            <label class="form-label" for="form1">Username</label>
+                                            <label class="form-label" for="form1">Email</label>
                                         </div>
 
                                         <div class="form-outline mb-4">
@@ -63,7 +64,8 @@
                                         </div>
                                         <div class="text-center pt-1 mb-5 pb-1">
                                             <button class="btn btn-primary" type="submit">Create New User</button>
-                                            <a class="text-muted" href="#!">Forgot password?</a>
+                                            <a class="text-muted" href="mailto: [effectuallearning@gmail.com]">Not able
+                                                to login? Email Me</a>
                                         </div>
 
                                         <div class="d-flex align-items-center justify-content-center pb-4">
@@ -79,7 +81,7 @@
                             <div class="col-lg-6 d-flex align-items-center gradient-custom-2">
                                 <div class=" px-3 py-4 p-md-5 mx-md-4">
                                     <h4 class="mb-4">We are more than just a learning</h4>
-                                    <img src="/files/login-image.jpg" class="img-fluid" alt="Sample image"
+                                    <img src="/files/register-image.jpg" class="img-fluid" alt="Sample image"
                                         style="width:fit-content">
 
                                 </div>
@@ -129,7 +131,7 @@
                         firstname: fnameInp.value,
                         lastname: lnameInp.value
                     })
-                    // window.location.href = 'sims.html';
+                    window.location.href = 'login.html';
                 })
                 .catch((error) => {
                     alert(error.message)
