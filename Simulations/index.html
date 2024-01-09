@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Effectual Learning 3d interactive modules</title>
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="shortcut icon" href="../files/favicon_white.ico" media="(prefers-color-scheme: dark)" />
+    <link rel="shortcut icon" href="../files/favicon.ico" media="(prefers-color-scheme: light)" />
+    <link rel="stylesheet" type="text/css" href="../css/style-page.css">
+    <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-7VWWT4ZKR6"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-7VWWT4ZKR6');
+    </script>
+    <meta name="google-site-verification" content="mz0TRB59UNqdTxhwzmXmGdgVPh8pB4YqjuUr-aWNGIY">
+
+</head>
+
+<body>
+
+    <iframe id="viewer" name="viewer" allow="fullscreen; xr-spatial-tracking;" src="./Optics_Compound_Microscope.html"
+        style="height:100vh; width:100%"></iframe>
+    <script type="importmap">
+        {
+          "imports": {
+            "three": "../build/three.module.js",
+            "three/addons/": "../jsm/"
+          }
+        }
+      </script>
+    <script type="module">
+        const pathname = window.location.hash.substring(1)
+        const FILE_URL = `./${pathname}.html`;
+        let viewerEL = document.getElementById('viewer')
+
+        // console.log(pathname, FILE_URL)
+        // viewerEL.src = FILE_URL;
+
+        let user = JSON.parse(localStorage.getItem('user'));
+        let UserCreds = JSON.parse(sessionStorage.getItem("user-creds"));
+        let UserInfo = JSON.parse(sessionStorage.getItem("user-info"))
+        let CheckCred = () => {
+            if (UserInfo) {
+                viewerEL.src = FILE_URL;
+
+            } else if (user) {
+                viewerEL.src = FILE_URL;
+            } else if (UserInfo == null && user == null) {
+                console.log(user)
+                window.location.href = '../log-user.html'
+            }
+        }
+
+        window.addEventListener('load', CheckCred)
+    </script>
+</body>
+
+</html>
