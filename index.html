@@ -51,9 +51,11 @@
         <ul class="nav-menu">
           <li class="menu-active"><a href="#body">Home</a></li>
           <li><a href="#about">About Us</a></li>
-           <li><a id="logref">Login</a></li>
-          <li><a id="register" href="register.html" style="display: none;">Register</a></li>
           <li><a href="#contact">Contact</a></li>
+          <li><a id="logref" style="display: none;">User</a></li>
+          <li><a id="register" href="log-user.html">login</a></li>
+          <li><a id="logout" href="#" style="display: none;">Log Out</a></li>
+
         </ul>
 
       </nav><!-- #nav-menu-container -->
@@ -123,7 +125,7 @@
   </section><!-- #services -->
   <article>
     <div id="app" class="app">
-<!--       <div class="aSlide" id="aSlide" style="display: none;">
+      <!-- <div class="aSlide" id="aSlide" style="display: none;">
         <iframe src="" name="iframe" id="iframe" title="Iframe"></iframe>
         <a id="viewButton"> <img src="files/ic_code_black_24dp.svg" alt="viewer"></a>
       </div> -->
@@ -210,7 +212,7 @@
           const template = `
               
                 <div id="${file}"  class="column"> 
-                  <a href="https://effectuall.github.io/Simulations/${getName(file)}" target="blank">
+                  <a href="Simulations-${file}" target="blank">
                     <img class="image" style="width:100%" src="../assets/screenshots/${file}.jpg" loading="lazy"  target="iframe" />
                     <div class="middle">
                       <div class="text">${getName(file)}</div>
@@ -222,10 +224,10 @@
           div.innerHTML = template.trim();
           row.appendChild(div.firstChild);
           let selected = document.getElementById(file);
-          selected.href = './Simulations/' + file + '.html';
+          selected.href = `./Simulations-${file}`;
 
           selected.addEventListener('click', function (e) {
-            window.open('./Simulations/' + file + '.html')
+            window.open('./Simulations/index.html#' + file)
           });
         }
       }
@@ -255,29 +257,40 @@
     });
 
     let logrefEl = document.getElementById("logref")
+    let logoutEl = document.getElementById("logout")
     let registerEl = document.getElementById("register")
 
+
+
     let CheckCred = () => {
-      if (!sessionStorage.getItem("user-creds")) {
-        logrefEl.innerHTML = "Login"
-        registerEl.style.display = 'block'
-        logrefEl.href = "login.html"
-
-
-      } else {
-        logrefEl.innerHTML = "Log Out"
+      if (localStorage.getItem('user')) {
+        const userName = JSON.parse(localStorage.getItem('user')).name;
         registerEl.style.display = 'none'
-        logrefEl.addEventListener('click', SignOut)
+        logrefEl.style.display = 'block'
+        logoutEl.style.display = 'block'
+        logrefEl.innerText = `Welcome "${userName}"!`;
+      } else if (sessionStorage.getItem("user-creds")) {
+        // console.log(sessionStorage)
+        registerEl.style.display = 'none'
+        logrefEl.style.display = 'block'
+        logoutEl.style.display = 'block'
+        logrefEl.innerText = "Welcome !";
       }
     }
 
     let SignOut = () => {
       sessionStorage.removeItem("user-creds");
       sessionStorage.removeItem("user-info");
+      localStorage.removeItem('user');
+      registerEl.style.display = 'block'
+      logrefEl.style.display = 'none'
+      logoutEl.style.display = 'none'
       window.location.href = 'index.html'
     }
 
+
     window.addEventListener('load', CheckCred)
+    logoutEl.addEventListener('click', SignOut)
   </script>
 </body>
 
