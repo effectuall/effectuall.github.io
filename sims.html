@@ -75,9 +75,22 @@
 	<a id="button" target="_blank"><img src="../files/ic_code_black_24dp.svg"></a>
 
 	<script>
+		const useGetUserInfo = () => {
+			const { name, profilePhoto, userID, isAuth } = JSON.parse(
+				localStorage.getItem('user'));
+
+			return {
+				name,
+				profilePhoto,
+				userID,
+				isAuth
+			}
+		}
+		const userName = useGetUserInfo().name;
+		// console.log(userName);
 		let UserCreds = JSON.parse(sessionStorage.getItem("user-creds"));
 		let UserInfo = JSON.parse(sessionStorage.getItem("user-info"))
-
+		// console.log(UserCreds, UserInfo)
 		// let MsgHead = document.getElementById('msg')
 		let GreetHead = document.getElementById('greet')
 		let SignoutBtn = document.getElementById('signout')
@@ -87,17 +100,17 @@
 		let SignOut = () => {
 			sessionStorage.removeItem("user-creds");
 			sessionStorage.removeItem("user-info");
+			localStorage.removeItem('user');
 			window.location.href = 'index.html'
 		}
 
 		let CheckCred = () => {
-			// console.log(sessionStorage)
-			if (!sessionStorage.getItem("user-creds")) {
-				console.log(sessionStorage)
-				window.location.href = 'login.html'
-			} else {
+			if (UserInfo) {
 				// console.log(sessionStorage)
 				GreetHead.innerText = `Welcome "${UserInfo.firstname + " " + UserInfo.lastname}"!`;
+			} else if (userName) {
+				// console.log(localStorage)
+				GreetHead.innerText = `Welcome "${userName}"!`;
 			}
 		}
 
