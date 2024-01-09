@@ -75,19 +75,7 @@
 	<a id="button" target="_blank"><img src="../files/ic_code_black_24dp.svg"></a>
 
 	<script>
-		const useGetUserInfo = () => {
-			const { name, profilePhoto, userID, isAuth } = JSON.parse(
-				localStorage.getItem('user'));
-
-			return {
-				name,
-				profilePhoto,
-				userID,
-				isAuth
-			}
-		}
-		const userName = useGetUserInfo().name;
-		// console.log(userName);
+		let user = JSON.parse(localStorage.getItem('user'));
 		let UserCreds = JSON.parse(sessionStorage.getItem("user-creds"));
 		let UserInfo = JSON.parse(sessionStorage.getItem("user-info"))
 		// console.log(UserCreds, UserInfo)
@@ -106,11 +94,14 @@
 
 		let CheckCred = () => {
 			if (UserInfo) {
-				// console.log(sessionStorage)
 				GreetHead.innerText = `Welcome "${UserInfo.firstname + " " + UserInfo.lastname}"!`;
-			} else if (userName) {
-				// console.log(localStorage)
-				GreetHead.innerText = `Welcome "${userName}"!`;
+
+			} else if (user) {
+				console.log(user)
+				GreetHead.innerText = `Welcome !`;
+			} else if (UserInfo == null && user == null) {
+				console.log(user)
+				window.location.href = 'log-user.html'
 			}
 		}
 
