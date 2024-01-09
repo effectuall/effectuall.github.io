@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Effectual Learning-Firebase Auth</title>
+    <!-- Favicons -->
+    <link href="files/favicon.png" rel="icon">
+    <link href="files/apple-touch-icon.png" rel="apple-touch-icon">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <style>
+        html,
+        body {
+            height: 100%;
+            align-items: center;
+        }
+    </style>
+</head>
+
+<body>
+    <section class="h-100 gradient-form" style="background-color: #eee;">
+        <div class="container py-5 h-100">
+            <div class="row d-flex justify-content-center align-items-center h-100">
+                <div class="col-xl-10">
+                    <div class="card rounded-3 text-black">
+                        <div class="row g-0">
+                            <div class="col-lg-6">
+                                <div class="card-body p-md-5 mx-md-4">
+
+                                    <div class="text-center">
+                                        <a href="/"><img src="/files/EffectualL.png" style="width: 185px;"
+                                                alt="logo"></a>
+
+                                        <p>Sign in with Google to continue</p>
+                                        <button id="googlebtn" class="btn btn-primary">Sign in with Google</button>
+                                    </div>
+
+                                    <form id="MainForm" class="mt-4">
+                                        <p>Register for Free 3D Interactive Simulations</p>
+
+                                        <div class="form-outline mb-2">
+                                            <input type="email" id="email" class="form-control"
+                                                placeholder="Email address" />
+                                            <label class="form-label" for="form1">Email</label>
+                                        </div>
+
+                                        <div class="form-outline mb-2">
+                                            <input type="password" id="password" class="form-control"
+                                                placeholder="Password" />
+                                            <label class="form-label" for="form2">Password</label>
+                                        </div>
+                                        <div class="form-outline mb-2">
+                                            <input type="text" id="fname" class="form-control"
+                                                placeholder="First Name" />
+                                            <label class="form-label" for="form3">First Name</label>
+                                        </div>
+                                        <div class="form-outline mb-2">
+                                            <input type="text" id="lname" class="form-control"
+                                                placeholder="Last Name" />
+                                            <label class="form-label" for="form4">Last Name</label>
+                                        </div>
+                                        <div class="text-center pt-1 mb-2 pb-1">
+                                            <button class="btn btn-primary" type="submit">Create New User</button>
+
+                                        </div>
+
+                                        <div class="d-flex align-items-center justify-content-center pb-2">
+                                            <p class="mb-0 me-2">Have an account?</p>
+                                            <a href="login.html"><button type="button"
+                                                    class="btn btn-outline-danger">Login</button></a>
+                                        </div>
+
+                                    </form>
+
+                                </div>
+                            </div>
+                            <div class="col-lg-6 d-flex align-items-center gradient-custom-2">
+                                <div class=" px-3 py-1 p-md-2 mx-md-2">
+                                    <h4 class="mb-4">We are more than just a learning</h4>
+                                    <img src="/files/register-image.jpg" class="img-fluid" alt="Sample image"
+                                        style="width:fit-content">
+                                    <h4 class="mt-1 mb-1 pb-1">
+                                        Effectual Learning</h4>
+                                    <p>Effect of Visual Learning</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, set, ref } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getAuth, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCc9YyNEGdrlwhbxkpTR_Tbf0V5JkE_jv8",
+            authDomain: "effectuall-github.firebaseapp.com",
+            projectId: "effectuall-github",
+            storageBucket: "effectuall-github.appspot.com",
+            messagingSenderId: "746032555783",
+            appId: "1:746032555783:web:499502f3bc0b472f82c7a2"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase();
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
+
+        let emailInp = document.getElementById('email')
+        let passwordInp = document.getElementById('password')
+        let fnameInp = document.getElementById('fname')
+        let lnameInp = document.getElementById('lname')
+        let MainForm = document.getElementById('MainForm')
+        let GoogleBtn = document.getElementById('googlebtn')
+
+        const signInWithGoogle = async () => {
+
+            const results = await signInWithPopup(auth, provider);
+            console.log('clicked', results)
+            const authInfo = {
+                userID: results.user.uid,
+                name: results.user.displayName,
+                profile: results.user.photoURL,
+                isAuth: true,
+            }
+            localStorage.setItem('user', JSON.stringify(authInfo));
+            window.location.href = 'sims.html';
+        }
+
+        let RegisterUser = (event) => {
+            event.preventDefault();
+            createUserWithEmailAndPassword(auth, emailInp.value, passwordInp.value)
+                .then((credentials) => {
+                    console.log(credentials)
+                    set(ref(db, 'UsersAuthList/' + credentials.user.uid), {
+                        firstname: fnameInp.value,
+                        lastname: lnameInp.value
+                    })
+                    window.location.href = 'login.html';
+                })
+                .catch((error) => {
+                    alert(error.message)
+                    console.log(error.code)
+                    console.log(error.message)
+                })
+        }
+
+        MainForm.addEventListener('submit', RegisterUser)
+        GoogleBtn.addEventListener('click', signInWithGoogle)
+    </script>
+</body>
+
+</html>
