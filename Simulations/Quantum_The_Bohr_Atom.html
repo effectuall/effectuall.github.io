@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="shortcut icon" href="../files/favicon_white.ico" media="(prefers-color-scheme: dark)" />
+    <link rel="shortcut icon" href="../files/favicon.ico" media="(prefers-color-scheme: light)" />
+    <link rel="stylesheet" type="text/css" href="../css/style-page.css">
+    <title>The Bohr Atom</title>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0JWHY29KD2"></script>
+    <!-- <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-0JWHY29KD2');
+    </script> -->
+    <meta name="google-site-verification" content="mz0TRB59UNqdTxhwzmXmGdgVPh8pB4YqjuUr-aWNGIY">
+
+</head>
+
+<body>
+    <div id="container">
+        <div style="color: beige;" id="topmenu">The Bohr Atom</div>
+        <div id="sidemenu"> </div>
+
+
+        <div id="menu" style="width: 100%;color: beige; text-transform:uppercase;">
+            <p id="message">hydrogen</p>
+            <button id="switch" style="background-color: red;">OFF</button>
+            <button id="select" style="text-transform:uppercase;">sodium</button>
+        </div>
+    </div>
+
+
+    <script type="module">
+
+        import * as THREE from '../build/three.module.js';
+        import { OrbitControls } from '../jsm/controls/OrbitControls.js';
+        import { GLTFLoader } from '../jsm/loaders/GLTFLoader.js';
+        import { GUI } from '../jsm/libs/lil-gui.module.min.js';
+        import { RGBELoader } from '../jsm/loaders/RGBELoader.js';
+
+        let camera, scene, renderer, stats, controls, transformControls;
+        let pointer = new THREE.Vector2();
+        let objects = [], SELECTED;
+        let raycaster = new THREE.Raycaster();
+        let lines = new THREE.Group(), spectrum = new THREE.Group();
+        let cap, tube, glow, screen;
+        let params = {}
+        let hydrogen = {
+            total: 4,
+            col0: 'rgb(255, 0, 0)',
+            line0: 2,
+            col1: 'rgb(15, 194, 75)',
+            line1: 3.5,
+            col2: 'rgb(0, 0, 255)',
+            line2: 4.5,
+            col3: 'rgb(127, 0, 255)',
+            line3: 5
+        }
+        let sodium = {
+            total: 2,
+            col0: 'rgb(255, 255, 0)',
+            line0: 2.5,
+            col1: 'rgb(255, 170, 51)',
+            line1: 2.8
+        }
+        let labelGeometry = new THREE.PlaneBufferGeometry(2.5, 2.5);
+        const hdrEquirect = new RGBELoader()
+            .setPath('./assets/textures/')
+            .load('royal_esplanade_1k.hdr', function () {
+
+                hdrEquirect.mapping = THREE.EquirectangularReflectionMapping;
+
+                init();
+                render();
+
+            });
+        let clearMaterial = new THREE.MeshPhysicalMaterial({
+            color: 0xffffff,
+            metalness: 1,
+            roughness: .5,
+            ior: 1.5,
+            // alphaMap: texture,
+            envMap: hdrEquirect,
+            thickness: 10,
+            envMapIntensity: 1,
+            transmission: .7, // use material.transmission for glass materials
+            specularIntensity: 1,
+            specularColor: 0xffffff,
+            opacity: 1,
+            side: THREE.DoubleSide,
+            transparent: true
+        });
+        let silverMaterial = new THREE.MeshPhysicalMaterial({
+            color: 0xb87333,
+            metalness: 1,
+            roughness: 0,
+            side: THREE.DoubleSide
+        });
+        let streakTexture = new THREE.TextureLoader().load('./assets/gravity/sun.jpg');
+        let redMaterial = new THREE.MeshPhongMaterial({
+            color: 0xf43124,
+            // emissive: 0x00ee00,
+            // shininess: 30,
+            // specular: 0x0000ff,
+            map: streakTexture,
+            side: THREE.DoubleSide
+        });
+        let material = new THREE.MeshBasicMaterial({
+            color: 0x4D516D,
+            side: THREE.DoubleSide
+        });
+
+        const messageEl = document.getElementById("message");
+        const switchEl = document.getElementById("switch");
+        const selectEl = document.getElementById("select");
+
+
+
+        function init() {
+
+            scene = new THREE.Scene();
+            createRenderer();
+            createCamera(-45, 12, 100);
+            createControls(5, 2, -13);
+            // guiControls()
+            scene.add(new THREE.AmbientLight(0xffffff, 2));
+            glow = new THREE.Mesh(new THREE.CylinderGeometry(.7, .7, 14, 32, 16).rotateZ(1.57), clearMaterial);
+            glow.rotation.y = 1.57;
+            glow.position.set(-30, 0, 0)
+            objects.push(glow)
+            scene.add(glow, lines, spectrum)
+            scene.add(new THREE.GridHelper(50, 10, 'rgb(238, 130, 238)', 0xeeeeee).translateY(-10));
+            screen = new THREE.Mesh(new THREE.PlaneGeometry(50, 20).rotateY(1.57).rotateX(1.57), material)
+            spectrum.position.set(50, 0, 0)
+            scene.add(screen)
+            screen.position.x = 50
+            params = hydrogen
+            lines.visible = false;
+            spectrum.visible = false;
+            createLabels()
+            createModel()
+            buttonAction()
+            document.addEventListener('click', onClick);
+            window.addEventListener('resize', onWindowResize);
+            animate()
+        }
+
+        function createLabels() {
+            let filamentMaterial = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide, transparent: true });
+            let filament = makeText(-30, 1.5, 0, 68, filamentMaterial, 'FILAMENT', "rgba(0, 0, 0, 0.1)", "rgba(0, 255, 255, 1)");
+            let prismMaterial = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide, transparent: true });
+            let prismLabel = makeText(0, 15, 0, 68, prismMaterial, 'PRISM', "rgba(0, 0, 0, 0.1)", "rgba(0, 255, 255, 1)");
+            let screenMaterial = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide, transparent: true });
+            let screenLabel = makeText(45, 15, 0, 68, screenMaterial, 'SCREEN', "rgba(0, 0, 0, 0.1)", "rgba(0, 255, 255, 1)");
+        }
+
+        function buttonAction() {
+            switchEl.addEventListener('click', glowAction)
+            selectEl.addEventListener('click', changeAction)
+        }
+
+        function glowAction() {
+
+            if (switchEl.innerHTML === "OFF") {
+                switchEl.innerHTML = "ON";
+                switchEl.style.backgroundColor = "green";
+                glow.material = redMaterial;
+                gasGlow()
+                lines.visible = true;
+                spectrum.visible = true;
+            } else {
+                switchEl.innerHTML = "OFF";
+                switchEl.style.backgroundColor = "red";
+                glow.material = clearMaterial;
+
+                lines.visible = false;
+                spectrum.visible = false;
+            }
+        }
+
+        function createModel() {
+
+            const loader = new GLTFLoader();
+            loader
+                .setPath('./model/')
+                .load('gasTube.glb', function (gltf) {
+                    let model = gltf.scene;
+                    // console.log(model)
+                    scene.add(model);
+                    model.position.set(-30, 0, 0)
+                    model.scale.set(5, 5, 5)
+                    model.rotation.y = 1.57;
+                    tube = model.getObjectByName('tube');
+                    cap = model.getObjectByName('cap');
+                    tube.material = clearMaterial;
+                    cap.material = silverMaterial;
+                    objects.push(tube)
+                });
+            loader
+                .setPath('./model/')
+                .load('prism.glb', function (gltf) {
+                    let model = gltf.scene;
+                    // console.log(model)
+                    scene.add(model);
+                    model.scale.set(10, 10, 10)
+                    // model.position.set(0, -10, 0)
+
+                    let prism = model.getObjectByName('prism');
+                    prism.material = clearMaterial;
+
+                });
+
+        }
+
+        function changeAction() {
+            // console.log("change", messageEl.innerHTML, selectEl.innerHTML)
+            let previous = messageEl.innerHTML;
+            let next = selectEl.innerHTML;
+            while (lines.children.length > 0) {
+                const A = lines.children[0];
+                A.parent.remove(A);
+            }
+            while (spectrum.children.length > 0) {
+                const A = spectrum.children[0];
+                A.parent.remove(A);
+            }
+            switchEl.innerHTML = "OFF";
+            messageEl.innerHTML = next;
+            selectEl.innerHTML = previous;
+            params = `${next}` === "hydrogen" ? hydrogen : sodium;
+            switchEl.style.backgroundColor = "red";
+            glow.material = clearMaterial;
+        }
+
+        function gasGlow() {
+
+            lines.add(addLines(new THREE.Vector3(-30, 0, 0), new THREE.Vector3(-10, 0, 0), 'pink'),
+            )
+            for (let i = 0; i < params.total; i++) {
+                lines.add(addLines(new THREE.Vector3(-10, 0, 0), new THREE.Vector3(10 + params[`line${i}`], -params[`line${i}`], 0), new THREE.Color(params[`col${i}`])),
+                    addLines(new THREE.Vector3(10 + params[`line${i}`], -params[`line${i}`], 0), new THREE.Vector3(50, -params[`line${i}`] * 3, 0), new THREE.Color(params[`col${i}`])),
+                )
+            }
+
+            for (let i = 0; i < params.total; i++) {
+                let screenLine = screen.clone()
+                screenLine.scale.set(1, .015, 1)
+                screenLine.position.set(- .1, -params[`line${i}`] * 3, 0)
+                screenLine.material = new THREE.MeshBasicMaterial({
+                    color: new THREE.Color(params[`col${i}`]),
+                    side: THREE.DoubleSide
+                })
+                spectrum.add(screenLine)
+            }
+        }
+
+        function addLines(vector1, vector2, col) {
+            let linepoints = [vector1, vector2];
+            let lineMaterial = new THREE.LineBasicMaterial({ color: col });
+
+            let lineGeometry = new THREE.BufferGeometry().setFromPoints(linepoints);
+            let axis = new THREE.Line(lineGeometry, lineMaterial);
+
+            return axis
+        }
+
+        function pointerMove() {
+            pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
+            pointer.y = - (event.clientY / window.innerHeight) * 2 + 1;
+
+        }
+
+        function onClick(event) {
+            event.preventDefault();
+            pointerMove()
+            raycaster.setFromCamera(pointer, camera);
+
+            let intersects = raycaster.intersectObjects(objects, true);
+            if (intersects.length > 0) {
+
+                SELECTED = intersects[0].object;// electronButton, gunLabel
+                console.log(SELECTED)
+                glowAction()
+            }
+        }
+
+        function createCamera(x, y, z) {
+
+            let fov = 55;
+            const aspect = window.innerWidth / window.innerHeight;
+            const near = 0.1;
+            const far = 1500;
+
+            camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+
+            camera.position.set(x, y, z);
+        }
+
+        function createControls(x, y, z) {
+            controls = new OrbitControls(camera, renderer.domElement);
+            controls.enablePan = true;
+            controls.enableZoom = true;
+            controls.target.set(x, y, z);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.rotateSpeed = 0.1;
+            controls.update();
+            controls.addEventListener('change', render);
+        }
+
+        function createRenderer() {
+            // create the renderer
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.alpha = true;
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.outputEncoding = THREE.sRGBEncoding;
+            document.body.appendChild(renderer.domElement);
+
+        }
+
+        function onWindowResize() {
+
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+
+            renderer.setSize(window.innerWidth, window.innerHeight);
+
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            controls.update()
+            render();
+
+        }
+
+        function render() {
+
+
+            renderer.render(scene, camera);
+
+        }
+
+        function guiControls() {
+            let gui = new GUI();
+            gui.close()
+
+
+            gui.add(camera.position, 'x', -100, 100);
+            gui.add(camera.position, 'y', -100, 100);
+            gui.add(camera.position, 'z', -100, 100);
+            let controlFolder = gui.addFolder("Control");
+            controlFolder.add(controls.target, 'x', -100, 100);
+            controlFolder.add(controls.target, 'y', -100, 100);
+            controlFolder.add(controls.target, 'z', -100, 100);
+
+        }
+
+        function makeLabelCanvas(size, name, backgdCol, color) {
+            const borderSize = 2;
+            const ctx = document.createElement('canvas').getContext('2d');
+            const font = `${size}px bold sans-serif`;
+            ctx.font = font;
+            // measure how long the name will be
+            const doubleBorderSize = borderSize * 2;
+            const width = ctx.measureText(name).width + doubleBorderSize;
+            const height = size + doubleBorderSize;
+            ctx.canvas.width = width;
+            ctx.canvas.height = height;
+
+            // need to set font again after resizing canvas
+            ctx.font = font;
+            ctx.textBaseline = 'top';
+
+            ctx.fillStyle = backgdCol;
+            ctx.fillRect(0, 0, width, height);
+            ctx.fillStyle = color;
+            ctx.fillText(name, borderSize, borderSize);
+
+            return ctx.canvas;
+        }
+
+        function makeText(x, y, z, size, material, name, backgdCol, color) {
+            const canvas = makeLabelCanvas(size, name, backgdCol, color);
+            material.map = new THREE.CanvasTexture(canvas);
+
+            const root = new THREE.Object3D();
+            root.position.set(x, y, z);
+
+            const label = new THREE.Mesh(labelGeometry, material);
+            root.add(label);
+            const labelBaseScale = 0.01;
+            label.scale.x = canvas.width * labelBaseScale;
+            label.scale.y = canvas.height * labelBaseScale;
+
+            scene.add(root);
+            return root;
+        }
+
+        function generateTexture() {
+
+            const canvas = document.createElement('canvas');
+            canvas.width = 2;
+            canvas.height = 2;
+
+            const context = canvas.getContext('2d');
+            context.fillStyle = 'red';
+            context.fillRect(0, 1, 2, 1);
+
+            return canvas;
+
+        }
+
+    </script>
+
+</body>
+
+</html>
