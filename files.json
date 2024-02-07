@@ -65,6 +65,7 @@
 	"Quantum": [
 		"Quantum_Photoelectric_Effect",
 		"Quantum_Cathode_Rays_The_Electrons",
-		"Quantum_The_Bohr_Atom"
+		"Quantum_The_Bohr_Atom",
+		"Quantum_Hydrogen_Atom"
 	]
 }
