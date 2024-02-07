@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Hydrogren Atom</title>
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="shortcut icon" href="../files/favicon_white.ico" media="(prefers-color-scheme: dark)" />
+    <link rel="shortcut icon" href="../files/favicon.ico" media="(prefers-color-scheme: light)" />
+    <link rel="stylesheet" type="text/css" href="../css/style-page.css">
+    <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-7VWWT4ZKR6"></script>
+    <!-- <script>
+		window.dataLayer = window.dataLayer || [];
+		function gtag() { dataLayer.push(arguments); }
+		gtag('js', new Date());
+
+		gtag('config', 'G-7VWWT4ZKR6');
+	</script> -->
+    <meta name="google-site-verification" content="mz0TRB59UNqdTxhwzmXmGdgVPh8pB4YqjuUr-aWNGIY">
+
+</head>
+
+<body>
+
+    <div style="color: aliceblue;" id="topmenu">
+        <div>Hydrogren Atom </div>
+
+    </div>
+
+    <div id="menu" style="text-align: center; align-items: center; color: aliceblue;">
+        <button id="change">Energy Levels</button>
+        <button id="quantum">Quantum Behaviour</button>
+    </div>
+
+    <script type="module">
+        import * as THREE from '../../build/three.module.js';
+        import { OrbitControls } from '../../jsm/controls/OrbitControls.js';
+        import Stats from '../../jsm/libs/stats.module.js';
+        // import { GUI } from '../../jsm/libs/lil-gui.module.min.js';
+
+        let camera, scene, renderer, controls;
+        let atom = new THREE.Group(), electron, POINTS = new THREE.Group();
+        let width = window.innerWidth, height = window.innerHeight;
+        let electronlabel, atomlabel;
+        let clock = new THREE.Clock();
+        let v = new THREE.Vector3();
+
+        let t = 0, interval = 0, requestID;
+        let orbit, curve, arrows = new THREE.Group(), labels = new THREE.Group();
+        let labelGeometry = new THREE.PlaneGeometry(32, 32);
+        let isChanged = false, isQuantum = false;
+        const changeEl = document.getElementById("change");
+        const quantumEl = document.getElementById("quantum");
+
+        function createCamera() {
+
+            const fov = 60;
+            const aspect = width / height;
+            const near = 1;
+            const far = 1000;
+
+            camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+            // camera.position.set(-20, -30, 30);
+            camera.position.set(-20, 40, 150);
+
+        }
+
+        function createLights() {
+            let hemiLight = new THREE.PointLight(0xffffff, 1);
+            hemiLight.position.set(0, 20, 0);
+            scene.add(hemiLight);
+
+            let dirLight = new THREE.DirectionalLight(0xffffff, 1);
+            dirLight.position.set(-30, 50, -30);
+            dirLight.castShadow = true;
+            dirLight.shadow.camera.top = 70;
+            dirLight.shadow.camera.bottom = -70;
+            dirLight.shadow.camera.left = -70
+            dirLight.shadow.camera.right = 70;
+            dirLight.shadow.mapSize.width = 2048;
+            dirLight.shadow.mapSize.height = 2048;
+            scene.add(dirLight);
+
+            scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+        }
+
+        function hydrogenAtom() {
+
+            createLights()
+            let atomGeometry = new THREE.IcosahedronGeometry(5, 6);
+            let atomTexture = new THREE.TextureLoader().load('./assets/gravity/sun.jpg');
+            let atomMaterial = new THREE.MeshPhongMaterial({ color: 0xff0000, map: atomTexture })
+            let nucleus = new THREE.Mesh(atomGeometry, atomMaterial);
+            atom.add(nucleus);
+
+            // Add electron
+            // let electronGeometry = new THREE.SphereGeometry(7, 12, 6);
+            // let electronMaterial = new THREE.MeshPhongMaterial({ color: 0x0000ff });
+            // let eln = new THREE.Mesh(electronGeometry, electronMaterial);
+            electron = nucleus.clone();
+            electron.material = new THREE.MeshPhongMaterial({ color: 0x0000ff });
+            electron.position.set(30, 0, 0);
+            electron.scale.set(0.5, 0.5, 0.5);
+            let A = addEllipse(30, 30, 0, 100, "yellow")
+            orbit = addEllipse(30, 30, 0, 100, "yellow").ellipse;
+            curve = addEllipse(30, 30, 0, 100, "yellow").curve;
+            orbit.rotation.x = -1.57;
+            scene.add(electron);
+
+            scene.add(orbit);
+            // orbit.add(X, eln);
+            let cloud = nucleus.clone();
+            cloud.material = new THREE.MeshBasicMaterial({ color: 0x0000ff, transparent: true, opacity: 0.2 });
+            cloud.scale.set(6, 6, 6);
+            POINTS.add(cloud)
+            // for (let i = 0; i < 1.7 * Math.PI; i = i + 0.2) {
+            //     let A = X.clone();
+            //     console.log(Math.floor(Math.random() * 2))
+            //     A.rotation.set(Math.random() * 2 * i, Math.random() * 2 * i, Math.random() * 2 * i)
+            //     orbit.add(A);
+            // }
+        }
+
+        function createControls(x, y, z) {
+            controls = new OrbitControls(camera, renderer.domElement);
+            controls.enablePan = true;
+            controls.enableZoom = true;
+            controls.target.set(x, y, z);
+        }
+
+        function createRenderer() {
+            renderer = new THREE.WebGLRenderer({
+                antialias: true
+            });
+            renderer.alpha = true;
+            renderer.setSize(width, height);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            document.body.appendChild(renderer.domElement);
+
+        }
+
+        function init() {
+            scene = new THREE.Scene();
+            scene.add(atom, arrows, POINTS)
+
+            createCamera();
+            createRenderer();
+            createControls(0, 0, 0);
+            hydrogenAtom();
+            atom.position.set(0, 0, 0);
+            buttonActions();
+            addPoints();
+            window.addEventListener('resize', onWindowResize);
+            scene.add(labels, arrows)
+            labels.visible = false;
+            arrows.visible = false;
+            POINTS.visible = false;
+        }//add obbiting feature too
+
+        window.onload = function () {
+            init();
+            animate();
+            // guiControls();
+            planetMovement()
+        }
+
+        function addPoints() {
+
+            let a = 27, b = 22;
+            for (let i = 0.02; i < Math.PI; i = i + 0.05) {
+                const vertices = [];
+                for (let j = 0.04; j < 2 * Math.PI; j = j + 0.05) {
+                    let r = Math.random() * (a - b) + a
+                    const x = (Math.random() * (a - b) + a) * Math.sin(j);
+                    const y = (Math.random() * (a - b) + a) * Math.cos(j);
+
+                    vertices.push(x, y, 0);
+
+                }
+                const geometry = new THREE.BufferGeometry();
+                geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+                const material = new THREE.PointsMaterial({ color: 0x888888, size: 0.5 });
+                const points = new THREE.Points(geometry, material);
+                points.rotation.set(0, i, 0)
+                POINTS.add(points);
+            }
+        }
+
+        function buttonActions() {
+            changeEl.addEventListener('click', () => {
+                isChanged = !isChanged;
+                if (isChanged) {
+                    atom.position.set(0, -40, 0);
+                    orbit.position.set(0, -40, 0);
+                    POINTS.position.set(0, -40, 0);
+                    hydrogenLevels()
+
+                    labels.visible = true;
+                    arrows.visible = true;
+                } else {
+                    atom.position.set(0, 0, 0);
+                    hydrogenLevels()
+                    orbit.position.set(0, 0, 0);
+                    POINTS.position.set(0, 0, 0);
+                    labels.visible = false;
+                    arrows.visible = false;
+                }
+            })
+
+            quantumEl.addEventListener('click', () => {
+                isQuantum = !isQuantum;
+                if (isQuantum) {
+                    POINTS.visible = true;
+                    electron.visible = false;
+                    orbit.visible = false;
+                    cancelAnimationFrame(requestID)
+                } else {
+                    POINTS.visible = false;
+                    electron.visible = true;
+                    orbit.visible = true;
+                    planetMovement()
+                }
+            })
+        }
+
+        function hydrogenLevels() {
+            let levels = [
+                { n: 1, l: 0, m: 0, name: "1s" },
+                { n: 2, l: 0, m: 0, name: "2s" },
+                { n: 2, l: 1, m: 0, name: "2p" },
+                { n: 3, l: 0, m: 0, name: "3s" },
+                { n: 3, l: 1, m: 0, name: "3p" },
+                { n: 3, l: 2, m: 0, name: "3d" },
+                { n: 4, l: 0, m: 0, name: "4s" },
+                { n: 4, l: 1, m: 0, name: "4p" },
+                { n: 4, l: 2, m: 0, name: "4d" },
+                { n: 4, l: 3, m: 0, name: "4f" },
+                { n: 5, l: 0, m: 0, name: "5s" },
+                { n: 5, l: 1, m: 0, name: "5p" },
+                { n: 5, l: 2, m: 0, name: "5d" },
+                { n: 5, l: 3, m: 0, name: "5f" },
+                { n: 6, l: 0, m: 0, name: "6s" },
+                { n: 6, l: 1, m: 0, name: "6p" },
+                { n: 6, l: 2, m: 0, name: "6d" },
+                { n: 7, l: 0, m: 0, name: "7s" },
+                { n: 7, l: 1, m: 0, name: "7p" }]
+            // console.log(levels[1])
+            for (let i = 0; i < levels.length; i++) {
+                // let X = addEllipse(10 * levels[i].n, 10 * levels[i].n, 0, 100, "yellow").ellipse;
+                // orbit.add(X);
+                let filamentMaterial = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide, transparent: true });
+                labels.add(makeText(10 * levels[i].l, 10 * levels[i].n, 0, 22, filamentMaterial, levels[i].name, "rgba(0, 0, 0, 0.1)", "rgba(0, 255, 255, 1)"))
+                let A = new THREE.ArrowHelper(new THREE.Vector3(-1, 1, 0).normalize(), new THREE.Vector3(0, 0, 0), 15, 0xffff00)
+                A.position.set(10 * levels[i].l, 10 * levels[i].n, 0)
+                arrows.add(A)
+            }
+            // let filamentMaterial = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide, transparent: true });
+            // scene.add(new THREE.ArrowHelper(new THREE.Vector3(-1, 1, 0).normalize(), new THREE.Vector3(0, 0, 0), 20, 0xffff00))
+        }
+
+        function guiControls() {
+            let gui = new GUI();
+            gui.close()
+
+
+            gui.add(camera.position, 'x', -100, 100);
+            gui.add(camera.position, 'y', -100, 100);
+            gui.add(camera.position, 'z', -100, 100);
+            let controlFolder = gui.addFolder("Control");
+            controlFolder.add(controls.target, 'x', -100, 100);
+            controlFolder.add(controls.target, 'y', -100, 100);
+            controlFolder.add(controls.target, 'z', -100, 100);
+
+        }
+
+        function render() {
+            renderer.render(scene, camera);
+        }
+
+        function onWindowResize() {
+
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            render();
+
+        }
+
+        function addEllipse(r1, r2, rot, N, col) {
+
+            const curve = new THREE.EllipseCurve(
+                0, 0,            // ax, aY
+                r1, r2,           // xRadius, yRadius
+                0, 2 * Math.PI,  // aStartAngle, aEndAngle
+                false,            // aClockwise
+                rot                // aRotation
+            );
+
+            const points = curve.getSpacedPoints(N);
+            const geometry = new THREE.BufferGeometry().setFromPoints(points);
+
+            const material = new THREE.LineBasicMaterial({ color: col, linewidth: 2 });
+
+            // Create the final object to add to the scene
+            const ellipse = new THREE.Line(geometry, material);
+
+            return { curve, points, ellipse }
+
+        }
+
+        function planetMovement() {
+            t = (clock.getElapsedTime() * 0.1) % 1;
+            electron.position.copy(curve.getPointAt(t, v));
+            electron.position.applyMatrix4(orbit.matrixWorld);
+            if (interval > 100) {
+                orbit.rotation.x += 0.05;
+                orbit.rotation.y += 0.05;
+                orbit.rotation.z += 0.05
+                interval = 0;
+            }
+            electron.rotation.y += 0.05;
+            requestID = requestAnimationFrame(planetMovement);
+            interval++;
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            render();
+        }
+
+        function makeLabelCanvas(size, name, backgdCol, color) {
+            const borderSize = 2;
+            const ctx = document.createElement('canvas').getContext('2d');
+            const font = `${size}px bold sans-serif`;
+            ctx.font = font;
+            // measure how long the name will be
+            const doubleBorderSize = borderSize * 2;
+            const width = ctx.measureText(name).width + doubleBorderSize;
+            const height = size + doubleBorderSize;
+            ctx.canvas.width = width;
+            ctx.canvas.height = height;
+
+            // need to set font again after resizing canvas
+            ctx.font = font;
+            ctx.textBaseline = 'top';
+
+            ctx.fillStyle = backgdCol;
+            ctx.fillRect(0, 0, width, height);
+            ctx.fillStyle = color;
+            ctx.fillText(name, borderSize, borderSize);
+
+            return ctx.canvas;
+        }
+
+        function makeText(x, y, z, size, material, name, backgdCol, color) {
+            const canvas = makeLabelCanvas(size, name, backgdCol, color);
+            material.map = new THREE.CanvasTexture(canvas);
+
+            const root = new THREE.Object3D();
+            root.position.set(x, y, z);
+
+            const label = new THREE.Mesh(labelGeometry, material);
+            root.add(label);
+            const labelBaseScale = 0.01;
+            label.scale.x = canvas.width * labelBaseScale;
+            label.scale.y = canvas.height * labelBaseScale;
+
+            scene.add(root);
+            return root;
+        }
+
+    </script>
+</body>
