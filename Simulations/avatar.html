@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>3D Models from Science</title>
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="shortcut icon" href="../files/favicon_white.ico" media="(prefers-color-scheme: dark)" />
+    <link rel="shortcut icon" href="../files/favicon.ico" media="(prefers-color-scheme: light)" />
+    <link rel="stylesheet" type="text/css" href="../css/style-page.css">
+    <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-7VWWT4ZKR6"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-7VWWT4ZKR6');
+    </script>
+    <meta name="google-site-verification" content="mz0TRB59UNqdTxhwzmXmGdgVPh8pB4YqjuUr-aWNGIY">
+
+</head>
+
+<body>
+    <div id="container">
+        <div id="topmenu">
+            <div>3D Models-</div>
+
+        </div>
+        <div id="menu">
+            <div>Few 3d models are created by vert4art</div>
+
+        </div>
+    </div>
+
+
+    <script type="importmap">
+			{
+				"imports": {
+					"three": "../build/three.module.js",
+					"three/addons/": "../jsm/"
+				}
+			}
+		</script>
+
+    <script type="module">
+
+        import * as THREE from 'three';
+
+        import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
+        import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        let scene, camera, renderer, controls, gui;
+        const models = ['electroplatingCopper.glb', 'galvanicCell.glb', 'headPhone.glb', 'vernierCaliper.glb', 'screwGauge.glb'];
+        let index = 0, mixer, model, delta;
+        let modelReady = false;
+        let group = new THREE.Group();
+        const loader = new GLTFLoader();
+        const clock = new THREE.Clock();
+        window.onload = function () {
+
+            init();
+            animate();
+        }
+        function init() {
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xbfd1e5);
+            createCamera(45, -15, 6, 15, new THREE.Vector3(0, 0, 0));
+            createRenderer();
+
+            scene.add(group)
+            createControls(0, 0, 0);
+            guiControls();
+            createLights()
+
+            addModel()
+
+
+            document.body.appendChild(renderer.domElement);
+            window.addEventListener('resize', onWindowResize);
+        }
+
+        function createControls(x, y, z) {
+            controls = new OrbitControls(camera, renderer.domElement);
+            controls.enablePan = true;
+            controls.enableZoom = true;
+            controls.target.set(x, y, z);
+        }
+
+        function createRenderer() {
+            // create the renderer
+            renderer = new THREE.WebGLRenderer({
+                antialias: true
+            });
+            renderer.alpha = true;
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            document.body.appendChild(renderer.domElement);
+        }
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+        function createCamera(view, x, y, z, vector) {
+
+            let fov = view;
+            const aspect = window.innerWidth / window.innerHeight;
+            const near = 0.1;
+            const far = 1500;
+
+            camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+
+            camera.position.set(x, y, z);
+            camera.lookAt(vector)
+            // camera.position.set(-10, 3, 40);
+        }
+
+        function createLights() {
+            const ambientLight = new THREE.AmbientLight(0xffffff, 1);
+            const mainLight = new THREE.DirectionalLight(0xffffff, 1);
+
+            mainLight.position.set(10, 15, 10);
+
+            scene.add(ambientLight, mainLight);
+        }
+
+        function guiControls() {
+            // dat.GUI
+            const animations = {
+
+                labels: function () {
+                    if (index < models.length - 1) {
+                        index = index + 1
+                    } else {
+                        index = 0
+                    }
+                    addModel()
+                }
+            }
+            const gui = new GUI({ width: 200 });
+            gui.add(animations, 'labels').name('Add Models');
+        }
+        function addModel() {
+            // console.log('addModels', index, models.length)
+            while (group.children.length > 0) {
+                const A = group.children[0];
+                A.parent.remove(A);
+            }
+
+            loader
+                .setPath('./model/glb/')
+                .load(models[index], function (gltf) {
+                    model = gltf.scene;
+                    group.add(model)
+                    modelReady = true;
+                    mixer = new THREE.AnimationMixer(model);
+                    // console.log(gltf.animations)
+                    // mixer.clipAction(gltf.animations[0]).play();
+                    for (let i = 0; i < gltf.animations.length; i++) {
+                        mixer.clipAction(gltf.animations[i]).play();
+                    }
+                });
+
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            delta = clock.getDelta();
+            controls.update();
+            if (modelReady) mixer.update(delta);
+
+            renderer.render(scene, camera);
+        }
+
+        window.addEventListener('resize', function () {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+
+</body>
+
+</html>
