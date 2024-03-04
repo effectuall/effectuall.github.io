@@ -12,22 +12,22 @@
 		"Mechanics_Projectile_Motion",
 		"Mechanics_Banking_on_a_Road",
 		"Mechanics_Motion_in_straight_line",
-		"Mechanics_Motion_in_a_Plane",
+		"Mechanics_Motion_in_a_Plane"
 	],
 	"Electricity": [
 		"Electricity_Coulomb's_Law",
 		"Electricity_The_Electric_Field",
-		"Electricity_Three_Point_Charges_in_a_Line",
+		"Electricity_Three_Point_Charges_in_a_Line"
 	],
 	"Magnetism": [
 		"Magnetism_History_of_Electromagnetism",
 		"Magnetism_Fleming's_Thumb_Rule",
 		"Magnetism_Magnetic_Effect_due_to_Current",
-		"Magnetism_Force_on_a_Current_Carrying_Conductor",
+		"Magnetism_Force_on_a_Current_Carrying_Conductor"
 	],
 	"Thermodynamics": [
 		"Thermodynamics_Introduction",
 		"Thermodynamics_Pressure",
-		"Thermodynamics_Buoyant_Force",
+		"Thermodynamics_Buoyant_Force"
 	]
 }
