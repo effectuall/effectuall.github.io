@@ -66,12 +66,25 @@
 				<img id="previewsToggler" src="./files/thumbnails.svg" width="20" height="20" />
 			</div>
 		</div>
+	</div>
+	<div id="popup-window">
+		<h1>🌟 3D Simulation Enthusiasts! 🌟</h1>
+		<p>Are you ready to elevate your virtual experiences to the next level? </p>
+		<p>It's time to step into the future of WebGL based 3d simulations for STEM topics with our latest updates and
+			features! <br>Don't miss
+			out on the opportunity to revolutionize your 3D simulation experience!<br><br> Embark on a journey of
+			innovation
+			and
+			discovery.<br> Together, let's shape the future of virtual exploration!</p>
 
+
+		<h1 id="text-message">🎯 Take Action Now: Fill out the User Feedback Form</h1>
+		<button id="close-button">Close</button><button id="pop-button">User Feedback Form</button>
 
 	</div>
-
 	<iframe id="viewer" name="viewer" allow="fullscreen; xr-spatial-tracking;"
 		src="./Simulations/Optics_Compound_Microscope.html"></iframe>
+
 	<a id="button" target="_blank"><img src="../files/ic_code_black_24dp.svg"></a>
 
 	<script>
@@ -107,6 +120,43 @@
 
 		window.addEventListener('load', CheckCred)
 		SignoutBtn.addEventListener('click', SignOut)
+		// Get the elements by their ID
+
+		let popupWindow = document.getElementById("popup-window");
+		let closeButton = document.getElementById("close-button");
+		let popButton = document.getElementById("pop-button");
+		let textMessage = document.getElementById("text-message");
+		let pop = false;
+
+		window.addEventListener('scroll', function () {
+			popupWindow.style.display = "block";
+		});
+		// window.addEventListener('click', function () {
+		//   event.preventDefault()
+		//   popupWindow.style.display = "block";
+		// });
+		closeButton.addEventListener('click', function () {
+
+			if (pop) {
+
+				popupWindow.style.visibility = "hidden";
+			} else {
+				console.log('no')
+				textMessage.style.fontWeight = "bolder"
+				textMessage.style.fontSize = "32px"
+			}
+		});
+
+		popButton.addEventListener('click', function () {
+			pop = true;
+			window.open("https://forms.gle/S22Y4Z3hUEvedBtD9", "_blank");
+
+			// <button id="pop-button"><a href="https://effectuall.com/"
+			//     target="_blank">Pop</a></button></a>
+		});
+		setTimeout(function () {
+			popupWindow.style.display = "block";
+		}, 4000); // Open popup after 6 seconds
 	</script>
 	<script src="script.js"></script>
 
