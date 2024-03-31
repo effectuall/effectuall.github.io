@@ -16,7 +16,8 @@ const validRedirects = new Map();
 const container = document.createElement('div');
 
 let selected = "Optics_Compound_Microscope";
-viewSrcButton.href = './Simulations/' + selected + '.html';
+let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+viewSrcButton.href = './Simulations/' + "Optics_Compound_Microscope" + '.html';
 init();
 
 async function init() {
@@ -45,7 +46,7 @@ async function init() {
             container.appendChild(link);
 
             links[file] = link;
-            validRedirects.set(file, 'Simulations/' + file + '.html');
+            validRedirects.set(characters.charAt(Math.floor(Math.random() * 26)));
 
         }
 
@@ -204,7 +205,7 @@ function selectFile(file) {
     // Reveal "View source" button and set attributes to this example
     viewSrcButton.style.display = 'block';
 
-    viewSrcButton.href = './Simulations/' + selected + '.html';
+    // viewSrcButton.href = './Simulations/' + selected + '.html';
 
 }
 
