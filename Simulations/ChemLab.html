@@ -43,7 +43,7 @@
         let camera, scene, renderer;
         let controller;
 
-        let model
+        let carModel
         let reticle;
 
         let hitTestSource = null;
@@ -80,7 +80,7 @@
             const gltfLoader = new GLTFLoader();
 
             gltfLoader.load("model/methane.glb", (gltf) => {
-                model = gltf.scene;
+                carModel = gltf.scene;
                 // console.log(model)
             });
 
@@ -94,9 +94,11 @@
                     // const mesh = new THREE.Mesh(geometry, material);
                     // reticle.matrix.decompose(mesh.position, mesh.quaternion, mesh.scale);
                     // mesh.scale.y = Math.random() * 2 + 1;
-                    // scene.add(mesh);const model = carModel.clone();
+                    // scene.add(mesh);
+			
+			const model = carModel.clone();
 
-      model.position.setFromMatrixPosition(reticle.matrix);
+      	model.position.setFromMatrixPosition(reticle.matrix);
 
       // Rotate the model randomly to give a bit of variation to the scene.
       model.rotation.y = Math.random() * (Math.PI * 2);
