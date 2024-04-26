@@ -90,15 +90,15 @@
 
                 if (reticle.visible) {
 
-                    const material = new THREE.MeshPhongMaterial({ color: 0xffffff * Math.random() });
-                    const mesh = new THREE.Mesh(geometry, material);
-                    reticle.matrix.decompose(mesh.position, mesh.quaternion, mesh.scale);
-                    mesh.scale.y = Math.random() * 2 + 1;
-                    scene.add(mesh);
+                    // const material = new THREE.MeshPhongMaterial({ color: 0xffffff * Math.random() });
+                    // const mesh = new THREE.Mesh(geometry, material);
+                    // reticle.matrix.decompose(mesh.position, mesh.quaternion, mesh.scale);
+                    // mesh.scale.y = Math.random() * 2 + 1;
+                    // scene.add(mesh);
 
-                    // reticle.matrix.decompose(model.position, model.quaternion, model.scale);
-                    // model.scale.y = Math.random() * 2 + 1;
-                    // scene.add(model);
+                    reticle.matrix.decompose(model.position, model.quaternion, model.scale);
+                    model.scale.y = Math.random() * 2 + 1;
+                    scene.add(model);
                 }
 
             }
