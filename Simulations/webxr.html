@@ -213,7 +213,7 @@ let camera, scene, renderer;
 
 				//
 
-				const geometry = new THREE.TorusGeometry( 10, 3, 16, 100 )rotateX( Math.PI / 2 );
+				const geometry = new THREE.CylinderGeometry( 0.1, 0.1, 0.2, 32 ).translate( 0, 0.1, 0 );
 
 				function onSelect() {
 
