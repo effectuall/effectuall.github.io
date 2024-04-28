@@ -11,6 +11,7 @@
         :not(:defined)>* {
             display: none;
             margin: 0;
+            padding: 0;
         }
 
 
@@ -154,8 +155,11 @@
     <!-- Use it like any other HTML element -->
     <model-viewer ar ar-placement="wall" camera-controls touch-action="pan-y" alt="A 3D model of methane"
         src="assets/chem/methane.glb">
+        <button slot="ar-button" id="ar-button">
+            View in your space
+        </button>
+
         <div id="ar-prompt">
-            hand
         </div>
 
         <button id="ar-failure">
