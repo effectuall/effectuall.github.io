@@ -150,44 +150,44 @@
 </head>
 
 <body>
-    <div>
-        <span
-            style="position: absolute; text-align: center; font-size: 30px; line-height: 30px; left: 50%; transform: translateX(-50%); text-transform: capitalize;">
-            <a id="choice">earth</a><br>Mass:
-            <a id="mass">10 kg <br> Weight:<a id="wgt">98</a> N
-        </span>
 
-        <model-viewer id="xfade-demo" ar ar-placement="wall" camera-controls touch-action="pan-y" autoplay
-            animation-name="idle" alt="A 3D model of astronaut" src="assets/astro/astronaut.glb"
-            style="background-color: unset;">
-            <button slot="ar-button" id="ar-button">
-                View in your space
-            </button>
 
-            <div id="ar-prompt">
-            </div>
+    <model-viewer id="xfade-demo" ar ar-placement="wall" camera-controls touch-action="pan-y" autoplay
+        animation-name="idle" alt="A 3D model of astronaut" src="assets/astro/astronaut.glb"
+        style="background-color: unset;">
+        <div> <span
+                style="position: absolute; text-align: center; font-size: 30px; line-height: 30px; left: 50%; transform: translateX(-50%); text-transform: capitalize;">
+                <a id="choice">earth</a><br>Mass:
+                <a id="mass">10 kg <br> Weight:<a id="wgt">98</a> N
+            </span></div>
+        <button slot="ar-button" id="ar-button">
+            View in your space
+        </button>
 
-            <button id="ar-failure">
-                AR is not tracking!
-            </button>
+        <div id="ar-prompt">
+        </div>
 
-            <div class="slider">
-                <div class="slides">
-                    <button class="slide selected" onclick="switchSrc(this, 1.63,'moon')"
-                        style="background-image: url('assets/astro/moon.jpg');">MOON
-                    </button>
-                    <button class="slide selected" onclick="switchSrc(this, 25,'jupiter')"
-                        style="background-image: url('assets/astro/jupiter.jpg');">JUPITER
-                    </button>
-                    <button class="slide selected" onclick="switchSrc(this, 0,'space')"
-                        style="background-image: url('assets/astro/space.jpg');">SPACE
-                    </button>
-                    <button class="slide selected" onclick="switchSrc(this, 9.81,'earth')"
-                        style="background-image: url('assets/astro/earth.jpg');">EARTH
-                    </button>
-        </model-viewer>
+        <button id="ar-failure">
+            AR is not tracking!
+        </button>
 
-    </div>
+        <div class="slider">
+            <div class="slides">
+                <button class="slide selected" onclick="switchSrc(this, 1.63,'moon')"
+                    style="background-image: url('assets/astro/moon.jpg');">MOON
+                </button>
+                <button class="slide selected" onclick="switchSrc(this, 25,'jupiter')"
+                    style="background-image: url('assets/astro/jupiter.jpg');">JUPITER
+                </button>
+                <button class="slide selected" onclick="switchSrc(this, 0,'space')"
+                    style="background-image: url('assets/astro/space.jpg');">SPACE
+                </button>
+                <button class="slide selected" onclick="switchSrc(this, 9.81,'earth')"
+                    style="background-image: url('assets/astro/earth.jpg');">EARTH
+                </button>
+    </model-viewer>
+
+
 
     <script type="module">
         const modelViewer = document.querySelector('#xfade-demo');
