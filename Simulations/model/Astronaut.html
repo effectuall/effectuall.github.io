@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Molecules Viewer</title>
+    <title>Understanding Mass and Weight through Astronaut journey</title>
     <!-- Import the component -->
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
     <style>
@@ -128,7 +128,7 @@
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
-            background-color: #fff;
+            color: #DADCE0;
             margin-right: 10px;
             border-radius: 10px;
             border: none;
@@ -150,41 +150,58 @@
 </head>
 
 <body>
+    <div>
+        <span
+            style="position: absolute; text-align: center; font-size: 40px; line-height: 40px; left: 50%; transform: translateX(-50%); text-transform: capitalize;">
+            <a id="choice">earth</a><br>Mass:
+            <a id="mass">10 kg <br> Weight:<a id="wgt">98</a> N
+        </span>
 
+        <model-viewer id="xfade-demo" ar ar-placement="wall" camera-controls touch-action="pan-y" autoplay
+            animation-name="idle" alt="A 3D model of astronaut" src="assets/astro/astronaut.glb"
+            style="background-color: unset;">
+            <button slot="ar-button" id="ar-button">
+                View in your space
+            </button>
 
-    <model-viewer id="xfade-demo" ar ar-placement="wall" camera-controls touch-action="pan-y" autoplay
-        animation-name="walk" alt="A 3D model of astronaut" src="assets/astro/astronaut.glb">
-        <button slot="ar-button" id="ar-button">
-            View in your space
-        </button>
+            <div id="ar-prompt">
+            </div>
 
-        <div id="ar-prompt">
-        </div>
+            <button id="ar-failure">
+                AR is not tracking!
+            </button>
 
-        <button id="ar-failure">
-            AR is not tracking!
-        </button>
+            <div class="slider">
+                <div class="slides">
+                    <button class="slide selected" onclick="switchSrc(this, 1.63,'moon')"
+                        style="background-image: url('assets/astro/moon.jpg');">MOON
+                    </button>
+                    <button class="slide selected" onclick="switchSrc(this, 20,'jupiter')"
+                        style="background-image: url('assets/astro/jupiter.jpg');">JUPITER
+                    </button>
+                    <button class="slide selected" onclick="switchSrc(this, 0,'space')"
+                        style="background-image: url('assets/astro/space.jpg');">SPACE
+                    </button>
+                    <button class="slide selected" onclick="switchSrc(this, 9.81,'earth')"
+                        style="background-image: url('assets/astro/earth.jpg');">EARTH
+                    </button>
+        </model-viewer>
 
-        <div class="slider">
-            <div class="slides">
-                <button class="slide selected" onclick="switchSrc(this, 'idle')"
-                    style="background-image: url('assets/astro/idle.jpg');">IDLE
-                </button>
-                <button class="slide selected" onclick="switchSrc(this, 'walk')"
-                    style="background-image: url('assets/astro/idle.jpg');">WALK
-                </button>
-                <button class="slide selected" onclick="switchSrc(this, 'swag')"
-                    style="background-image: url('assets/astro/idle.jpg');">SWAG
-                </button>
-    </model-viewer>
+    </div>
 
     <script type="module">
         const modelViewer = document.querySelector('#xfade-demo');
+        const wgt = document.getElementById('wgt')
+        const choice = document.getElementById('choice')
 
-        window.switchSrc = (element, name) => {
-            console.log('select action', element, name)
+        const gravity = 9.8;
+        window.switchSrc = (element, value, name) => {
+            console.log('Weight', 10 * value)
+            choice.innerText = name
+            wgt.innerText = (10 * value).toFixed(1)
             modelViewer.animationName = name
-            // modelViewer.play
+            modelViewer.play
+
         };
 
         document.querySelector(".slider").addEventListener('beforexrselect', (ev) => {
