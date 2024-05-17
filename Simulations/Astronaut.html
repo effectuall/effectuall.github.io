@@ -155,11 +155,7 @@
     <model-viewer id="xfade-demo" ar ar-placement="wall" camera-controls touch-action="pan-y" autoplay
         animation-name="idle" alt="A 3D model of astronaut" src="assets/astro/astronaut.glb"
         style="background-color: unset;">
-        <div> <span
-                style="position: absolute; text-align: center; font-size: 30px; line-height: 30px; left: 50%; transform: translateX(-50%); text-transform: capitalize;">
-                <a id="choice">earth</a><br>Mass:
-                <a id="mass">10 kg <br> Weight:<a id="wgt">98</a> N
-            </span></div>
+
         <button slot="ar-button" id="ar-button">
             View in your space
         </button>
@@ -172,6 +168,7 @@
         </button>
 
         <div class="slider">
+
             <div class="slides">
                 <button class="slide selected" onclick="switchSrc(this, 1.63,'moon')"
                     style="background-image: url('assets/astro/moon.jpg');">MOON
@@ -185,6 +182,10 @@
                 <button class="slide selected" onclick="switchSrc(this, 9.81,'earth')"
                     style="background-image: url('assets/astro/earth.jpg');">EARTH
                 </button>
+                <button> <a id="choice">earth</a><br>Mass:
+                    <a id="mass">10 kg <br> Weight:<a id="wgt">98</a> N</button>
+            </div>
+        </div>
     </model-viewer>
 
 
