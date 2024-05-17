@@ -152,7 +152,7 @@
 <body>
     <div>
         <span
-            style="position: absolute; text-align: center; font-size: 40px; line-height: 40px; left: 50%; transform: translateX(-50%); text-transform: capitalize;">
+            style="position: absolute; text-align: center; font-size: 30px; line-height: 30px; left: 50%; transform: translateX(-50%); text-transform: capitalize;">
             <a id="choice">earth</a><br>Mass:
             <a id="mass">10 kg <br> Weight:<a id="wgt">98</a> N
         </span>
@@ -196,7 +196,7 @@
 
         const gravity = 9.8;
         window.switchSrc = (element, value, name) => {
-            //console.log('Weight', 10 * value)
+            console.log('Weight', 10 * value)
             choice.innerText = name
             wgt.innerText = (10 * value).toFixed(1)
             modelViewer.animationName = name
