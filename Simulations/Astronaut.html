@@ -104,6 +104,16 @@
             display: block;
         }
 
+        .menu {
+            top: 50px;
+            width: 100%;
+            font-size: 30px;
+            text-transform: capitalize;
+            text-align: center;
+            overflow: hidden;
+            position: absolute;
+        }
+
         .slider {
             width: 100%;
             text-align: center;
@@ -132,6 +142,7 @@
             margin-right: 10px;
             border-radius: 10px;
             border: none;
+            cursor: pointer;
             display: flex;
         }
 
@@ -166,7 +177,11 @@
         <button id="ar-failure">
             AR is not tracking!
         </button>
+        <div class="menu">
 
+            <a id="choice">earth</a><br>Mass:
+            <a id="mass">50 kg <br> Weight:<a id="wgt">490</a> N
+        </div>
         <div class="slider">
 
             <div class="slides">
@@ -182,8 +197,7 @@
                 <button class="slide selected" onclick="switchSrc(this, 9.81,'earth')"
                     style="background-image: url('assets/astro/earth.jpg');">EARTH
                 </button>
-                <button> <a id="choice">earth</a><br>Mass:
-                    <a id="mass">10 kg <br> Weight:<a id="wgt">98</a> N</button>
+
             </div>
         </div>
     </model-viewer>
@@ -195,11 +209,10 @@
         const wgt = document.getElementById('wgt')
         const choice = document.getElementById('choice')
 
-        const gravity = 9.8;
         window.switchSrc = (element, value, name) => {
-            console.log('Weight', 10 * value)
+            // console.log('Weight', 50 * value)
             choice.innerText = name
-            wgt.innerText = (10 * value).toFixed(1)
+            wgt.innerText = (50 * value).toFixed(1)
             modelViewer.animationName = name
             modelViewer.play
 
