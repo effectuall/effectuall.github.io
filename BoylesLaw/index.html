@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Boyle's Law</title>
+    <link rel="shortcut icon" href="/favicon.png" />
+  <script type="module" crossorigin src="/assets/index-CXKoXByz.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-B2UK6r5X.css">
+</head>
+
+<body>
+
+    <div id="topmenu">
+        <div style="font-weight: bold;  text-decoration-line: underline; font-size: 125%; padding-bottom: 2px;">
+            Boyle's Law
+        </div>
+    </div>
+    <div id="menu">
+        <a id="message-el">
+            Ideal Gas Law, PV = nRT <br>
+            <strong>Boyle's Law</strong><br>
+            Case 1: Constant T (Isothermal), P &Proportional; 1/V <br>
+            At lower volume (higher pressure), the gases deviates from the ideal gas behaviour.
+        </a><br>
+        <a><input type="range" id="volume" name="volume" min="1" max="30" value="10" step="0.25">
+            <label for="volume"><strong>Change Volume</strong></label>
+        </a><br>
+        <button id="atom-el">ATOM</button>
+        <button id="mole-el">MOLECULES</button>
+        <button id="reset-el">RESET </button>
+        <button onClick="idealLaw()">IDEAL GAS</button>
+        <button onClick="charlesLaw()">CHARLE'S LAW</button>
+    </div>
+    <div id="logo">
+        <img src="/logo.png" alt="EffectualL" width="150" height="30">
+    </div>
+    <script>
+
+        function idealLaw() {
+
+            window.open("Thermodynamics_Ideal_Gas_Equation.html", "_self")
+        }
+
+        function charlesLaw() {
+
+            window.open("Thermodynamics_Charle's_Law.html", "_self")
+        }
+    </script>
+    <script id="vertexShader" type="x-shader/x-vertex">
+    varying vec2 vUv;
+    void main() {
+      vUv = uv;
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1);
+    }
+  </script>
+
+    <script id="fragmentShader" type="x-shader/x-fragment">
+    uniform vec3 color1;
+    uniform vec3 color2;
+    varying vec2 vUv;
+    void main() {
+      gl_FragColor = vec4(mix(color1, color2, vUv.y), 1.0);
+    }
+  </script>
+</body>
+
+</html>
