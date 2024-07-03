@@ -108,7 +108,6 @@
             top: 50px;
             width: 100%;
             font-size: 30px;
-            text-transform: capitalize;
             text-align: center;
             overflow: hidden;
             position: absolute;
@@ -164,7 +163,7 @@
 
 
     <model-viewer id="xfade-demo" ar ar-placement="wall" camera-controls touch-action="pan-y" autoplay
-        animation-name="idle" alt="A 3D model of astronaut" src="assets/astro/astronaut.glb"
+        animation-name="earth" alt="A 3D model of astronaut" src="assets/astro/astronaut.glb"
         style="background-color: unset;">
 
         <button slot="ar-button" id="ar-button">
@@ -178,9 +177,12 @@
             AR is not tracking!
         </button>
         <div class="menu">
-
-            <a id="choice">earth</a><br>Mass:
-            <a id="mass">50 kg <br> Weight:<a id="wgt">490</a> N
+            
+            
+            <a id="choice" style="text-transform: capitalize;">earth</a>
+            <br>Gravity : <a id="gravity">9.81</a>m&#47;s<sup>2</sup>
+            <br>Mass:
+            <a id="mass">50 kg <br> Weight:<a id="wgt">490.5</a> N 
         </div>
         <div class="slider">
 
@@ -197,7 +199,24 @@
                 <button class="slide selected" onclick="switchSrc(this, 9.81,'earth')"
                     style="background-image: url('assets/astro/earth.jpg');">EARTH
                 </button>
-
+                <button class="slide selected" onclick="switchSrc(this, 3.71,'mars')"
+                style="background-image: url('assets/astro/mars.jpg');">MARS
+            </button>
+            <button class="slide selected" onclick="switchSrc(this, 1.63,'venus')"
+            style="background-image: url('assets/astro/venus.jpg');">VENUS
+        </button>
+            <button class="slide selected" onclick="switchSrc(this, 8.87,'uranus')"
+                style="background-image: url('assets/astro/uranus.jpg');">URANUS
+            </button>
+            <button class="slide selected" onclick="switchSrc(this, 11.15,'neptune')"
+            style="background-image: url('assets/astro/neptune.jpg');">NEPTUNE
+        </button>
+            <button class="slide selected" onclick="switchSrc(this, 10.44,'saturn')"
+                style="background-image: url('assets/astro/saturn.jpg');">SATURN
+            </button>
+            <button class="slide selected" onclick="switchSrc(this, 3.7,'mercury')"
+                style="background-image: url('assets/astro/mercury.jpg');">MERCURY
+            </button>
             </div>
         </div>
     </model-viewer>
@@ -208,13 +227,23 @@
         const modelViewer = document.querySelector('#xfade-demo');
         const wgt = document.getElementById('wgt')
         const choice = document.getElementById('choice')
+        const actions = ['moon', 'jupiter','swag','idle', 'earth']
 
         window.switchSrc = (element, value, name) => {
-            // console.log('Weight', 50 * value)
+            console.log(actions[Math.floor(Math.random() * 4)])
             choice.innerText = name
             wgt.innerText = (50 * value).toFixed(1)
-            modelViewer.animationName = name
-            modelViewer.play
+            if (name === 'space') {
+                modelViewer.animationName = name
+                modelViewer.play
+            } else if (name === 'earth'){
+                modelViewer.animationName = name
+                modelViewer.play
+            } else {
+                modelViewer.animationName = actions[Math.floor(Math.random() * 4)]
+                modelViewer.play
+            }
+            
 
         };
 
