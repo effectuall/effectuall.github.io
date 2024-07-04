@@ -105,7 +105,7 @@
         }
 
         .menu {
-            top: 50px;
+            top: 10px;
             width: 100%;
             font-size: 30px;
             text-align: center;
@@ -156,6 +156,8 @@
         .slide:focus-visible {
             outline: 1px solid #4285f4;
         }
+
+        
     </style>
 </head>
 
@@ -181,8 +183,8 @@
             
             <a id="choice" style="text-transform: capitalize;">earth</a>
             <br>Gravity : <a id="gravity">9.81</a>m&#47;s<sup>2</sup>
-            <br>Mass:
-            <a id="mass">50 kg <br> Weight:<a id="wgt">490.5</a> N 
+            <br>Mass:<input type="range" min="1" max="100" value="50"  id="range-input" oninput="massInput(value)">
+            <a id="mass">50 </a> kg <br> Weight:<a id="wgt">490.5</a> N 
         </div>
         <div class="slider">
 
@@ -225,12 +227,25 @@
 
     <script type="module">
         const modelViewer = document.querySelector('#xfade-demo');
+        const gEl = document.getElementById('gravity')
         const wgt = document.getElementById('wgt')
         const choice = document.getElementById('choice')
         const actions = ['moon', 'jupiter','swag','idle', 'earth']
+        let sliderValue = 50
+        let gravity = 9.81
+        gEl.innerText = gravity
+        // window.addEventListener("load", massInput);    
+        window.massInput = (value) => {
+            console.log('here',value)
+            sliderValue = parseInt(value);
+            document.getElementById("mass").innerText = sliderValue;
+            wgt.innerText = (sliderValue* gravity).toFixed(1)
+        }
 
         window.switchSrc = (element, value, name) => {
-            console.log(actions[Math.floor(Math.random() * 4)])
+          
+            gravity = value
+            gEl.innerText = gravity
             choice.innerText = name
             wgt.innerText = (50 * value).toFixed(1)
             if (name === 'space') {
