@@ -174,7 +174,37 @@ h6 {
   }
 }
 
+/* ----------pop up------------ */
+#popup-window {
+  position: fixed;
+  width: 500px;
+  height: 600px;
+  background: white;
+  border: 1px solid black;
+  padding: 70px 25px;
+  margin: auto;
+  align-items: center;
+  text-align: center;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 10;
+  display: none;
 
+}
+
+#popup-window h1 {
+  font-size: 22px;
+  font-weight: bolder;
+}
+
+#popup-window p {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+/* ------------ */
 
 /*--------------------------------------------------------------
   # Intro Section
@@ -617,7 +647,7 @@ article {
   margin-top: .5rem;
   font-weight: bold;
   text-transform: uppercase;
-  background-color: rgba(0, 164, 240, 0.8);
+  background-color: #0c2e8a;
   color: white;
   text-shadow: 2px 2px 10px black;
   padding: 12px;
@@ -692,7 +722,6 @@ button {
   padding: 5px 10px;
   text-align: center;
   font-size: 16px;
-  transition: 0.5s all;
   cursor: pointer;
 }
 
@@ -700,9 +729,9 @@ button {
   cursor: pointer;
   display: inline-block;
   position: relative;
-  transition: 0.5s;
 }
 
+/* 
 button:after {
   content: '\00ab';
   float: left;
@@ -710,7 +739,7 @@ button:after {
   top: 14px;
   right: 20px;
   transition: 0.5s;
-}
+} */
 
 button:hover {
   background-color: rgba(243, 44, 87, 0.75);
