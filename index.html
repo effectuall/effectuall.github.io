@@ -41,7 +41,7 @@
     <div class="container">
 
       <div id="logo" class="pull-left">
-        <h1><a href="/" class="scrollto">Effect<span>uall</span></a></h1>
+        <h1><a href="/" class="scrollto">Effect<span>ualL</span></a></h1>
         <!-- Uncomment below if you prefer to use an image logo -->
         <!-- <a href="#body"><img src="img/logo.png" alt="" title="" /></a>-->
       </div>
@@ -49,12 +49,10 @@
       <nav id="nav-menu-container">
 
         <ul class="nav-menu">
-          <li class="menu-active"><a href="#body">Home</a></li>
+          <li><a href="sims.html">Simulations</a></li>
+          <li><a href="/Theory/index.html">Theory</a></li>
           <li><a href="#about">About Us</a></li>
           <li><a href="#contact">Contact</a></li>
-          <li><a id="logref" style="display: none;">User</a></li>
-          <li><a id="register" href="log-user.html">login</a></li>
-          <li><a id="logout" href="#" style="display: none;">Log Out</a></li>
 
         </ul>
 
@@ -72,14 +70,24 @@
       <h2>Physics <span>Interactive 3D </span><br>Simulations!</h2>
       <div>
         <a href="sims.html" class="btn-get-started scrollto">Try Simulations</a>
-        <a href="#" class="btn-projects scrollto">Learn More</a>
+        <a href="/Theory/index.html" id="learn" class="btn-projects scrollto">Learn More</a>
       </div>
     </div>
+
   </section><!-- #intro -->
 
+
   <section>
+
     <div class="container">
+      <div class="section">
+        <h2>Visit <a href="https://effectuall.com/">Effectual Learning </a>for entire collections of STEM related topics
+        </h2>
+
+      </div>
+
       <div class="section-header">
+
         <h1><strong>Effect of Visual Learning - Effectual Learning</strong></h1>
         <h1> Effectual Learning introduces a teaching methodology that uses technology as access points for guiding
           students in science.</h1>
@@ -115,29 +123,26 @@
           </div>
         </div>
       </div>
+      <div id="about" class="content">
+        <h1><strong>Simulations</strong></h1>
+        <div id="row" class="row">
+
+          <a id="topics" class="title"></a>
+        </div>
+      </div>
       <h1> <strong>Understand what you learn with visual 3D elements ...</strong></h1>
       <h1>Let's</h1>
       <h1>
         Explore, Evoke & Envision
       </h1>
       <h1>Select a Physics Interactive Simulation from the sidebar to see the 3D visualisation here.</h1>
-    </div>
-  </section><!-- #services -->
-  <article>
-    <div id="app" class="app">
-      <!-- <div class="aSlide" id="aSlide" style="display: none;">
-        <iframe src="" name="iframe" id="iframe" title="Iframe"></iframe>
-        <a id="viewButton"> <img src="files/ic_code_black_24dp.svg" alt="viewer"></a>
-      </div> -->
-    </div>
-    <div id="about" class="content">
-      <div id="row" class="row">
+      <div id="contact">
+        <h1><strong>Theory</strong></h1>
+        <div id="theory" class="row">
 
-        <a id="topics" class="title"></a>
+          <a id="topics" class="title"></a>
+        </div>
       </div>
-    </div>
-
-    <div id="contact">
       <p> All of the simulations in this site are created by me, <a href="mailto:effectuallearning@gmail.com">E.P
           Sajitha</a>. Please click on my name to send feedback about the simulation contents, visualisations or
         suggestions for new simulations.
@@ -156,7 +161,9 @@
       </p>
     </div>
 
-  </article>
+
+  </section>
+
 
   <footer>
     <div>
@@ -192,7 +199,7 @@
 
       const row = document.getElementById('row');
 
-      const files = await (await fetch('files.json')).json();
+      const files = await (await fetch('content.json')).json();
       const container = document.createElement('div');
       const topics = document.getElementById('topics');
       row.appendChild(topics)
@@ -232,6 +239,46 @@
         }
       }
 
+      const theory = document.getElementById('theory');
+      const card = document.createElement('div');
+      const text = document.getElementById('topics');
+      theory.appendChild(text)
+
+      for (const key in files) {
+
+        const section = files[key];
+        const each = document.createElement('div');
+        let X = `
+             <a class = "title">${key} </a>`;
+        each.innerHTML = X.trim();
+        theory.appendChild(each.firstChild);
+        for (let i = 0; i < section.length; i++) {
+
+          const file = section[i];
+          const link = '/Theory/' + file
+          const template = `
+              
+                <div id="${file}"  class="column"> 
+                  <a href="/Theory/${key}/${file}.html" target="blank">
+                    <img class="image" style="width:100%" src="../assets/screenshots/${file}.jpg" loading="lazy"  target="iframe" />
+                    <div class="middle">
+                      <div class="text">${getName(file)}</div>
+                    </div>
+                  </a>
+                  </div>
+                `;
+          const div = document.createElement('div');
+          div.innerHTML = template.trim();
+          theory.appendChild(div.firstChild);
+          let selected = document.getElementById(file);
+          selected.href = `./Simulations-${file}`;
+
+          selected.addEventListener('click', function (e) {
+            window.open('./Simulations/index.html#' + file)
+          });
+        }
+      }
+
     }
 
 
@@ -245,6 +292,8 @@
     let cont = document.getElementById('nav-menu-container')
     let expand = document.getElementById('expandButton')
     let isOpen = false
+
+    //for small screen
     expand.addEventListener('click', function (e) {
       isOpen = !isOpen
       console.log(isOpen)
@@ -256,42 +305,12 @@
 
     });
 
-    let logrefEl = document.getElementById("logref")
-    let logoutEl = document.getElementById("logout")
-    let registerEl = document.getElementById("register")
 
-
-
-    let CheckCred = () => {
-      if (localStorage.getItem('user')) {
-        const userName = JSON.parse(localStorage.getItem('user')).name;
-        registerEl.style.display = 'none'
-        logrefEl.style.display = 'block'
-        logoutEl.style.display = 'block'
-        logrefEl.innerText = `Welcome "${userName}"!`;
-      } else if (sessionStorage.getItem("user-creds")) {
-        // console.log(sessionStorage)
-        registerEl.style.display = 'none'
-        logrefEl.style.display = 'block'
-        logoutEl.style.display = 'block'
-        logrefEl.innerText = "Welcome !";
-      }
-    }
-
-    let SignOut = () => {
-      sessionStorage.removeItem("user-creds");
-      sessionStorage.removeItem("user-info");
-      localStorage.removeItem('user');
-      registerEl.style.display = 'block'
-      logrefEl.style.display = 'none'
-      logoutEl.style.display = 'none'
-      window.location.href = 'index.html'
-    }
-
-
-    window.addEventListener('load', CheckCred)
-    logoutEl.addEventListener('click', SignOut)
   </script>
+  <script src="https://bots.easy-peasy.ai/chat.min.js"
+    data-chat-url="https://bots.easy-peasy.ai/bot/f19986b6-1fb6-4677-9a7f-ac990c4a0fff" data-btn-position="bottom-right"
+    data-widget-btn-color="#6366f1" defer>
+    </script>
 </body>
 
 </html>
