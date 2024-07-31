@@ -1,0 +1,26 @@
+{
+	"Optics": [
+		"Optics_Compound_Microscope",
+		"Optics_Astronomical_Telescope",
+		"Optics_Converging_Lens",
+		"Optics_Diverging_Lens"
+	],
+	"Mechanics": [
+		"Mechanics_Circular_Motion",
+		"Mechanics_Projectile_Motion",
+		"Mechanics_Banking_on_a_Road",
+		"Mechanics_Periodic_Motion"
+	],
+	"Magnetism": [
+		"Magnetism_History_of_Electromagnetism",
+		"Magnetism_Hall_Effect"
+	],
+	"Thermodynamics": [
+		"Thermodynamics_Ideal_Gas_Equation",
+		"Thermodynamics_Kinetic_Theory_of_Gases",
+		"Thermodynamics_Hot_Air_Balloon"
+	],
+	"Quantum": [
+		"Quantum_Photoelectric_Effect"
+	]
+}
