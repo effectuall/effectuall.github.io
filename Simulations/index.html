@@ -32,31 +32,7 @@
           }
         }
       </script>
-    <script type="module">
-        const pathname = window.location.hash.substring(1)
-        const FILE_URL = `./${pathname}.html`;
-        let viewerEL = document.getElementById('viewer')
 
-        // console.log(pathname, FILE_URL)
-        // viewerEL.src = FILE_URL;
-
-        let user = JSON.parse(localStorage.getItem('user'));
-        let UserCreds = JSON.parse(sessionStorage.getItem("user-creds"));
-        let UserInfo = JSON.parse(sessionStorage.getItem("user-info"))
-        let CheckCred = () => {
-            if (UserInfo) {
-                viewerEL.src = FILE_URL;
-
-            } else if (user) {
-                viewerEL.src = FILE_URL;
-            } else if (UserInfo == null && user == null) {
-                console.log(user)
-                window.location.href = '../log-user.html'
-            }
-        }
-
-        window.addEventListener('load', CheckCred)
-    </script>
 </body>
 
 </html>
