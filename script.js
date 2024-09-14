@@ -26,7 +26,7 @@ async function init() {
     content.classList.toggle('minimal');
 
 
-    const files = await (await fetch('content.json')).json();
+    const files = await (await fetch('files.json')).json();
     const tags = await (await fetch('tags.json')).json();
 
     for (const key in files) {
