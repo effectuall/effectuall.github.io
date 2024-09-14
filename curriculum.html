@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Learning and Understanding Physics with Interactive 3D Simulations| Effectual Learning </title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="Effectual Learning, Interactive, Simulations, Learning and Understanding, Physics" name="keywords">
+    <meta content="Interactive 3D simulations created using Three.js. Author- E.P. Sajitha. " name="description">
+
+    <!-- Favicons -->
+    <link href="files/favicon.png" rel="icon">
+    <link href="files/apple-touch-icon.png" rel="apple-touch-icon">
+
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+    <!-- Main Stylesheet File -->
+    <link href="css/main.css" rel="stylesheet">
+    <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-7VWWT4ZKR6"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-7VWWT4ZKR6');
+    </script>
+    <meta name="google-site-verification" content="mz0TRB59UNqdTxhwzmXmGdgVPh8pB4YqjuUr-aWNGIY">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+        }
+
+        .learning-solutions .card {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            transition: transform 0.2s ease;
+        }
+
+        .learning-solutions .card:hover {
+            transform: scale(1.05);
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .card-text {
+            font-size: 16px;
+            color: #555;
+        }
+
+
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -10px;
+        }
+
+        .grade-item {
+            display: flex;
+            flex-direction: column;
+            margin: 10px;
+        }
+
+        .grade-container {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: box-shadow 0.3s;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .grade-container:hover {
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .grade-image {
+            width: 100%;
+            height: auto;
+            flex: 1;
+        }
+
+        .grade-content {
+            padding: 15px;
+            text-align: center;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .grade-title {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .grade-keywords {
+            font-size: 1rem;
+            margin-bottom: 15px;
+            color: #666;
+        }
+
+        @media (min-width: 992px) {
+            .grade-item {
+                flex: 1 1 calc(33.333% - 20px);
+            }
+        }
+
+        @media (max-width: 991px) {
+            .grade-item {
+                flex: 1 1 calc(100% - 20px);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .card {
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!--==========================
+    Header
+  ============================-->
+    <header id="header">
+
+        <div class="container">
+
+            <div id="logo" class="pull-left">
+                <h1><a href="/" class="scrollto">Effect<span>ualL</span></a></h1>
+                <!-- Uncomment below if you prefer to use an image logo -->
+                <!-- <a href="#body"><img src="img/logo.png" alt="" title="" /></a>-->
+            </div>
+            <div id="expandButton"></div>
+            <nav id="nav-menu-container">
+
+                <ul class="nav-menu">
+                    <li><a href="sims.html">Simulations</a></li>
+                    <li><a href="curriculum.html">CBSE</a></li>
+                    <li><a href="#about">About Us</a></li>
+                    <li><a href="#contact">Contact</a></li>
+
+                </ul>
+
+            </nav><!-- #nav-menu-container -->
+
+        </div>
+    </header><!-- #header -->
+
+    <!--==========================
+    Intro Section
+  ============================-->
+    <section id="intro">
+
+        <div class="intro-content">
+            <h2>Physics <span>Curriculum </span></h2>
+            <div>
+                <a href="#gradesims" class="btn-get-started scrollto">CBSE Indian Syllabus</a>
+                <a href="#visual" id="learn" class="btn-projects scrollto">Learn More</a>
+            </div>
+            <div class="container learning-solutions" style="margin: 10px;">
+                <div class="row justify-content-center">
+                    <!-- Card 4 -->
+                    <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <h5 class="card-title">Flexible Resource Utilization</h5>
+                                <p class="card-text">
+                                    Resources are designed to be flexible and easily integrated into existing school
+                                    frameworks, enhancing the overall experience.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 5 -->
+                    <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <h5 class="card-title">Bespoke Learning Experiences</h5>
+                                <p class="card-text">
+                                    Providers create bespoke learning experiences, including eLearning and virtual
+                                    reality, tailored to different learners’ needs.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <h5 class="card-title">Customization for Educators</h5>
+                                <p class="card-text">
+                                    Providers offer training and resources for teachers, ensuring they have effective
+                                    strategies that align with the curriculum.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row justify-content-center">
+
+                </div>
+            </div>
+
+        </div>
+
+
+    </section><!-- #intro -->
+    <section>
+        <div class="container" id="gradesims">
+            <div class="row" id="gradeContainer">
+                <!-- Grade Containers will be dynamically inserted here -->
+            </div>
+        </div>
+        <div class="container" id="visual">
+            <h2>Importance of visualisation </h2>
+            <p>
+                Visual elements play a crucial role in solving complex vector problems in physics, particularly within
+                STEM education. The use of graphical representations helps students and practitioners visualize vector
+                quantities, which possess both magnitude and direction, making it easier to understand and manipulate
+                them.
+
+            </p>
+            <p><strong>Graphical Representation:</strong> Vectors can be represented visually as arrows in
+                diagrams, where the length indicates magnitude and the direction shows orientation. This method
+                aids in comprehending the relationships between different vectors and their resultant.</p>
+            <p><strong>Vector Diagrams:</strong> Drawing vector diagrams is a fundamental step in solving vector
+                addition problems. For example, the tip-to-tail method allows for the systematic addition of
+                vectors, making complex problems more manageable by breaking them down into simpler components.
+            </p>
+            <p><strong>Component Breakdown:</strong> Visualizing vectors as components along perpendicular axes
+                (x and y) simplifies calculations. By breaking vectors into their components, one can use
+                trigonometric functions to find resultant vectors, which is especially useful in two-dimensional
+                motion problems.</p>
+            <p><strong>Data Tables and Summation:</strong> Creating data tables to organize vector components
+                and their magnitudes facilitates a clearer understanding of the problem. This method allows for
+                straightforward addition and subtraction of vectors, leading to the determination of resultant
+                vectors.</p>
+            <p><strong>Educational Tools:</strong> Visual aids like Feynman diagrams in particle physics have
+                transformed complex mathematical expressions into intuitive graphics. Similar innovations in
+                vector calculus aim to simplify the learning process by turning intricate mathematical
+                operations into visual tasks, thereby enhancing comprehension and application in physics.</p>
+            <h2>Conclusion</h2>
+            <p>In summary, visual elements are integral to solving complex vector problems in physics. They
+                provide clarity, enhance understanding, and facilitate the application of mathematical
+                principles in STEM education. By utilizing graphical methods, students can effectively tackle
+                challenging vector addition scenarios, making the learning process more engaging and effective.
+            </p>
+        </div>
+
+
+    </section>
+
+    <footer>
+        <div>
+            <p><a href="https://www.youtube.com/channel/UCFSMjn_YssD7Y1ybBwZb3mw"> Subscribe Here for the Youtube
+                    Channel</a>
+            </p>
+            Support the work
+            <form action="https://www.paypal.com/donate" method="post" target="_top">
+                <input type="hidden" name="hosted_button_id" value="ZTQ5RKXFNFB26" />
+                <input type="image" src="https://www.paypalobjects.com/en_GB/i/btn/btn_donate_SM.gif" border="0"
+                    name="submit" title="PayPal - The safer, easier way to pay online!"
+                    alt="Donate with PayPal button" />
+                <!-- <img alt="" border="0" src="https://www.paypal.com/en_IN/i/scr/pixel.gif" width="1.5" height="1.5" /> -->
+            </form>
+
+        </div>
+        <div>
+            Content still in development. The interactive 3D simulation created using open source
+            Three.js-JavaScript 3D Library. © Copyright 2020 by E.P Sajitha (Ph.D). All rights reserved. Any suggestion
+            appreciated.
+            <br>
+            Email: effectuallearning@gmail.com
+
+        </div>
+    </footer>
+    <script>
+        const grades = [
+            {
+                title: "8th grade",
+                keywords: ["circular motion", "refraction", "electric field", "photoelectric"],
+                link: "assets/images/grade8.jpeg",
+                url: "visualpage.html?grade=8"
+            },
+            {
+                title: "9th grade",
+                keywords: ["circular motion", "projectile motion", "waves", "light as rays and waves", "magnetic effect"],
+                link: "assets/images/grade9.jpeg",
+                url: "visualpage.html?grade=9"
+            },
+            {
+                title: "10th grade",
+                keywords: ["thermodynamics", "pressure", "electromagnetic induction", "Hall effect", "photoelectric effect"],
+                link: "assets/images/grade10.jpeg",
+                url: "visualpage.html?grade=10"
+            },
+            {
+                title: "11th grade",
+                keywords: ["gravitational force", "angular momentum", "ideal gas equation", "interference", "Young's double slit"],
+                link: "assets/images/grade11.jpeg",
+                url: "visualpage.html?grade=11"
+            },
+            {
+                title: "12th grade",
+                keywords: ["Bohr atom", "hydrogen atom", "compound microscope", "astronomical telescope", "Lorentz force"],
+                link: "assets/images/grade12.jpeg",
+                url: "visualpage.html?grade=12"
+            }
+        ];
+
+        function generateGradeContainers() {
+            const container = document.getElementById('gradeContainer');
+            grades.forEach(grade => {
+                const div = document.createElement('div');
+                div.className = 'col-12 col-md-6 col-lg-4 grade-item';
+                div.innerHTML = `
+                    <div class="grade-container">
+                        <img src="${grade.link}" alt="${grade.title}" class="grade-image">
+                        <div class="grade-content">
+                            <h2 class="grade-title">${grade.title}</h2>
+                            
+                            <a href="${grade.url}" class="btn btn-primary">Explore</a>
+                            <p class="grade-keywords">${grade.keywords.join(', ')}</p>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // Generate grade containers on page load
+        window.onload = generateGradeContainers;
+    </script>
+</body>
+
+</html>

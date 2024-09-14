@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Physics Simulation Viewer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Explore physics simulations with related problems for CBSE curriculum.">
+    <meta name="keywords"
+        content="Physics Simulations, CBSE Problems, 3D Learning, STEM Education, Mechanics, Optics, Electricity, Magnetism, Quantum Physics">
+    <meta name="author" content="Effectual Learning">
+
+    <!-- Favicons -->
+    <link href="files/favicon.png" rel="icon">
+    <link href="files/apple-touch-icon.png" rel="apple-touch-icon">
+
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+    <!-- Main Stylesheet File -->
+    <link href="css/main.css" rel="stylesheet">
+    <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-7VWWT4ZKR6"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-7VWWT4ZKR6');
+    </script>
+    <meta name="google-site-verification" content="mz0TRB59UNqdTxhwzmXmGdgVPh8pB4YqjuUr-aWNGIY">
+
+    <!-- Custom CSS -->
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+
+        .grade-section {
+            padding: 20px;
+        }
+
+        .simulation-list {
+            background-color: #f1f1f1;
+            border-right: 1px solid #ddd;
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            overflow-y: auto;
+        }
+
+        .simulation-list li {
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .iframe-container {
+            padding: 1px;
+            width: 100%;
+            height: 75vh;
+            border: none;
+        }
+
+        @media (min-width: 992px) {
+
+            .simulation-list {
+                flex: 0 0 25%;
+            }
+
+            .iframe-container {
+                flex: 1;
+                padding: 1px;
+            }
+        }
+
+        @media (max-width: 991px) {
+
+            .simulation-list {
+                border-right: none;
+                border-top: 1px solid #ddd;
+            }
+
+            .iframe-container {
+                border-bottom: 1px solid #ddd;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!--==========================
+    Header
+  ============================-->
+    <header id="header">
+
+        <div class="container">
+
+            <div id="logo" class="pull-left">
+                <h1><a href="/" class="scrollto">Effect<span>ualL</span></a></h1>
+                <!-- Uncomment below if you prefer to use an image logo -->
+                <!-- <a href="#body"><img src="img/logo.png" alt="" title="" /></a>-->
+            </div>
+            <div id="expandButton"></div>
+            <nav id="nav-menu-container">
+
+                <ul class="nav-menu">
+                    <li><a href="sims.html">Simulations</a></li>
+                    <li><a href="curriculum.html">CBSE</a></li>
+                    <li><a href="#about">About Us</a></li>
+                    <li><a href="#contact">Contact</a></li>
+
+                </ul>
+
+            </nav><!-- #nav-menu-container -->
+
+        </div>
+    </header><!-- #header -->
+
+
+    <!-- Related Problems Section -->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="problems-section" id="problemsSection">
+                    <h4>Related Problems</h4>
+                    <div id="problemContent">
+                        <p>Select a simulation to view related problems.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Simulation Layout with List and Display -->
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Simulation Display Section -->
+            <div class="col-lg-9 col-md-8 col-12">
+                <iframe id="simulationIframe" class="iframe-container" src="" loading="lazy"
+                    style="display: none;"></iframe>
+                <div id="placeholderDiv" class="placeholder" style="display: block; padding:50px 25px; height: 75vh;">
+                    <h2>Physics Simulation Viewer</h2>
+                    <p><strong>Select a topic in the list </strong></p>
+                    <p>Visual elements play a crucial role in solving complex vector problems in physics, particularly
+                        within STEM education. The use of graphical representations helps students and practitioners
+                        visualize vector quantities, which possess both magnitude and direction, making it easier to
+                        understand and manipulate them.</p>
+                    <h2> Visualize the 3D interactive simulation here</h2>
+
+                </div>
+            </div>
+            <!-- Simulation List -->
+            <div class="col-lg-3 col-md-4 col-12">
+                <ul class="simulation-list" id="simulationList">
+                    <!-- Simulation items will be dynamically loaded here -->
+                </ul>
+                <a href="curriculum.html" class="btn btn-primary mb-3">Back to Curriculum</a>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div>
+            <p><a href="https://www.youtube.com/channel/UCFSMjn_YssD7Y1ybBwZb3mw"> Subscribe Here for the Youtube
+                    Channel</a>
+            </p>
+            Support the work
+            <form action="https://www.paypal.com/donate" method="post" target="_top">
+                <input type="hidden" name="hosted_button_id" value="ZTQ5RKXFNFB26" />
+                <input type="image" src="https://www.paypalobjects.com/en_GB/i/btn/btn_donate_SM.gif" border="0"
+                    name="submit" title="PayPal - The safer, easier way to pay online!"
+                    alt="Donate with PayPal button" />
+                <!-- <img alt="" border="0" src="https://www.paypal.com/en_IN/i/scr/pixel.gif" width="1.5" height="1.5" /> -->
+            </form>
+
+        </div>
+        <div>
+            Content still in development. The interactive 3D simulation created using open source
+            Three.js-JavaScript 3D Library. © Copyright 2020 by E.P Sajitha (Ph.D). All rights reserved. Any suggestion
+            appreciated.
+            <br>
+            Email: effectuallearning@gmail.com
+
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- JavaScript to dynamically load simulations -->
+    <script>
+        const simulationIframe = document.getElementById('simulationIframe');
+        const problemContent = document.getElementById('problemContent');
+        const simulationList = document.getElementById('simulationList');
+        const placeholderDiv = document.getElementById('placeholderDiv');
+        const grade = new URLSearchParams(window.location.search).get('grade') || '8';
+
+        fetch('problems.json')
+            .then(response => response.json())
+            .then(data => {
+                const simulations = data[grade] || {};
+                populateSimulationList(simulations);
+
+            })
+            .catch(error => console.error('Error fetching problems:', error));
+
+        function populateSimulationList(simulations) {
+            console.log(grade)
+            simulationList.innerHTML = ''; // Clear existing list
+            const title = document.createElement('h1');
+            title.textContent = `For Grade ${grade}`
+            simulationList.appendChild(title)
+            for (const [simulation, problem] of Object.entries(simulations)) {
+                const listItem = document.createElement('li');
+                listItem.className = 'simulation-item';
+                listItem.textContent = simulation.replace(/_/g, ' ');
+                listItem.dataset.simulation = simulation;
+                listItem.dataset.problems = problem;
+                listItem.addEventListener('click', () => {
+                    const simulationUrl = `./Simulations/${simulation}.html`;
+                    simulationIframe.src = simulationUrl;
+                    placeholderDiv.style.display = 'none';
+                    simulationIframe.style.display = 'block';
+                    problemContent.innerHTML = `<p>${problem}</p>`;
+                });
+                simulationList.appendChild(listItem);
+            }
+        }
+        // function updateIframeAndPlaceholder() {
+        //     const iframe = document.getElementById('simulationIframe');
+        //     const placeholderDiv = document.getElementById('placeholderDiv');
+
+        //     if (iframe.src === "") {
+        //         placeholderDiv.style.display = 'block';
+        //     } else {
+        //         placeholderDiv.style.display = 'none';
+        //     }
+        // }
+
+        // Call the function to update the iframe and placeholder
+        // window.onload = updateIframeAndPlaceholder();
+    </script>
+</body>
+
+</html>
