@@ -1,0 +1,38 @@
+{
+    "8": {
+        "Mechanics_Motion_in_straight_line": "Problem: A car accelerates from rest at 2 m/s². Calculate the distance traveled after 5 seconds.",
+        "Mechanics_Vector_Display": "Problem: Given a vector A = 3i + 4j, find its magnitude and direction.",
+        "Optics_Reflection_of_Light": "Problem: Explain the laws of reflection and give examples of their application.",
+        "Optics_Refraction_of_Light": "Problem: Using Snell's law, calculate the angle of refraction when light passes from air to water.",
+        "Electricity_Coulomb's_Law": "Problem: Calculate the force between two charges of 5μC and 10μC separated by a distance of 2 meters.",
+        "Electricity_The_Electric_Field": "Problem: Determine the electric field at a point 1 meter away from a charge of 3μC."
+    },
+    "9": {
+        "Mechanics_Circular_Motion": "Problem: Calculate the centripetal force for a mass of 5kg moving at 2m/s in a circle of radius 3m.",
+        "Mechanics_Projectile_Motion": "Problem: Determine the range of a projectile launched at an angle of 30 degrees with an initial velocity of 20m/s.",
+        "Optics_Understanding_Waves": "Problem: Calculate the wavelength of a wave with a frequency of 500Hz traveling at a speed of 340m/s.",
+        "Optics_Light_as_Rays_and_Waves": "Problem: Find the angle of incidence for light entering a water surface from air given the refractive indices of air and water.",
+        "Magnetism_Magnetic_Effect_due_to_Current": "Problem: Compute the magnetic field strength at a point 0.1m from a long, straight wire carrying a current of 3A."
+    },
+    "10": {
+        "Thermodynamics_Introduction": "Problem: Find the final temperature of 2kg of water heated from 20°C to 80°C given the specific heat capacity of water is 4.18 J/g°C.",
+        "Thermodynamics_Pressure": "Problem: Calculate the pressure exerted by 1 mole of an ideal gas at 273K in a 22.4L container using the ideal gas law.",
+        "Magnetism_Electromagnetic_Induction": "Problem: Determine the induced emf in a coil with 50 turns when the magnetic flux changes from 0.5Wb to 0.1Wb in 0.2 seconds.",
+        "Magnetism_Hall_Effect": "Problem: Calculate the Hall voltage produced across a conductor with a current of 2A, a magnetic field of 0.3T, and a thickness of 1mm.",
+        "Quantum_Photoelectric_Effect": "Problem: Compute the stopping potential required to stop electrons emitted from a metal surface with a work function of 2.2eV when exposed to 300nm light."
+    },
+    "11": {
+        "Mechanics_Gravitational_Force": "Problem: Calculate the gravitational force between two masses of 5kg and 10kg separated by a distance of 2m.",
+        "Mechanics_Angular_Momentum": "Problem: Find the angular momentum of a 2kg object rotating at 5m/s in a circular path of radius 0.5m.",
+        "Thermodynamics_Ideal_Gas_Equation": "Problem: Determine the volume of 1 mole of gas at 300K and 1.5 atm pressure using the ideal gas law.",
+        "Optics_Interference": "Problem: Calculate the fringe separation in a double-slit experiment with a wavelength of 600nm and a slit separation of 0.1mm.",
+        "Optics_Young's_Double_Slit_Experiment": "Problem: Determine the path difference between two beams of light in Young's experiment causing constructive interference."
+    },
+    "12": {
+        "Quantum_The_Bohr_Atom": "Problem: Compute the radius of the first orbit of the hydrogen atom using Bohr's model.",
+        "Quantum_Hydrogen_Atom": "Problem: Find the energy of the electron in the second orbit of a hydrogen atom.",
+        "Optics_Compound_Microscope": "Problem: Calculate the magnifying power of a compound microscope with an objective lens focal length of 2cm and an eyepiece focal length of 5cm.",
+        "Optics_Astronomical_Telescope": "Problem: Determine the angular magnification of an astronomical telescope with an objective lens focal length of 80cm and an eyepiece focal length of 2cm.",
+        "Magnetism_Understanding_Lorentz_Force": "Problem: Compute the force on an electron moving at 3×10^6 m/s perpendicular to a magnetic field of 0.1T."
+    }
+}
