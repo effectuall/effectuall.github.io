@@ -212,6 +212,7 @@
       const row = document.getElementById('row');
 
       const files = await (await fetch('files.json')).json();
+      const content = await (await fetch('content.json')).json();
       const container = document.createElement('div');
       const topics = document.getElementById('topics');
       row.appendChild(topics)
@@ -257,9 +258,9 @@
       const text = document.getElementById('topics');
       theory.appendChild(text)
 
-      for (const key in files) {
+      for (const key in content) {
 
-        const section = files[key];
+        const section = content[key];
         const each = document.createElement('div');
         let X = `
              <a class = "title">${key} </a>`;
