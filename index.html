@@ -208,7 +208,7 @@
 
       const row = document.getElementById('row');
 
-      const files = await (await fetch('content.json')).json();
+      const files = await (await fetch('files.json')).json();
       const container = document.createElement('div');
       const topics = document.getElementById('topics');
       row.appendChild(topics)
