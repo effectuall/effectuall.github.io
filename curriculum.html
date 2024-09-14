@@ -122,12 +122,26 @@
             }
         }
 
-        @media (max-width: 768px) {
+       @media (max-width: 768px) {
             .card {
-                margin-bottom: 20px;
+                margin-bottom: 2px;
+                font-size: 1em;
+            }
+
+            .learning-solutions {
+                display: none;
+
+            }
+
+            .intro-content {
+                margin-bottom: -150px;
+            }
+
+            .nav-menu {
+                margin-top: -20px;
             }
         }
-    </style>
+  </style>
 </head>
 
 <body>
@@ -151,7 +165,7 @@
                     <li><a href="sims.html">Simulations</a></li>
                      <li><a href="/Theory/index.html">Theory</a></li>
                     <li><a href="curriculum.html">CBSE</a></li>
-                    <li><a href="#about">About Us</a></li>
+                    <li><a href="#visual">About Us</a></li>
                     <li><a href="#contact">Contact</a></li>
 
                 </ul>
@@ -268,7 +282,7 @@
 
     </section>
 
-    <footer>
+    <footer id="contact">
         <div>
             <p><a href="https://www.youtube.com/channel/UCFSMjn_YssD7Y1ybBwZb3mw"> Subscribe Here for the Youtube
                     Channel</a>
@@ -348,6 +362,22 @@
 
         // Generate grade containers on page load
         window.onload = generateGradeContainers;
+        let cont = document.getElementById('nav-menu-container')
+        let expand = document.getElementById('expandButton')
+        let isOpen = false
+
+        //for small screen
+        expand.addEventListener('click', function (e) {
+            isOpen = !isOpen
+            console.log(isOpen)
+            if (isOpen) {
+                cont.style.display = 'block'
+                cont.style.cursor = 'pointer'
+            } else {
+                cont.style.display = 'none'
+            }
+
+        });
     </script>
 </body>
 
