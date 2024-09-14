@@ -3,10 +3,11 @@
 
 <head>
   <meta charset="utf-8">
-  <title>Learning and Understanding Physics with Interactive 3D Simulations| Effectual Learning </title>
+  <title>Interactive 3D Physics Simulations | Effectual Learning for STEM</title>
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <meta content="Effectual Learning, Interactive, Simulations, Learning and Understanding, Physics" name="keywords">
-  <meta content="Interactive 3D simulations created using Three.js. Author- E.P. Sajitha. " name="description">
+  <meta name="description" content="Explore interactive 3D physics simulations designed for STEM learning. Dive into complex physics concepts through engaging visuals and simulations powered by Three.js." />
+  <meta name="keywords" content="interactive physics simulations, STEM learning, 3D simulations, Three.js, virtual STEM education, physics education, effectual learning" />
+
 
   <!-- Favicons -->
   <link href="files/favicon.png" rel="icon">
@@ -43,7 +44,7 @@
       <div id="logo" class="pull-left">
         <h1><a href="/" class="scrollto">Effect<span>ualL</span></a></h1>
         <!-- Uncomment below if you prefer to use an image logo -->
-        <!-- <a href="#body"><img src="img/logo.png" alt="" title="" /></a>-->
+        <!-- <a href="#body"><img src="img/logo.png" alt="logo" title="logo" /></a>-->
       </div>
       <div id="expandButton"></div>
       <nav id="nav-menu-container">
@@ -69,12 +70,10 @@
     <div class="intro-content">
       <h2>Physics <span>Interactive 3D </span><br>Simulations!</h2>
       <div>
-        <a href="sims.html" class="btn-get-started scrollto">Try Simulations</a>
-        <a href="/Theory/index.html" id="learn" class="btn-projects scrollto">Learn More</a>
+        <a href="sims.html" class="btn-get-started scrollto">Try Our 3D Physics Simulations</a>
+        <a href="https://effectuall.com/" id="learn" class="btn-projects scrollto">Effectual Learning </a>
       </div>
-      <div>
-        <button onclick="extraSite()">Effectual Learning</button>
-      </div>
+     
     </div>
 
   </section><!-- #intro -->
@@ -84,9 +83,7 @@
 
     <div class="container">
       <div class="section">
-        <h2>Visit <a href="https://effectuall.com/">Effectual Learning </a>for entire collections of STEM related topics
-        </h2>
-
+        <a href="sims.html">Explore our interactive 3D physics simulations</a> to enhance your STEM learning experience.
       </div>
 
       <div class="section-header">
@@ -170,14 +167,14 @@
 
   <footer>
     <div>
-      <p><a href="https://www.youtube.com/channel/UCFSMjn_YssD7Y1ybBwZb3mw"> Subscribe Here for the Youtube Channel</a>
+      <p><a href="https://www.youtube.com/channel/@effectuallearning"> Subscribe Here for the Youtube Channel</a>
       </p>
       Support the work
       <form action="https://www.paypal.com/donate" method="post" target="_top">
         <input type="hidden" name="hosted_button_id" value="ZTQ5RKXFNFB26" />
         <input type="image" src="https://www.paypalobjects.com/en_GB/i/btn/btn_donate_SM.gif" border="0" name="submit"
           title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
-        <!-- <img alt="" border="0" src="https://www.paypal.com/en_IN/i/scr/pixel.gif" width="1.5" height="1.5" /> -->
+        <!-- <img alt="paypal" border="0" src="https://www.paypal.com/en_IN/i/scr/pixel.gif" width="1.5" height="1.5" /> -->
       </form>
 
     </div>
@@ -225,13 +222,14 @@
 
           const file = section[i];
           const link = 'Simulations/' + file
+          const altname = getName(file)
           const template = `
               
                 <div id="${file}"  class="column"> 
                   <a href="Simulations-${file}" target="blank">
-                    <img class="image" style="width:100%" src="../assets/screenshots/${file}.jpg" loading="lazy"  target="iframe" />
+                    <img class="image" style="width:100%" src="../assets/screenshots/${file}.jpg" alt="${altname}" loading="lazy"  target="iframe"/>
                     <div class="middle">
-                      <div class="text">${getName(file)}</div>
+                      <div class="text">${altname}</div>
                     </div>
                   </a>
                   </div>
@@ -265,13 +263,14 @@
 
           const file = section[i];
           const link = '/Theory/' + file
+          const altname = getName(file)
           const template = `
               
                 <div id="${file}"  class="column"> 
                   <a href="/Theory/${key}/${file}.html" target="blank">
-                    <img class="image" style="width:100%" src="../assets/screenshots/${file}.jpg" loading="lazy"  target="iframe" />
+                    <img class="image" style="width:100%" src="../assets/screenshots/${file}.jpg" alt="${altname}" loading="lazy"  target="iframe" />
                     <div class="middle">
-                      <div class="text">${getName(file)}</div>
+                      <div class="text">${altname}</div>
                     </div>
                   </a>
                   </div>
@@ -320,6 +319,18 @@
     data-chat-url="https://bots.easy-peasy.ai/bot/f19986b6-1fb6-4677-9a7f-ac990c4a0fff" data-btn-position="bottom-right"
     data-widget-btn-color="#6366f1" defer>
     </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Effectual Learning",
+  "url": "https://effectuall.com",
+  "sameAs": [
+    "https://www.youtube.com/channel/@effectuallearning"
+  ]
+}
+</script>
+
 </body>
 
 </html>
