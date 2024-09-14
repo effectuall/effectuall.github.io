@@ -87,6 +87,9 @@
             .iframe-container {
                 border-bottom: 1px solid #ddd;
             }
+             .nav-menu {
+                margin-top: -20px;
+            }
         }
     </style>
 </head>
@@ -112,7 +115,7 @@
                     <li><a href="sims.html">Simulations</a></li>
                      <li><a href="/Theory/index.html">Theory</a></li>
                     <li><a href="curriculum.html">CBSE</a></li>
-                    <li><a href="#about">About Us</a></li>
+                    <li><a href="#simulationList">About Us</a></li>
                     <li><a href="#contact">Contact</a></li>
 
                 </ul>
@@ -165,7 +168,7 @@
         </div>
     </div>
 
-    <footer>
+    <footer id="contact">
         <div>
             <p><a href="https://www.youtube.com/channel/UCFSMjn_YssD7Y1ybBwZb3mw"> Subscribe Here for the Youtube
                     Channel</a>
@@ -247,6 +250,22 @@
 
         // Call the function to update the iframe and placeholder
         // window.onload = updateIframeAndPlaceholder();
+        let cont = document.getElementById('nav-menu-container')
+        let expand = document.getElementById('expandButton')
+        let isOpen = false
+
+        //for small screen
+        expand.addEventListener('click', function (e) {
+            isOpen = !isOpen
+            console.log(isOpen)
+            if (isOpen) {
+                cont.style.display = 'block'
+                cont.style.cursor = 'pointer'
+            } else {
+                cont.style.display = 'none'
+            }
+
+        });
     </script>
 </body>
 
