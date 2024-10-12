@@ -1,0 +1,1 @@
+import{j as e}from"./index-BAQI0JZo.js";import{O as t}from"./Overlay-B5VU0t59.js";const n=()=>e.jsxs("div",{className:"bg-gradient-to-r from-cyan-900 to-cyan-500 h-screen text-center items-center align-middle ",children:[e.jsx("h1",{className:"text-5xl pt-52 text-white",children:"Coming Soon"}),e.jsx(t,{})]});export{n as default};
