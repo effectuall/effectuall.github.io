@@ -107,9 +107,9 @@
 
 		//camera
 		createCamera(50, 5, 3, 5);
-		stats = new Stats();
+		// stats = new Stats();
 		clock = new THREE.Clock();
-		document.body.appendChild(stats.dom);
+		// document.body.appendChild(stats.dom);
 
 		//renderer
 		createRenderer();
@@ -192,6 +192,8 @@
 				.setPath(modelPath)
 				.load(elements['3'], function (gltf) {
 					leftHand = gltf.scene;
+					scene.add(leftHand);
+					leftHand.visible = false;
 					
 				});
 			//load Armature Coil model
@@ -351,7 +353,7 @@
 			if (element === 0 && !hGesture) {
 
 				leftHand.position.set(-1, 1, 0.7);
-				scene.add(leftHand);
+				leftHand.visible = true
 				ruleEl.style.visibility = "visible";
 				hGesture = true;
 				buttonHand.innerHTML = "HIDE GESTURE";
@@ -360,13 +362,13 @@
 
 				leftHand.position.set(-1, 1, 1.3);
 				leftHand.rotation.set(-1.57, 1.57, 0);
-				scene.add(leftHand);
+				leftHand.visible = true
 				ruleEl.style.visibility = "visible";
 				hGesture = true;
 				buttonHand.innerHTML = "HIDE GESTURE";
 
 			} else  {
-				scene.remove(leftHand);
+				leftHand.visible =false;
 				ruleEl.style.visibility = "hidden";
 				hGesture = false;
 				buttonHand.innerHTML = "HAND GESTURE"
@@ -548,7 +550,7 @@
 				conductorEl.textContent = "------------------------------------------------ ";
 				message = "No Current Flows, Switch OFF, rod position restored";
 				messageEl.textContent = message;
-				scene.remove(leftHand);
+				leftHand.visible =false;
 
 				animate();
 			}
@@ -640,7 +642,7 @@
 			actions['arrowflipR'].reset().stop();
 			actions['direction1'].reset().stop();
 			actions['direction2'].reset().stop();
-			// scene.remove(leftHand);
+			// leftHand.visible =false;
 			// scene.remove(coilModel);
 			// scene.remove(wireModel);
 			// scene.remove(magnet);
@@ -695,7 +697,10 @@
 			mixer2.update(delta);
 			controls.update();
 
-			stats.update();
+			// stats.update();
+			// if (leftHand) {
+			// 	leftHand.rotation.y += 0.01;
+			// }
 
 			render();
 		};
@@ -748,9 +753,12 @@
 			// Left hand gesture showing the three mutually perpendicular vectors
 			buttonHand.addEventListener('click', function () {
 				if (flow) {
+					console.log("flow, true")
+					leftHand.visible =true;
 					handGesture();
 				} else {
-					scene.remove(leftHand);
+					console.log("flow, false")
+					leftHand.visible =false;
 					message = "SWITCH ON";
 					messageEl.textContent = message;
 				}
@@ -796,7 +804,7 @@
 				actions['left'].reset().stop();
 				actions['currentright'].reset().stop();
 				actions['right'].reset().stop();
-				scene.remove(leftHand);
+				// leftHand.visible =false;
 				direction.visible = false;
 				ruleEl.style.visibility = "hidden";
 				buttonHand.innerHTML = "HAND GESTURE";
@@ -832,9 +840,10 @@
 
 				if (element === 0 && !flow) {
 					conductorEl.textContent = "------------------------------------------------ ";
-					scene.remove(leftHand);
+					leftHand.visible =false;
 					magnetRotation();
 				} else if (element === 1) {
+					leftHand.visible =true;
 					fDirection = !fDirection;
 					forceDirection();
 				} else {
