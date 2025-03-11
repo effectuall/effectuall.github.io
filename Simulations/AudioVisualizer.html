@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Microphone Audio Visualizer</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: black;
+        }
+
+        #toggleButton {
+            padding: 10px;
+            background: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        #canvas {
+            width: 35%;
+            height: 20%;
+            background: black;
+            border: 2px solid white;
+        }
+    </style>
+</head>
+<body>
+<h1 style="font-weight: bolder; color: azure;">Audio Visualization</h1>
+    <button id="toggleButton">Enable Microphone</button>
+    <canvas id="canvas"></canvas>
+
+    <script>
+        let audioContext, analyser, microphone, stream;
+        let isMicrophoneOn = false;
+        let animationFrameId;
+        
+        const button = document.getElementById("toggleButton");
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth * 0.5;
+            canvas.height = window.innerHeight * 0.2;
+        }
+        
+        window.addEventListener("resize", resizeCanvas);
+        resizeCanvas(); // Initial resize
+
+        async function enableMicrophone() {
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                analyser = audioContext.createAnalyser();
+                microphone = audioContext.createMediaStreamSource(stream);
+                microphone.connect(analyser);
+
+                analyser.fftSize = 256;
+                const bufferLength = analyser.frequencyBinCount;
+                const dataArray = new Uint8Array(bufferLength);
+
+                function renderFrame() {
+                    animationFrameId = requestAnimationFrame(renderFrame);
+                    analyser.getByteFrequencyData(dataArray);
+
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                    let barWidth = (canvas.width / bufferLength) * 2.5;
+                    let barHeight;
+                    let x = 0;
+
+                    for (let i = 0; i < bufferLength; i++) {
+                        barHeight = dataArray[i];
+
+                        let r = barHeight + (25 * (i / bufferLength));
+                        let g = 250 * (i / bufferLength);
+                        let b = 50;
+
+                        ctx.fillStyle = `rgb(${r},${g},${b})`;
+                        ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+
+                        x += barWidth + 1;
+                    }
+                }
+
+                renderFrame();
+                button.textContent = "Disable Microphone";
+                isMicrophoneOn = true;
+            } catch (err) {
+                alert("Microphone access denied or not supported.");
+                console.error(err);
+            }
+        }
+
+        function disableMicrophone() {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
+            if (audioContext) {
+                audioContext.close();
+            }
+            cancelAnimationFrame(animationFrameId);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            button.textContent = "Enable Microphone";
+            isMicrophoneOn = false;
+        }
+
+        button.addEventListener("click", () => {
+            if (isMicrophoneOn) {
+                disableMicrophone();
+            } else {
+                enableMicrophone();
+            }
+        });
+    </script>
+
+</body>
+</html>
