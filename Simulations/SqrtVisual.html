@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Square Root of 2 on Number Line</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+
+        canvas {
+            background: white;
+            border: 1px solid black;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="canvas"></canvas>
+    <script>
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
+        canvas.width = 600;
+        canvas.height = 300;
+
+        const originX = 100;
+        const originY = 150;
+        const unit = 50; // Scale factor for 1 unit
+
+        function drawNumberLine() {
+            ctx.beginPath();
+            ctx.moveTo(50, originY);
+            ctx.lineTo(550, originY);
+            ctx.stroke();
+
+            for (let i = 0; i <= 5; i++) {
+               
+                let x = originX + i * unit;
+                ctx.moveTo(x, originY - 5);
+                ctx.lineTo(x, originY + 5);
+                ctx.stroke();
+                ctx.strokeStyle = "black";
+                ctx.fillStyle = "black";
+                ctx.fillText(i, x - 5, originY + 20);
+            }
+        }
+        function drawHypotenuse() {
+            let A = { x: originX, y: originY };
+            let B = { x: originX + unit, y: originY };
+            let C = { x: originX + unit, y: originY - unit };
+
+            ctx.beginPath();
+            ctx.moveTo(A.x, A.y);
+            ctx.lineTo(C.x, C.y);
+            ctx.strokeStyle = "red";
+            ctx.stroke();
+            ctx.strokeStyle = "cyan"; 
+            ctx.beginPath();
+            ctx.moveTo(A.x, A.y);
+            ctx.lineTo(B.x, B.y);
+            ctx.stroke();
+            ctx.strokeStyle = "blue"; 
+            ctx.beginPath();
+            ctx.moveTo(B.x, B.y);
+            ctx.lineTo(C.x, C.y);
+            ctx.stroke();
+            ctx.fillText("1", (A.x + B.x) / 2 - 10, A.y - 5);
+            ctx.fillText("1", B.x + 5, (B.y + C.y) / 2);
+            ctx.fillText("√2", (A.x + C.x) / 2 - 10, (A.y + C.y) / 2 - 10);
+            ctx.beginPath();
+            ctx.arc(A.x, A.y, Math.sqrt(2) * unit, -Math.PI / 4, 0);
+            ctx.strokeStyle = "purple";
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.setLineDash([5, 5]);
+            ctx.arc(A.x, A.y, Math.sqrt(2) * unit, 0, Math.PI * 2);
+            ctx.strokeStyle = "black";
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+    function animateHypotenuse() {
+        let angle = 0.707;
+        const radius = Math.sqrt(2) * unit;
+
+        function drawFrame() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawNumberLine();
+
+        let A = { x: originX, y: originY };
+        let B = { x: originX + radius * Math.cos(angle), y: originY - radius * Math.sin(angle) };
+
+        ctx.beginPath();
+        ctx.moveTo(A.x, A.y);
+        ctx.lineTo(B.x, B.y);
+        ctx.strokeStyle = "red";
+        ctx.stroke();
+
+        drawHypotenuse();
+        markSqrt2();
+
+        angle -= 0.002;
+        if (angle <= 0) {
+            angle = 0;
+        }
+
+        requestAnimationFrame(drawFrame);
+        }
+
+        drawFrame();
+    }
+
+    animateHypotenuse();
+
+        function markSqrt2() {
+            let sqrt2_x = originX + Math.sqrt(2) * unit;
+            ctx.beginPath();
+            ctx.fillStyle = "green";
+            ctx.arc(sqrt2_x, originY, 4, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = "green";
+            ctx.fillText("√2", sqrt2_x - 10, originY - 10);
+        }
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawNumberLine();
+        drawHypotenuse();
+        markSqrt2();
+
+    </script>
+</body>
+
+</html>
