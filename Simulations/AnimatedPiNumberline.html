@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animate Point to Pi</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f9f9f9;
+        }
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="numberLine" width="600" height="150"></canvas>
+    <script>
+        const canvas = document.getElementById("numberLine");
+        const ctx = canvas.getContext("2d");
+        const width = canvas.width;
+        const height = canvas.height;
+        
+        const startX = 50;
+        const endX = width - 50;
+        const piX = startX + ((Math.PI / 4) * (endX - startX));
+        let progress = 0;
+        
+        function drawNumberLine() {
+            ctx.clearRect(0, 0, width, height);
+            
+            // Draw horizontal line
+            ctx.beginPath();
+            ctx.moveTo(startX, height / 2);
+            ctx.lineTo(endX, height / 2);
+            ctx.strokeStyle = "black";
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            
+            // Draw tick marks and labels
+            for (let i = 0; i <= 4; i++) {
+                let x = startX + (i * (endX - startX) / 4);
+                ctx.beginPath();
+                ctx.moveTo(x, height / 2 - 10);
+                ctx.lineTo(x, height / 2 + 10);
+                ctx.stroke();
+                ctx.font = "20px Arial";
+                ctx.fillStyle = "blue";
+                ctx.fillText(i, x - 5, height / 2 + 30);
+            }
+            
+            // Draw Pi label
+            ctx.fillStyle = "black";
+            ctx.font = "30px serif";
+            ctx.fillText("π", piX - 10, height / 2 - 20);
+        }
+        
+        function drawMarker(x) {
+            ctx.fillStyle = "red";
+            ctx.beginPath();
+            ctx.moveTo(x, height / 2);
+            ctx.lineTo(x - 10, height / 2 + 10);
+            ctx.lineTo(x, height / 2 + 20);
+            ctx.lineTo(x + 10, height / 2 + 10);
+            ctx.closePath();
+            ctx.fill();
+        }
+        
+        function animateMarker() {
+            progress += 0.01; // Adjust speed
+            let x = startX + progress * (piX - startX);
+            drawNumberLine();
+            drawMarker(x);
+            
+            if (progress < 1) {
+                requestAnimationFrame(animateMarker);
+            }
+        }
+        
+        drawNumberLine();
+        animateMarker();
+    </script>
+</body>
+</html>
