@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conservation of Momentum - HTML Structure</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        h1 {
+            color: #2c3e50;
+        }
+        nav {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        nav ul {
+            display: flex;
+            justify-content: space-around;
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+        nav a {
+            text-decoration: none;
+            color: #3498db;
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 3px;
+            transition: background-color 0.3s;
+        }
+        nav a:hover {
+            background-color: #e9ecef;
+        }
+        .animation-container {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 30px;
+            min-height: 400px;
+        }
+        .controls {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .slider-container {
+            margin-bottom: 10px;
+        }
+        label {
+            display: inline-block;
+            width: 150px;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 3px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .explanation {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            color: #7f8c8d;
+        }
+        canvas {
+            background-color: #f8f8f8;
+            border: 1px solid #ddd;
+            display: block;
+            margin: 0 auto;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Conservation of Momentum</h1>
+        <p>Interactive animations for middle school physics</p>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="#basic">Basic Collision</a></li>
+            <li><a href="#elastic">Elastic Collisions</a></li>
+            <li><a href="#inelastic">Inelastic Collisions</a></li>
+            <li><a href="#explosion">Explosions</a></li>
+            <li><a href="#realworld">Real-World Examples</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <!-- Animation sections will be populated by JavaScript -->
+        <section id="basic" class="animation-section">
+            <h2>Basic Collision Demonstration</h2>
+            <div class="animation-container">
+                <canvas id="basicCanvas" width="800" height="300"></canvas>
+                <div class="controls">
+                    <div class="slider-container">
+                        <label for="mass1">Blue Ball Mass:</label>
+                        <input type="range" id="mass1" min="1" max="10" value="5" class="slider">
+                        <span id="mass1Value">5 kg</span>
+                    </div>
+                    <div class="slider-container">
+                        <label for="velocity1">Blue Ball Velocity:</label>
+                        <input type="range" id="velocity1" min="-10" max="10" value="5" class="slider">
+                        <span id="velocity1Value">5 m/s</span>
+                    </div>
+                    <div class="slider-container">
+                        <label for="mass2">Red Ball Mass:</label>
+                        <input type="range" id="mass2" min="1" max="10" value="5" class="slider">
+                        <span id="mass2Value">5 kg</span>
+                    </div>
+                    <div class="slider-container">
+                        <label for="velocity2">Red Ball Velocity:</label>
+                        <input type="range" id="velocity2" min="-10" max="10" value="-5" class="slider">
+                        <span id="velocity2Value">-5 m/s</span>
+                    </div>
+                    <button id="basicPlay">Play</button>
+                    <button id="basicPause">Pause</button>
+                    <button id="basicReset">Reset</button>
+                </div>
+                <div class="explanation">
+                    <h3>What's Happening?</h3>
+                    <p>This animation demonstrates the basic principle of conservation of momentum. The total momentum of the system (sum of both balls' momenta) remains the same before and after the collision.</p>
+                    <p>Momentum is calculated as mass × velocity (p = m × v). Notice how the total momentum stays constant even though the individual momenta of the balls change.</p>
+                    <p><strong>Conservation of Momentum:</strong> p<sub>total before</sub> = p<sub>total after</sub></p>
+                </div>
+            </div>
+        </section>
+
+        <section id="elastic" class="animation-section hidden">
+            <h2>Elastic Collisions</h2>
+            <div class="animation-container">
+                <canvas id="elasticCanvas" width="800" height="300"></canvas>
+                <div class="controls">
+                    <div class="slider-container">
+                        <label for="elasticMass1">Blue Ball Mass:</label>
+                        <input type="range" id="elasticMass1" min="1" max="10" value="5" class="slider">
+                        <span id="elasticMass1Value">5 kg</span>
+                    </div>
+                    <div class="slider-container">
+                        <label for="elasticVelocity1">Blue Ball Velocity:</label>
+                        <input type="range" id="elasticVelocity1" min="-10" max="10" value="5" class="slider">
+                        <span id="elasticVelocity1Value">5 m/s</span>
+                    </div>
+                    <div class="slider-container">
+                        <label for="elasticMass2">Red Ball Mass:</label>
+                        <input type="range" id="elasticMass2" min="1" max="10" value="5" class="slider">
+                        <span id="elasticMass2Value">5 kg</span>
+                    </div>
+                    <div class="slider-container">
+                        <label for="elasticVelocity2">Red Ball Velocity:</label>
+                        <input type="range" id="elasticVelocity2" min="-10" max="10" value="0" class="slider">
+                        <span id="elasticVelocity2Value">0 m/s</span>
+                    </div>
+                    <button id="elasticPlay">Play</button>
+                    <button id="elasticPause">Pause</button>
+                    <button id="elasticReset">Reset</button>
+                </div>
+                <div class="explanation">
+                    <h3>What's Happening?</h3>
+                    <p>In an elastic collision, both momentum AND kinetic energy are conserved. The balls bounce off each other without losing energy.</p>
+                    <p>Momentum: p<sub>total before</sub> = p<sub>total after</sub></p>
+                    <p>Kinetic Energy: KE<sub>total before</sub> = KE<sub>total after</sub></p>
+                    <p>Real-world examples of nearly elastic collisions include billiard balls and superballs.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="inelastic" class="animation-section hidden">
+            <h2>Inelastic Collisions</h2>
+            <div class="animation-container">
+                <canvas id="inelasticCanvas" width="800" height="300"></canvas>
+                <div class="controls">
+                    <div class="slider-container">
+                        <label for="inelasticMass1">Blue Object Mass:</label>
+                        <input type="range" id="inelasticMass1" min="1" max="10" value="5" class="slider">
+                        <span id="inelasticMass1Value">5 kg</span>
+                    </div>
+                    <div class="slider-container">
+                        <label for="inelasticVelocity1">Blue Object Velocity:</label>
+                        <input type="range" id="inelasticVelocity1" min="-10" max="10" value="5" class="slider">
+                        <span id="inelasticVelocity1Value">5 m/s</span>
+                    </div>
+                    <div class="slider-container">
+                        <label for="inelasticMass2">Red Object Mass:</label>
+                        <input type="range" id="inelasticMass2" min="1" max="10" value="5" class="slider">
+                        <span id="inelasticMass2Value">5 kg</span>
+                    </div>
+                    <div class="slider-container">
+                        <label for="inelasticVelocity2">Red Object Velocity:</label>
+                        <input type="range" id="inelasticVelocity2" min="-10" max="10" value="0" class="slider">
+                        <span id="inelasticVelocity2Value">0 m/s</span>
+                    </div>
+                    <button id="inelasticPlay">Play</button>
+                    <button id="inelasticPause">Pause</button>
+                    <button id="inelasticReset">Reset</button>
+                </div>
+                <div class="explanation">
+                    <h3>What's Happening?</h3>
+                    <p>In an inelastic collision, momentum is conserved but kinetic energy is not. The objects stick together or deform during the collision.</p>
+                    <p>Momentum: p<sub>total before</sub> = p<sub>total after</sub></p>
+                    <p>Kinetic Energy: KE<sub>total before</sub> > KE<sub>total after</sub></p>
+                    <p>The "lost" kinetic energy is converted to heat, sound, or deformation energy. Examples include clay balls colliding or cars crashing.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="explosion" class="animation-section hidden">
+            <h2>Explosions</h2>
+            <div class="animation-container">
+                <canvas id="explosionCanvas" width="800" height="300"></canvas>
+                <div class="controls">
+                    <div class="slider-container">
+                        <label for="explosionForce">Explosion Force:</label>
+                        <input type="range" id="explosionForce" min="1" max="10" value="5" class="slider">
+                        <span id="explosionForceValue">5</span>
+                    </div>
+                    <div class="slider-container">
+                        <label for="fragmentCount">Number of Fragments:</label>
+                        <input type="range" id="fragmentCount" min="2" max="6" value="3" class="slider">
+                        <span id="fragmentCountValue">3</span>
+                    </div>
+                    <button id="explosionPlay">Play</button>
+                    <button id="explosionPause">Pause</button>
+                    <button id="explosionReset">Reset</button>
+                </div>
+                <div class="explanation">
+                    <h3>What's Happening?</h3>
+                    <p>An explosion demonstrates conservation of momentum in reverse. A stationary object (zero momentum) breaks into multiple pieces that move in different directions.</p>
+                    <p>The total momentum remains zero because the momentum vectors of all the fragments add up to cancel each other out.</p>
+                    <p>This is the same principle that makes rockets work! The rocket pushes exhaust gases backward, and the gases push the rocket forward with equal momentum.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="realworld" class="animation-section hidden">
+            <h2>Real-World Applications</h2>
+            <div class="animation-container">
+                <canvas id="realworldCanvas" width="800" height="300"></canvas>
+                <div class="controls">
+                    <div class="scenario-selector">
+                        <button id="billiards">Billiards</button>
+                        <button id="rocket">Rocket Propulsion</button>
+                        <button id="skaters">Ice Skaters</button>
+                        <button id="carCrash">Car Collision</button>
+                    </div>
+                    <div class="slider-container">
+                        <label for="scenarioSpeed">Animation Speed:</label>
+                        <input type="range" id="scenarioSpeed" min="1" max="10" value="5" class="slider">
+                        <span id="scenarioSpeedValue">5</span>
+                    </div>
+                    <button id="realworldPlay">Play</button>
+                    <button id="realworldPause">Pause</button>
+                    <button id="realworldReset">Reset</button>
+                </div>
+                <div class="explanation">
+                    <h3>What's Happening?</h3>
+                    <p>Conservation of momentum applies to many real-world situations:</p>
+                    <p><strong>Billiards:</strong> When the cue ball hits another ball, momentum is transferred while being conserved in the system.</p>
+                    <p><strong>Rocket Propulsion:</strong> A rocket expels gas in one direction and moves in the opposite direction to conserve momentum.</p>
+                    <p><strong>Ice Skaters:</strong> When two skaters push away from each other, they move in opposite directions with momenta proportional to their masses.</p>
+                    <p><strong>Car Collision:</strong> In a crash, the total momentum before equals the total momentum after, which is why heavier vehicles tend to push lighter ones.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>Created for middle school physics education | Conservation of Momentum Animations</p>
+    </footer>
+
+    <!-- JavaScript will be added here -->
+    <script src="js/main.js"></script>
+</body>
+</html>
