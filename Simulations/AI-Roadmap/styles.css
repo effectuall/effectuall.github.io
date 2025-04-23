@@ -1,0 +1,399 @@
+/* AI Evolution Roadmap - Interactive Visualization Styles */
+
+:root {
+  /* Color palette */
+  --near-term-color: #3498db;
+  --mid-term-color: #9b59b6;
+  --long-term-color: #e74c3c;
+  
+  --healthcare-color: #2ecc71;
+  --education-color: #3498db;
+  --environment-color: #f39c12;
+  --society-color: #9b59b6;
+  
+  --background-color: #f8f9fa;
+  --text-color: #2c3e50;
+  --panel-color: #ffffff;
+  --border-color: #dfe6e9;
+  
+  /* Spacing */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  
+  /* Typography */
+  --font-family-sans: 'Roboto', 'Helvetica Neue', sans-serif;
+  --font-family-mono: 'Roboto Mono', monospace;
+  
+  /* Transitions */
+  --transition-speed: 0.3s;
+}
+
+/* Base styles */
+body {
+  font-family: var(--font-family-sans);
+  color: var(--text-color);
+  background-color: var(--background-color);
+  margin: 0;
+  padding: 0;
+  line-height: 1.5;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 0;
+  font-weight: 500;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  border-radius: 4px;
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-family: var(--font-family-sans);
+  font-size: 14px;
+  transition: all var(--transition-speed) ease;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+button:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.5);
+}
+
+/* Container styles */
+#roadmap-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--spacing-lg);
+  background-color: var(--panel-color);
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.roadmap-header {
+  margin-bottom: var(--spacing-lg);
+  text-align: center;
+}
+
+.roadmap-header h1 {
+  font-size: 28px;
+  margin-bottom: var(--spacing-sm);
+}
+
+.roadmap-header p {
+  font-size: 16px;
+  color: #7f8c8d;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Timeline navigation */
+.timeline-navigation {
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--spacing-lg);
+  gap: var(--spacing-md);
+}
+
+.time-button {
+  color: white;
+  font-weight: 500;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-radius: 20px;
+  opacity: 0.7;
+}
+
+.time-button.active {
+  opacity: 1;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Sector filter */
+.sector-filter {
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--spacing-lg);
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+}
+
+.sector-button {
+  background-color: transparent;
+  border: 2px solid var(--border-color);
+  border-radius: 20px;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  font-weight: 500;
+}
+
+.sector-button.active {
+  background-color: rgba(0, 0, 0, 0.05);
+  font-weight: 600;
+}
+
+/* Cultural selector */
+.cultural-selector {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--spacing-lg);
+  gap: var(--spacing-md);
+}
+
+.selector-label {
+  font-weight: 500;
+}
+
+#cultural-perspective {
+  padding: var(--spacing-sm);
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+  background-color: white;
+  font-family: var(--font-family-sans);
+}
+
+/* Zoom controls */
+.zoom-controls {
+  position: absolute;
+  top: var(--spacing-lg);
+  right: var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.zoom-button {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: white;
+  border: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Visualization area */
+.visualization-area {
+  position: relative;
+  min-height: 500px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+  overflow: hidden;
+  transition: transform var(--transition-speed) ease;
+  transform-origin: center center;
+}
+
+/* Timeline container */
+.timeline-container {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-xl);
+  padding-bottom: var(--spacing-md);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.year-marker {
+  font-family: var(--font-family-mono);
+  font-size: 14px;
+  color: #7f8c8d;
+  text-align: center;
+}
+
+/* Sector layers */
+.sector-layer {
+  position: relative;
+  margin-bottom: var(--spacing-xl);
+}
+
+.sector-label {
+  font-weight: 600;
+  margin-bottom: var(--spacing-sm);
+}
+
+.sector-stream {
+  position: relative;
+  height: 4px;
+  border-radius: 2px;
+  margin-left: var(--spacing-lg);
+  margin-right: var(--spacing-lg);
+  transition: height var(--transition-speed) ease;
+}
+
+/* Milestone nodes */
+.milestone-node {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  z-index: 2;
+  transition: all var(--transition-speed) ease;
+}
+
+.milestone-node:hover {
+  transform: translate(-50%, -50%) scale(1.5);
+  z-index: 3;
+}
+
+.milestone-tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: white;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-speed) ease;
+}
+
+.milestone-node:hover .milestone-tooltip {
+  opacity: 1;
+}
+
+/* Perspective description */
+.perspective-description {
+  position: absolute;
+  bottom: var(--spacing-md);
+  left: var(--spacing-md);
+  right: var(--spacing-md);
+  text-align: center;
+  font-style: italic;
+  color: #7f8c8d;
+  font-size: 14px;
+}
+
+/* Details panel */
+.details-panel {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;
+  max-width: 600px;
+  max-height: 80vh;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  z-index: 10;
+  overflow: hidden;
+}
+
+.details-header {
+  padding: var(--spacing-md);
+  color: white;
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.details-content {
+  padding: var(--spacing-md);
+  max-height: calc(80vh - 60px);
+  overflow-y: auto;
+}
+
+.detail-year {
+  font-family: var(--font-family-mono);
+  color: #7f8c8d;
+  margin-bottom: var(--spacing-md);
+}
+
+.detail-description {
+  margin-bottom: var(--spacing-lg);
+  line-height: 1.6;
+}
+
+.cultural-variation {
+  margin-bottom: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  border-radius: 4px;
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+.close-button {
+  position: absolute;
+  top: var(--spacing-sm);
+  right: var(--spacing-sm);
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.3);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+
+/* Cultural variations styling */
+.western {
+  border-left: 3px solid #3498db;
+}
+
+.eastern {
+  border-left: 3px solid #e74c3c;
+}
+
+.south {
+  border-left: 3px solid #f39c12;
+}
+
+.indigenous {
+  border-left: 3px solid #2ecc71;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .timeline-navigation,
+  .sector-filter {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .time-button,
+  .sector-button {
+    width: 100%;
+    max-width: 300px;
+    text-align: center;
+  }
+  
+  .details-panel {
+    width: 95%;
+  }
+}
+
+/* Animation for milestone nodes */
+@keyframes pulse {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.2);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+}
+
+.milestone-node.highlight {
+  animation: pulse 2s infinite;
+}
