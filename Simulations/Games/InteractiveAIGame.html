@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Interactive Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for the game */
+        body {
+            font-family: 'Press Start 2P', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #111827; /* Dark background */
+            color: #f9fafb; /* Light text */
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            text-align: center;
+        }
+        .title {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #6366f1; /* Vibrant purple */
+            text-shadow: 0 0 8px rgba(99, 102, 241, 0.8);
+        }
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+        .tab-button {
+            padding: 0.75rem 1.5rem;
+            margin: 0 0.5rem;
+            border: 2px solid #6b7280; /* Gray border */
+            border-radius: 0.5rem;
+            background-color: #374151; /* Darker tab background */
+            color: #f9fafb; /* Light text */
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        .tab-button:hover {
+            background-color: #6366f1; /* Purple on hover */
+            color: #f9fafb;
+            border-color: #6366f1;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.7);
+        }
+        .tab-button.active {
+            background-color: #6366f1; /* Active tab purple */
+            color: #f9fafb;
+            border-color: #6366f1;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.7);
+        }
+        .tab-content {
+            display: none;
+            border: 2px solid #6b7280; /* Gray border */
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            background-color: #4b5563; /* Darker content background */
+            color: #f9fafb;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+        }
+        .tab-content.active {
+            display: block;
+        }
+        #quiz-content {
+            text-align: left;
+        }
+        #quiz-content h2 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: #a855f7; /* Lighter purple */
+        }
+        #quiz-content .question {
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            color: #f9fafb;
+        }
+        #quiz-content .options {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+        #quiz-content .option-button {
+            padding: 0.5rem 1rem;
+            margin: 0.25rem 0;
+            border: none;
+            border-radius: 0.5rem;
+            background-color: #374151;
+            color: #f9fafb;
+            cursor: pointer;
+            font-size: 0.7rem;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            width: 100%;
+            text-align: left;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        #quiz-content .option-button:hover {
+            background-color: #8b5cf6; /* Purple hover */
+            color: #f9fafb;
+            box-shadow: 0 3px 5px rgba(0, 0, 0, 0.7);
+        }
+        #quiz-content .option-button.correct {
+            background-color: #16a34a; /* Green for correct */
+            color: #f9fafb;
+        }
+        #quiz-content .option-button.incorrect {
+            background-color: #dc2626; /* Red for incorrect */
+            color: #f9fafb;
+        }
+        #quiz-content .feedback {
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            min-height: 1rem;
+        }
+        #quiz-content .next-button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            background-color: #6366f1;
+            color: #f9fafb;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            margin-top: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        #quiz-content .next-button:hover {
+            background-color: #a855f7;
+            color: #f9fafb;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.7);
+        }
+
+        #puzzle-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        #puzzle-content h2 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: #a855f7;
+        }
+        #puzzle-content .pairs {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        #puzzle-content .pair {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 150px;
+            padding: 0.5rem;
+            border: 2px solid #6b7280;
+            border-radius: 0.5rem;
+            background-color: #374151;
+            color: #f9fafb;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        #puzzle-content .pair:hover {
+            background-color: #8b5cf6;
+            border-color: #8b5cf6;
+            box-shadow: 0 3px 5px rgba(0, 0, 0, 0.7);
+        }
+        #puzzle-content .pair.selected {
+            background-color: #a855f7;
+            border-color: #a855f7;
+            box-shadow: 0 3px 5px rgba(0, 0, 0, 0.7);
+        }
+        #puzzle-content .pair.matched {
+            background-color: #16a34a;
+            border-color: #16a34a;
+            box-shadow: none;
+        }
+        #puzzle-content .reset-button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            background-color: #6366f1;
+            color: #f9fafb;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            margin-top: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        #puzzle-content .reset-button:hover {
+            background-color: #a855f7;
+            color: #f9fafb;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.7);
+        }
+
+        #simulation-content {
+            text-align: left;
+        }
+        #simulation-content h2 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: #a855f7;
+        }
+        #simulation-content p {
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            color: #f9fafb;
+        }
+        #simulation-content .parameter-controls {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+        #simulation-content .parameter-controls label {
+            margin-bottom: 0.25rem;
+            font-size: 0.8rem;
+            color: #f9fafb;
+        }
+        #simulation-content .parameter-controls input[type="range"] {
+            width: 200px;
+            margin-bottom: 0.5rem;
+        }
+        #simulation-content .parameter-values {
+            display: flex;
+            justify-content: space-between;
+            width: 200px;
+            margin-bottom: 1rem;
+            font-size: 0.7rem;
+            color: #f9fafb;
+        }
+        #simulation-content .visualization {
+            width: 100%;
+            height: 200px;
+            border: 2px solid #6b7280;
+            border-radius: 0.5rem;
+            background-color: #242424;
+            margin-bottom: 1rem;
+            /* Placeholder for visualization - you'd use a canvas or SVG here */
+        }
+        #simulation-content .reset-simulation-button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            background-color: #6366f1;
+            color: #f9fafb;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            margin-top: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        #simulation-content .reset-simulation-button:hover {
+            background-color: #a855f7;
+            color: #f9fafb;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.7);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            .tabs {
+                flex-direction: column;
+            }
+            .tab-button {
+                margin: 0.5rem 0;
+                width: 100%;
+            }
+            .tab-content {
+                padding: 1rem;
+            }
+            #puzzle-content .pairs {
+                gap: 0.5rem;
+            }
+            #puzzle-content .pair {
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-50">
+    <div class="container">
+        <h1 class="title">AI Interactive Dashboard</h1>
+        <div class="tabs">
+            <button class="tab-button active" data-tab="quiz">Quiz</button>
+            <button class="tab-button" data-tab="puzzle">Puzzle</button>
+            <button class="tab-button" data-tab="simulation">Simulation</button>
+        </div>
+        <div class="tab-content active" id="quiz-content">
+            <h2>Quiz Time!</h2>
+            <div id="quiz-questions">
+                </div>
+            <button class="next-button" id="next-question">Next Question</button>
+        </div>
+        <div class="tab-content" id="puzzle-content">
+            <h2>Match the Intelligence</h2>
+            <div class="pairs" id="puzzle-pairs">
+                </div>
+            <button class="reset-button" id="reset-puzzle">Reset Puzzle</button>
+        </div>
+        <div class="tab-content" id="simulation-content">
+            <h2>AI Simulation</h2>
+            <p>Adjust the parameters below to see how AI behavior changes.</p>
+            <div class="parameter-controls">
+                <label for="learning-rate">Learning Rate:</label>
+                <input type="range" id="learning-rate" min="0.01" max="0.1" step="0.01" value="0.05">
+                <div class="parameter-values">
+                    <span id="learning-rate-value">0.05</span>
+                    <span>0.1</span>
+                </div>
+                <label for="memory-capacity">Memory Capacity:</label>
+                <input type="range" id="memory-capacity" min="10" max="100" step="10" value="50">
+                 <div class="parameter-values">
+                    <span id="memory-capacity-value">50</span>
+                    <span>100</span>
+                </div>
+                <label for="processing-power">Processing Power:</label>
+                <input type="range" id="processing-power" min="1" max="10" step="1" value="5">
+                <div class="parameter-values">
+                    <span id="processing-power-value">5</span>
+                    <span>10</span>
+                </div>
+            </div>
+            <div class="visualization">
+                <p>Visualization Area</p>
+            </div>
+            <button class="reset-simulation-button" id="reset-simulation">Reset Simulation</button>
+        </div>
+    </div>
+    <script>
+        // --- Quiz Section ---
+        const quizData = [
+            {
+                question: "What is the primary goal of AI?",
+                options: [
+                    { text: "To replace humans", correct: false },
+                    { text: "To enhance human capabilities", correct: true },
+                    { text: "To destroy the world", correct: false },
+                    { text: "To play games", correct: false }
+                ],
+                explanation: "AI aims to augment human intelligence and solve complex problems."
+            },
+            {
+                question: "Which of these is a type of machine learning?",
+                options: [
+                    { text: "Supervised learning", correct: true },
+                    { text: "Quantum computing", correct: false },
+                    { text: "Blockchain technology", correct: false },
+                    { text: "Virtual reality", correct: false }
+                ],
+                explanation: "Supervised learning is a type of machine learning where the model learns from labeled data."
+            },
+            {
+                question: "What is AGI?",
+                options: [
+                    { text: "Artificial General Intelligence", correct: true },
+                    { text: "Automated Graphic Interface", correct: false },
+                    { text: "Advanced Global Internet", correct: false },
+                    { text: "Autonomous Gaming Interface", correct: false }
+                ],
+                explanation: "AGI stands for Artificial General Intelligence, referring to AI with human-like cognitive abilities."
+            },
+             {
+                question: "What is one potential risk associated with advanced AI?",
+                options: [
+                    { text: "Increased human creativity", correct: false },
+                    { text: "Job displacement", correct: true },
+                    { text: "Decreased technological advancement", correct: false },
+                    { text: "Improved social interaction", correct: false }
+                ],
+                explanation: "One potential risk associated with advanced AI is job displacement due to automation."
+            },
+            {
+                question: "Which field of AI is related to computers understanding and processing human language?",
+                options: [
+                    { text: "Computer Vision", correct: false },
+                    { text: "Natural Language Processing (NLP)", correct: true },
+                    { text: "Robotics", correct: false },
+                    { text: "Expert Systems", correct: false }
+                ],
+                explanation: "Natural Language Processing (NLP) is the field of AI that enables computers to understand, interpret, and generate human language."
+            }
+        ];
+
+        const quizContent = document.getElementById('quiz-content');
+        const questionContainer = document.getElementById('quiz-questions');
+        const nextButton = document.getElementById('next-question');
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let userAnswers = [];
+
+        function loadQuizQuestion() {
+            const currentQuestion = quizData[currentQuestionIndex];
+            questionContainer.innerHTML = `
+                <h2>Question ${currentQuestionIndex + 1}</h2>
+                <p class="question">${currentQuestion.question}</p>
+                <div class="options">
+                    ${currentQuestion.options.map((option, index) => `
+                        <button class="option-button" data-option-index="${index}">${option.text}</button>
+                    `).join('')}
+                </div>
+                <div class="feedback"></div>
+            `;
+            nextButton.style.display = 'none'; // Hide next button initially
+
+            const optionButtons = document.querySelectorAll('.option-button');
+            optionButtons.forEach(button => {
+                button.addEventListener('click', handleOptionSelect);
+            });
+        }
+
+        function handleOptionSelect(event) {
+            const selectedOptionIndex = parseInt(event.target.dataset.optionIndex);
+            const currentQuestion = quizData[currentQuestionIndex];
+            const isCorrect = currentQuestion.options[selectedOptionIndex].correct;
+
+            userAnswers[currentQuestionIndex] = selectedOptionIndex; // Store user's answer
+
+            const feedbackDiv = document.querySelector('.feedback');
+            const optionButtons = document.querySelectorAll('.option-button');
+
+            optionButtons.forEach((button, index) => {
+                if (index === selectedOptionIndex) {
+                    if (isCorrect) {
+                        button.classList.add('correct');
+                        feedbackDiv.textContent = "Correct!";
+                        score++;
+                    } else {
+                        button.classList.add('incorrect');
+                        feedbackDiv.textContent = "Incorrect!";
+                    }
+                } else {
+                    button.disabled = true; // Disable other options
+                }
+            });
+
+            nextButton.style.display = 'block'; // Show next button after an answer
+        }
+
+        function loadNextQuestion() {
+            if (currentQuestionIndex < quizData.length - 1) {
+                currentQuestionIndex++;
+                loadQuizQuestion();
+            } else {
+                // Quiz is finished, show results
+                questionContainer.innerHTML = `
+                    <h2>Quiz Finished!</h2>
+                    <p>Your Score: ${score} / ${quizData.length}</p>
+                    <button class="next-button" onclick="resetQuiz()">Restart Quiz</button>
+                `;
+                nextButton.style.display = 'none';
+            }
+        }
+
+        function resetQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            userAnswers = [];
+            loadQuizQuestion();
+        }
+
+        nextButton.addEventListener('click', loadNextQuestion);
+
+        // --- Puzzle Section ---
+        const puzzleData = [
+            { id: 'dog', name: 'Dog', ability: 'Fetch' },
+            { id: 'cat', name: 'Cat', ability: 'Pounce' },
+            { id: 'human', name: 'Human', ability: 'Reason' },
+            { id: 'ai', name: 'AI', ability: 'Learn' },
+            { id: 'fetch', name: 'Fetch', ability: 'Fetch' },
+            { id: 'pounce', name: 'Pounce', ability: 'Pounce' },
+            { id: 'reason', name: 'Reason', ability: 'Reason' },
+            { id: 'learn', name: 'Learn', ability: 'Learn' }
+        ];
+
+        const puzzleContent = document.getElementById('puzzle-content');
+        const pairsContainer = document.getElementById('puzzle-pairs');
+        const resetButton = document.getElementById('reset-puzzle');
+
+        let selectedPairs = [];
+        let matchedPairs = [];
+
+        function loadPuzzlePairs() {
+            const shuffledData = shuffleArray(puzzleData); // Shuffle for random order
+            pairsContainer.innerHTML = shuffledData.map(item => `
+                <div class="pair" data-id="${item.id}" data-ability="${item.ability}">
+                    <p>${item.name}</p>
+                    <p>Ability: ${item.ability}</p>
+                </div>
+            `).join('');
+
+            const pairElements = document.querySelectorAll('.pair');
+            pairElements.forEach(pair => {
+                pair.addEventListener('click', handlePairSelect);
+            });
+        }
+
+        function handlePairSelect(event) {
+            const selectedPair = event.target;
+
+            if (selectedPair.classList.contains('matched')) return;  // Prevent matched pairs from being selected again
+
+            selectedPair.classList.add('selected');
+            selectedPairs.push(selectedPair);
+
+            if (selectedPairs.length === 2) {
+                setTimeout(checkPairMatch, 500); // Delay the check
+            }
+        }
+
+        function checkPairMatch() {
+            const [pair1, pair2] = selectedPairs;
+
+            if (pair1.dataset.ability === pair2.dataset.ability) {
+                pair1.classList.add('matched');
+                pair2.classList.add('matched');
+                matchedPairs.push(pair1.dataset.id, pair2.dataset.id);
+            } else {
+                pair1.classList.remove('selected');
+                pair2.classList.remove('selected');
+            }
+            selectedPairs = [];
+
+            if (matchedPairs.length === puzzleData.length) {
+                // Puzzle solved!
+                alert('Puzzle Solved!  Click Reset Puzzle to play again.');
+            }
+        }
+
+        function resetPuzzle() {
+            selectedPairs = [];
+            matchedPairs = [];
+            loadPuzzlePairs();
+        }
+
+        // Shuffle array function (Fisher-Yates)
+        function shuffleArray(array) {
+            let currentIndex = array.length, randomIndex;
+            while (currentIndex != 0) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                [array[currentIndex], array[randomIndex]] = [
+                    array[randomIndex], array[currentIndex]];
+            }
+            return array;
+        }
+
+        resetButton.addEventListener('click', resetPuzzle);
+
+        // --- Simulation Section ---
+        const learningRateControl = document.getElementById('learning-rate');
+        const memoryCapacityControl = document.getElementById('memory-capacity');
+        const processingPowerControl = document.getElementById('processing-power');
+        const learningRateValueDisplay = document.getElementById('learning-rate-value');
+        const memoryCapacityValueDisplay = document.getElementById('memory-capacity-value');
+        const processingPowerValueDisplay = document.getElementById('processing-power-value');
+        const resetSimulationButton = document.getElementById('reset-simulation');
+
+        let learningRateValue = parseFloat(learningRateControl.value);
+        let memoryCapacityValue = parseInt(memoryCapacityControl.value);
+        let processingPowerValue = parseInt(processingPowerControl.value);
+
+        learningRateControl.addEventListener('input', (event) => {
+            learningRateValue = parseFloat(event.target.value);
+            learningRateValueDisplay.textContent = learningRateValue.toFixed(2);
+            updateSimulation();
+        });
+
+        memoryCapacityControl.addEventListener('input', (event) => {
+            memoryCapacityValue = parseInt(event.target.value);
+            memoryCapacityValueDisplay.textContent = memoryCapacityValue;
+            updateSimulation();
+        });
+
+        processingPowerControl.addEventListener('input', (event) => {
+            processingPowerValue = parseInt(event.target.value);
+            processingPowerValueDisplay.textContent = processingPowerValue;updateSimulation();
+        });
+
+        function updateSimulation() {
+            // Placeholder for simulation logic
+            console.log('Simulation updated:', {
+                learningRate: learningRateValue,
+                memoryCapacity: memoryCapacityValue,
+                processingPower: processingPowerValue
+            });
+            // In a real application, you would update the visualization here
+        }
+
+        function resetSimulation() {
+            learningRateControl.value = 0.05;
+            memoryCapacityControl.value = 50;
+            processingPowerControl.value = 5;
+            learningRateValue = 0.05;
+            memoryCapacityValue = 50;
+            processingPowerValue = 5;
+            learningRateValueDisplay.textContent = '0.05';
+            memoryCapacityValueDisplay.textContent = '50';
+            processingPowerValueDisplay.textContent = '5';
+            updateSimulation();
+        }
+
+        resetSimulationButton.addEventListener('click', resetSimulation);
+
+        // --- Tab Switching ---
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const tabId = button.dataset.tab;
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                tabContents.forEach(content => content.classList.remove('active'));
+                button.classList.add('active');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+
+        // --- Initialize ---
+        loadQuizQuestion();
+        loadPuzzlePairs();
+        updateSimulation(); // Initial simulation update
+
+    </script>
+</body>
+</html>
