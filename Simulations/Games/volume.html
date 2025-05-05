@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Shape Volumes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.139.0/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.139.0/examples/js/controls/OrbitControls.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            overflow: hidden;
+            /* Prevent scrollbars */
+        }
+
+        #canvas-container {
+            width: 100vw;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }
+
+        .controls-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            /* Shifted to the right */
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            border-radius: 12px;
+            background-color: rgba(255, 255, 255, 0.8);
+            /* Semi-transparent white */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 200px;
+            /* Added a fixed width for better layout */
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 15px;
+            width: 100%;
+            /* Make input group take full width of container */
+        }
+
+        .input-group label {
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: 600;
+            width: 100%;
+            /* Make label take full width */
+            text-align: left;
+            /* Align label text to the left */
+        }
+
+        .input-group input {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            width: 100%;
+            font-size: 16px;
+            box-sizing: border-box;
+            /* Include padding and border in element's total width and height */
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+        }
+
+        #shape-select {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 16px;
+            margin-bottom: 15px;
+            width: 100%;
+            box-sizing: border-box;
+            /* Include padding and border in element's total width and height */
+        }
+
+        #shape-select:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+        }
+
+        #volume-display {
+            margin-top: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            background-color: #e9ecef;
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+            min-width: 100px;
+            width: 100%;
+            /* Make volume display take full width */
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-r from-cyan-900 to-cyan-500 h-screen flex justify-center items-start">
+    <div id="canvas-container">
+        <canvas id="three-canvas"></canvas>
+    </div>
+
+    <div class="controls-container">
+        <select id="shape-select">
+            <option value="Cylinder">Cylinder</option>
+            <option value="Box">Box</option>
+            <option value="Cone">Cone</option>
+            <option value="Sphere">Sphere</option>
+        </select>
+
+        <div id="cylinder-controls" class="input-group">
+            <label for="cylinder-radius">Radius:</label>
+            <input type="number" id="cylinder-radius" value="5" min="0">
+            <label for="cylinder-height">Height:</label>
+            <input type="number" id="cylinder-height" value="10" min="0">
+        </div>
+
+        <div id="box-controls" class="input-group" style="display: none;">
+            <label for="box-width">Width:</label>
+            <input type="number" id="box-width" value="10" min="0">
+            <label for="box-height">Height:</label>
+            <input type="number" id="box-height" value="10" min="0">
+            <label for="box-depth">Depth:</label>
+            <input type="number" id="box-depth" value="10" min="0">
+        </div>
+
+        <div id="cone-controls" class="input-group" style="display: none;">
+            <label for="cone-radius">Radius:</label>
+            <input type="number" id="cone-radius" value="5" min="0">
+            <label for="cone-height">Height:</label>
+            <input type="number" id="cone-height" value="10" min="0">
+        </div>
+
+        <div id="sphere-controls" class="input-group" style="display: none;">
+            <label for="sphere-radius">Radius:</label>
+            <input type="number" id="sphere-radius" value="7" min="0">
+        </div>
+
+        <div id="volume-display">Volume: 0</div>
+    </div>
+
+    <script>
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('three-canvas'), antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true; // Enable shadows for realism
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap; // Use soft shadows
+
+        // Orbit Controls
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true; // Add damping for smoother interaction
+        controls.dampingFactor = 0.1;
+        controls.target.set(0, 5, 0); // Set the target point the camera orbits around
+
+        // Lighting
+        const ambientLight = new THREE.AmbientLight(0x404040); // Soft white light
+        scene.add(ambientLight);
+        const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 0.6); // Soft white light from above, dim light from below
+        hemiLight.position.set(0, 20, 0); // Position the light above the scene
+        scene.add(hemiLight);
+
+        const spotLight = new THREE.SpotLight(0xffffff, Math.PI);
+        spotLight.position.set(10, 10, 10);
+        spotLight.castShadow = true;
+        spotLight.shadow.mapSize.width = 1024; // Increase shadow map size for better quality
+        spotLight.shadow.mapSize.height = 1024;
+        spotLight.shadow.camera.near = 0.5;
+        spotLight.shadow.camera.far = 50;
+        spotLight.penumbra = 0.3; // Add penumbra for softer edges
+        scene.add(spotLight);
+
+        const pointLight = new THREE.PointLight(0xffffff, Math.PI);
+        pointLight.position.set(-10, -10, -10);
+        scene.add(pointLight);
+
+        // Grid helper
+        const gridHelper = new THREE.GridHelper(100, 10);
+        scene.add(gridHelper);
+
+        let selectedShape = 'Cylinder';
+        let cylinder, box, cone, sphere;
+
+        function createCylinder(radius, height) {
+            const geometry = new THREE.CylinderGeometry(radius, radius, height, 32);
+            const material = new THREE.MeshStandardMaterial({ color: 0x00ff00 }); // Green
+            const mesh = new THREE.Mesh(geometry, material);
+            mesh.castShadow = true;
+            mesh.receiveShadow = true;
+            return mesh;
+        }
+
+        function createBox(width, height, depth) {
+            const geometry = new THREE.BoxGeometry(width, height, depth);
+            const material = new THREE.MeshStandardMaterial({ color: 0x0000ff }); // Blue
+            const mesh = new THREE.Mesh(geometry, material);
+            mesh.castShadow = true;
+            mesh.receiveShadow = true;
+            return mesh;
+        }
+
+        function createCone(radius, height) {
+            const geometry = new THREE.ConeGeometry(radius, height, 32);
+            const material = new THREE.MeshStandardMaterial({ color: 0xff0000 }); // Red
+            const mesh = new THREE.Mesh(geometry, material);
+            mesh.castShadow = true;
+            mesh.receiveShadow = true;
+            return mesh;
+        }
+
+        function createSphere(radius) {
+            const geometry = new THREE.SphereGeometry(radius, 32, 32);
+            const material = new THREE.MeshStandardMaterial({ color: 0xffff00 }); // Yellow
+            const mesh = new THREE.Mesh(geometry, material);
+            mesh.castShadow = true;
+            mesh.receiveShadow = true;
+            return mesh;
+        }
+
+        cylinder = createCylinder(5, 10);
+        box = createBox(10, 10, 10);
+        cone = createCone(5, 10);
+        sphere = createSphere(7);
+
+        cylinder.position.set(0, 5, 0);
+        box.position.set(0, 5, 0);
+        cone.position.set(0, 5, 0);
+        sphere.position.set(0, 5, 0);
+
+        scene.add(cylinder);
+
+        function updateVolumeDisplay(volume) {
+            document.getElementById('volume-display').textContent = `Volume: ${volume.toFixed(2)}`;
+        }
+
+        function calculateCylinderVolume(radius, height) {
+            return Math.PI * radius * radius * height;
+        }
+
+        function calculateBoxVolume(width, height, depth) {
+            return width * height * depth;
+        }
+
+        function calculateConeVolume(radius, height) {
+            return (1 / 3) * Math.PI * radius * radius * height;
+        }
+
+        function calculateSphereVolume(radius) {
+            return (4 / 3) * Math.PI * radius * radius * radius;
+        }
+
+        function updateScene(shape) {
+            scene.remove(cylinder);
+            scene.remove(box);
+            scene.remove(cone);
+            scene.remove(sphere);
+
+            switch (shape) {
+                case 'Cylinder':
+                    scene.add(cylinder);
+                    break;
+                case 'Box':
+                    scene.add(box);
+                    break;
+                case 'Cone':
+                    scene.add(cone);
+                    break;
+                case 'Sphere':
+                    scene.add(sphere);
+                    break;
+            }
+        }
+
+        document.getElementById('shape-select').addEventListener('change', (event) => {
+            selectedShape = event.target.value;
+            document.getElementById('cylinder-controls').style.display = 'none';
+            document.getElementById('box-controls').style.display = 'none';
+            document.getElementById('cone-controls').style.display = 'none';
+            document.getElementById('sphere-controls').style.display = 'none';
+
+            switch (selectedShape) {
+                case 'Cylinder':
+                    document.getElementById('cylinder-controls').style.display = 'flex';
+                    updateScene('Cylinder');
+                    break;
+                case 'Box':
+                    document.getElementById('box-controls').style.display = 'flex';
+                    updateScene('Box');
+                    break;
+                case 'Cone':
+                    document.getElementById('cone-controls').style.display = 'flex';
+                    updateScene('Cone');
+                    break;
+                case 'Sphere':
+                    document.getElementById('sphere-controls').style.display = 'flex';
+                    updateScene('Sphere');
+                    break;
+            }
+        });
+
+        document.getElementById('cylinder-radius').addEventListener('input', (event) => {
+            const radius = parseFloat(event.target.value);
+            cylinder.geometry.dispose();
+            cylinder.geometry = new THREE.CylinderGeometry(radius, radius, parseFloat(document.getElementById('cylinder-height').value), 32);
+            const volume = calculateCylinderVolume(radius, parseFloat(document.getElementById('cylinder-height').value));
+            updateVolumeDisplay(volume);
+        });
+
+        document.getElementById('cylinder-height').addEventListener('input', (event) => {
+            const height = parseFloat(event.target.value);
+            cylinder.geometry.dispose();
+            cylinder.geometry = new THREE.CylinderGeometry(parseFloat(document.getElementById('cylinder-radius').value), parseFloat(document.getElementById('cylinder-radius').value), height, 32);
+            const volume = calculateCylinderVolume(parseFloat(document.getElementById('cylinder-radius').value), height);
+            updateVolumeDisplay(volume);
+        });
+
+        document.getElementById('box-width').addEventListener('input', (event) => {
+            const width = parseFloat(event.target.value);
+            box.geometry.dispose();
+            box.geometry = new THREE.BoxGeometry(width, parseFloat(document.getElementById('box-height').value), parseFloat(document.getElementById('box-depth').value));
+            const volume = calculateBoxVolume(width, parseFloat(document.getElementById('box-height').value), parseFloat(document.getElementById('box-depth').value));
+            updateVolumeDisplay(volume);
+        });
+
+        document.getElementById('box-height').addEventListener('input', (event) => {
+            const height = parseFloat(event.target.value);
+            box.geometry.dispose();
+            box.geometry = new THREE.BoxGeometry(parseFloat(document.getElementById('box-width').value), height, parseFloat(document.getElementById('box-depth').value));
+            const volume = calculateBoxVolume(parseFloat(document.getElementById('box-width').value), height, parseFloat(document.getElementById('box-depth').value));
+            updateVolumeDisplay(volume);
+        });
+
+        document.getElementById('box-depth').addEventListener('input', (event) => {
+            const depth = parseFloat(event.target.value);
+            box.geometry.dispose();
+            box.geometry = new THREE.BoxGeometry(parseFloat(document.getElementById('box-width').value), parseFloat(document.getElementById('box-height').value), depth);
+            const volume = calculateBoxVolume(parseFloat(document.getElementById('box-width').value), parseFloat(document.getElementById('box-height').value), depth);
+            updateVolumeDisplay(volume);
+        });
+
+        document.getElementById('cone-radius').addEventListener('input', (event) => {
+            const radius = parseFloat(event.target.value);
+            cone.geometry.dispose();
+            cone.geometry = new THREE.ConeGeometry(radius, parseFloat(document.getElementById('cone-height').value), 32);
+            const volume = calculateConeVolume(radius, parseFloat(document.getElementById('cone-height').value));
+            updateVolumeDisplay(volume);
+        });
+
+        document.getElementById('cone-height').addEventListener('input', (event) => {
+            const height = parseFloat(event.target.value);
+            cone.geometry.dispose();
+            cone.geometry = new THREE.ConeGeometry(parseFloat(document.getElementById('cone-radius').value), height, 32);
+            const volume = calculateConeVolume(parseFloat(document.getElementById('cone-radius').value), height);
+            updateVolumeDisplay(volume);
+        });
+
+        document.getElementById('sphere-radius').addEventListener('input', (event) => {
+            const radius = parseFloat(event.target.value);
+            sphere.geometry.dispose();
+            sphere.geometry = new THREE.SphereGeometry(radius, 32, 32);
+            const volume = calculateSphereVolume(radius);
+            updateVolumeDisplay(volume);
+        });
+
+        camera.position.set(-25, 12, 25);
+        controls.update();
+
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+
+</html>
