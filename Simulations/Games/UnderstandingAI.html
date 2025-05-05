@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive AI Learning</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f7fa;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+        }
+        h1 {
+            margin: 0;
+        }
+        .tabs {
+            display: flex;
+            margin: 20px 0;
+            background-color: #34495e;
+            border-radius: 5px 5px 0 0;
+        }
+        .tab-button {
+            padding: 15px 20px;
+            background-color: transparent;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        .tab-button:hover {
+            background-color: #4a6583;
+        }
+        .tab-button.active {
+            background-color: #3498db;
+        }
+        .tab-content {
+            display: none;
+            padding: 20px;
+            background-color: white;
+            border-radius: 0 0 5px 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .timeline {
+            position: relative;
+            margin: 30px 0;
+            padding: 20px 0;
+            width: 100%;
+            height: 150px;
+        }
+        .timeline-bar {
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            height: 4px;
+            background-color: #3498db;
+        }
+        .timeline-event {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            background-color: #3498db;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .timeline-event:hover {
+            background-color: #2980b9;
+        }
+        .timeline-label {
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            white-space: nowrap;
+            margin-top: 5px;
+        }
+        .timeline-info {
+            position: absolute;
+            top: -80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #2c3e50;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+            width: 200px;
+            text-align: center;
+        }
+        .timeline-event:hover .timeline-info {
+            display: block;
+        }
+        .quiz-container {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+        .quiz-question {
+            margin-bottom: 20px;
+        }
+        .quiz-options label {
+            display: block;
+            margin: 10px 0;
+            cursor: pointer;
+        }
+        .quiz-options input {
+            margin-right: 10px;
+        }
+        .quiz-submit {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 15px;
+        }
+        .quiz-submit:hover {
+            background-color: #2980b9;
+        }
+        .quiz-result {
+            margin-top: 15px;
+            font-weight: bold;
+        }
+        .nn-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 30px 0;
+        }
+        .nn-layer {
+            display: flex;
+            justify-content: center;
+            margin: 10px 0;
+        }
+        .nn-neuron {
+            width: 30px;
+            height: 30px;
+            background-color: #3498db;
+            border-radius: 50%;
+            margin: 0 15px;
+            position: relative;
+        }
+        .nn-connection {
+            position: absolute;
+            background-color: #95a5a6;
+            z-index: -1;
+        }
+        .controls {
+            margin: 20px 0;
+            text-align: center;
+        }
+        .slider-container {
+            margin: 15px 0;
+        }
+        label {
+            margin-right: 10px;
+        }
+        .case-study {
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            margin-top: 30px;
+        }
+        .input-field {
+            margin: 10px 0;
+        }
+        .input-field label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .input-field input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+        .result-container {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e8f4f8;
+            border-radius: 5px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Understanding Artificial Intelligence</h1>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="tabs">
+            <button class="tab-button active" onclick="openTab('intro')">Introduction to AI</button>
+            <button class="tab-button" onclick="openTab('deep-learning')">Deep Learning 🔒</button>
+            <button class="tab-button" onclick="openTab('black-box')">Black Box Problem 🔒</button>
+            <button class="tab-button" onclick="openTab('analogical-reasoning')">Analogical Reasoning 🔒</button>
+            
+        </div>
+
+        <!-- Introduction to AI Tab -->
+        <div id="intro" class="tab-content active">
+            <h2>Introduction to Artificial Intelligence</h2>
+            <p><strong>Definition:</strong> Artificial Intelligence (AI) refers to the simulation of human intelligence processes by machines, especially computer systems. These processes include learning, reasoning, problem-solving, perception, and language understanding.</p>
+            
+            <h3>AI Timeline</h3>
+            <div class="timeline">
+                <div class="timeline-bar"></div>
+                
+                <div class="timeline-event" style="left: 10%">
+                    <div class="timeline-info">1950s: Alan Turing introduces the Turing Test to assess machine intelligence</div>
+                    <div class="timeline-label">1950s</div>
+                </div>
+                
+                <div class="timeline-event" style="left: 25%">
+                    <div class="timeline-info">1956: The term "Artificial Intelligence" is coined at the Dartmouth Conference</div>
+                    <div class="timeline-label">1956</div>
+                </div>
+                
+                <div class="timeline-event" style="left: 40%">
+                    <div class="timeline-info">1970s-1980s: Emergence of expert systems</div>
+                    <div class="timeline-label">1970s-80s</div>
+                </div>
+                
+                <div class="timeline-event" style="left: 55%">
+                    <div class="timeline-info">1997: IBM's Deep Blue defeats world chess champion Garry Kasparov</div>
+                    <div class="timeline-label">1997</div>
+                </div>
+                
+                <div class="timeline-event" style="left: 70%">
+                    <div class="timeline-info">2011: IBM's Watson wins Jeopardy!</div>
+                    <div class="timeline-label">2011</div>
+                </div>
+                
+                <div class="timeline-event" style="left: 85%">
+                    <div class="timeline-info">2016: Google's AlphaGo defeats Go champion Lee Sedol</div>
+                    <div class="timeline-label">2016</div>
+                </div>
+            </div>
+            
+            <h3>Real-World Applications</h3>
+            <ul>
+                <li><strong>Healthcare:</strong> Diagnostic systems, personalized medicine</li>
+                <li><strong>Finance:</strong> Fraud detection, algorithmic trading</li>
+                <li><strong>Transportation:</strong> Autonomous vehicles, traffic prediction</li>
+                <li><strong>Customer Service:</strong> Chatbots, virtual assistants</li>
+            </ul>
+            
+            <div class="quiz-container">
+                <h3>Test Your Knowledge</h3>
+                <div class="quiz-question">
+                    <p>1. Who coined the term "Artificial Intelligence"?</p>
+                    <div class="quiz-options">
+                        <label><input type="radio" name="q1" value="a"> Alan Turing</label>
+                        <label><input type="radio" name="q1" value="b"> John McCarthy at Dartmouth Conference</label>
+                        <label><input type="radio" name="q1" value="c"> IBM Researchers</label>
+                        <label><input type="radio" name="q1" value="d"> Google Engineers</label>
+                    </div>
+                </div>
+                
+                <div class="quiz-question">
+                    <p>2. In which year did IBM's Deep Blue defeat Garry Kasparov?</p>
+                    <div class="quiz-options">
+                        <label><input type="radio" name="q2" value="a"> 1987</label>
+                        <label><input type="radio" name="q2" value="b"> 1997</label>
+                        <label><input type="radio" name="q2" value="c"> 2007</label>
+                        <label><input type="radio" name="q2" value="d"> 2011</label>
+                    </div>
+                </div>
+                
+                <button class="quiz-submit" onclick="checkIntroQuiz()">Submit Answers</button>
+                <div id="introQuizResult" class="quiz-result"></div>
+            </div>
+        </div>
+
+        <!-- Deep Learning Tab -->
+        <div id="deep-learning" class="tab-content">
+            <h2>Deep Learning Fundamentals</h2>
+            <!-- <p><strong>Neural Networks:</strong> Neural networks are structures inspired by the human brain that consist of interconnected layers of artificial neurons. They include input, hidden, and output layers. Data flows through the network, with each neuron processing information and passing it to the next layer.</p>
+            
+            <p><strong>Activation Functions:</strong> These functions determine the output of a neuron given an input or set of inputs. Common activation functions include sigmoid, tanh, and ReLU (Rectified Linear Unit).</p>
+            
+            <p><strong>Training Process:</strong> Neural networks learn from data through a process that involves forward propagation (passing data through the network), loss calculation (measuring error), backpropagation (determining how to adjust weights), and optimization using algorithms like gradient descent.</p>
+            
+            <h3>Interactive Neural Network Visualization</h3> -->
+            <label for="pin-codeA">Enter PIN:</label>
+            <input type="password" id="pin-codeA" maxlength="6">
+            <button id="tab-pinA">Submit</button>
+            <!-- <div class="controls">
+                <div class="slider-container">
+                    <label for="layersSlider">Hidden Layers:</label>
+                    <input type="range" id="layersSlider" min="1" max="3" value="1" oninput="updateNeuralNetwork()">
+                    <span id="layersValue">1</span>
+                </div>
+                
+                <div class="slider-container">
+                    <label for="neuronsSlider">Neurons per Layer:</label>
+                    <input type="range" id="neuronsSlider" min="2" max="5" value="3" oninput="updateNeuralNetwork()">
+                    <span id="neuronsValue">3</span>
+                </div>
+            </div> -->
+             <!-- Neural network will be rendered here by JavaScript -->
+            <!-- <div id="neural-network" class="nn-container">
+               
+            </div> -->
+            
+            <!-- <div class="quiz-container">
+                <h3>Test Your Knowledge</h3>
+                <div class="quiz-question">
+                    <p>1. What is the purpose of activation functions in neural networks?</p>
+                    <div class="quiz-options">
+                        <label><input type="radio" name="dl1" value="a"> They determine the speed of computation</label>
+                        <label><input type="radio" name="dl1" value="b"> They determine the output of a neuron given input(s)</label>
+                        <label><input type="radio" name="dl1" value="c"> They connect different neural networks together</label>
+                        <label><input type="radio" name="dl1" value="d"> They store memory in the network</label>
+                    </div>
+                </div>
+                
+                <div class="quiz-question">
+                    <p>2. Which of these is NOT a common activation function?</p>
+                    <div class="quiz-options">
+                        <label><input type="radio" name="dl2" value="a"> ReLU</label>
+                        <label><input type="radio" name="dl2" value="b"> Sigmoid</label>
+                        <label><input type="radio" name="dl2" value="c"> Tanh</label>
+                        <label><input type="radio" name="dl2" value="d"> CircleX</label>
+                    </div>
+                </div>
+                
+                <button class="quiz-submit" onclick="checkDLQuiz()">Submit Answers</button>
+                <div id="dlQuizResult" class="quiz-result"></div>
+            </div> -->
+        </div>
+
+        <!-- Black Box Problem Tab -->
+        <div id="black-box" class="tab-content">
+            <h2>The Black Box Problem in AI</h2>
+            <label for="pin-codeB">Enter PIN:</label>
+            <input type="password" id="pin-codeB" maxlength="6">
+            <button id="tab-pinB">Submit</button>
+            <!-- <p><strong>Definition:</strong> The "black box" problem refers to the lack of transparency in AI systems, particularly deep learning models, where the decision-making process is not easily interpretable by humans.</p>
+            
+            <h3>Key Challenges:</h3>
+            <ul>
+                <li>Difficulty in understanding how inputs are transformed into outputs</li>
+                <li>Challenges in debugging and improving models</li>
+                <li>Ethical concerns regarding accountability and bias</li>
+            </ul>
+            
+            <p><strong>Importance of Explainability:</strong> Explainable AI (XAI) is crucial for building trust, ensuring compliance with regulations, and facilitating better decision-making.</p>
+            
+            <h3>Loan Approval Simulation</h3>
+            <p>This simulation demonstrates how a "black box" AI might approve or deny loan applications without clear explanation:</p>
+             -->
+            <!-- <div class="case-study">
+                <h4>Apply for a Loan</h4>
+                <div class="input-field">
+                    <label for="income">Annual Income ($):</label>
+                    <input type="number" id="income" min="0" max="250000" value="60000">
+                </div>
+                
+                <div class="input-field">
+                    <label for="credit">Credit Score:</label>
+                    <input type="number" id="credit" min="300" max="850" value="700">
+                </div>
+                
+                <div class="input-field">
+                    <label for="debt">Current Debt ($):</label>
+                    <input type="number" id="debt" min="0" max="500000" value="15000">
+                </div>
+                
+                <div class="input-field">
+                    <label for="history">Years of Credit History:</label>
+                    <input type="number" id="history" min="0" max="50" value="5">
+                </div>
+                
+                <button class="quiz-submit" onclick="processLoanApplication()">Submit Application</button>
+                
+                <div id="loanResult" class="result-container">
+                    <div id="loanDecision"></div>
+                    <div id="confidenceScore"></div>
+                    <p>This is what you might see from a "black box" AI system - a decision without clear explanation of why.</p>
+                    <button class="quiz-submit" onclick="showExplanation()">Request Explanation</button>
+                    <div id="explanation" style="margin-top: 15px; display: none;"></div>
+                </div>
+            </div>
+            
+            <div class="quiz-container">
+                <h3>Test Your Knowledge</h3>
+                <div class="quiz-question">
+                    <p>1. Why is the "black box" problem considered an issue in AI?</p>
+                    <div class="quiz-options">
+                        <label><input type="radio" name="bb1" value="a"> It makes AI systems run slower</label>
+                        <label><input type="radio" name="bb1" value="b"> It prevents AI from learning new information</label>
+                        <label><input type="radio" name="bb1" value="c"> It makes the decision-making process not easily interpretable</label>
+                        <label><input type="radio" name="bb1" value="d"> It means AI requires more computational power</label>
+                    </div>
+                </div>
+                
+                <div class="quiz-question">
+                    <p>2. What does XAI stand for?</p>
+                    <div class="quiz-options">
+                        <label><input type="radio" name="bb2" value="a"> Extreme Artificial Intelligence</label>
+                        <label><input type="radio" name="bb2" value="b"> Extended AI Framework</label>
+                        <label><input type="radio" name="bb2" value="c"> Explainable Artificial Intelligence</label>
+                        <label><input type="radio" name="bb2" value="d"> External AI Integration</label>
+                    </div>
+                </div>
+                
+                <button class="quiz-submit" onclick="checkBBQuiz()">Submit Answers</button>
+                <div id="bbQuizResult" class="quiz-result"></div>
+            </div> -->
+        </div>
+
+        <!-- Analogical Reasoning -->
+          
+        <div id="analogical-reasoning" class="tab-content">
+            <h2>What is Analogical Reasoning?</h2>
+            
+            <label for="pin-codeC">Enter PIN:</label>
+            <input type="password" id="pin-codeC" maxlength="6">
+            <button id="tab-pinC">Submit</button>
+            
+        </div>
+    </div>
+
+    <script>
+        // Tab functionality
+        function openTab(tabName) {
+            const tabContents = document.getElementsByClassName('tab-content');
+            for (let i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove('active');
+            }
+            
+            const tabButtons = document.getElementsByClassName('tab-button');
+            for (let i = 0; i < tabButtons.length; i++) {
+                tabButtons[i].classList.remove('active');
+            }
+            
+            document.getElementById(tabName).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+        
+        // Introduction Quiz
+        function checkIntroQuiz() {
+            let score = 0;
+            const answers = {
+                q1: 'b',  // John McCarthy at Dartmouth Conference
+                q2: 'b'   // 1997
+            };
+            
+            if (document.querySelector('input[name="q1"]:checked')?.value === answers.q1) {
+                score++;
+            }
+            
+            if (document.querySelector('input[name="q2"]:checked')?.value === answers.q2) {
+                score++;
+            }
+            
+            const resultElement = document.getElementById('introQuizResult');
+            resultElement.textContent = `You scored ${score} out of 2!`;
+            
+            if (score === 2) {
+                resultElement.style.color = 'green';
+            } else {
+                resultElement.style.color = 'orange';
+            }
+        }
+        
+        // Deep Learning Quiz
+        function checkDLQuiz() {
+            let score = 0;
+            const answers = {
+                dl1: 'b',  // They determine the output of a neuron given input(s)
+                dl2: 'd'   // CircleX is not a real activation function
+            };
+            
+            if (document.querySelector('input[name="dl1"]:checked')?.value === answers.dl1) {
+                score++;
+            }
+            
+            if (document.querySelector('input[name="dl2"]:checked')?.value === answers.dl2) {
+                score++;
+            }
+            
+            const resultElement = document.getElementById('dlQuizResult');
+            resultElement.textContent = `You scored ${score} out of 2!`;
+            
+            if (score === 2) {
+                resultElement.style.color = 'green';
+            } else {
+                resultElement.style.color = 'orange';
+            }
+        }
+        
+        // Black Box Quiz
+        function checkBBQuiz() {
+            let score = 0;
+            const answers = {
+                bb1: 'c',  // It makes the decision-making process not easily interpretable
+                bb2: 'c'   // Explainable Artificial Intelligence
+            };
+            
+            if (document.querySelector('input[name="bb1"]:checked')?.value === answers.bb1) {
+                score++;
+            }
+            
+            if (document.querySelector('input[name="bb2"]:checked')?.value === answers.bb2) {
+                score++;
+            }
+            
+            const resultElement = document.getElementById('bbQuizResult');
+            resultElement.textContent = `You scored ${score} out of 2!`;
+            
+            if (score === 2) {
+                resultElement.style.color = 'green';
+            } else {
+                resultElement.style.color = 'orange';
+            }
+        }
+        
+        // Neural Network Visualization
+        // function updateNeuralNetwork() {
+        //     const layers = parseInt(document.getElementById('layersSlider').value);
+        //     document.getElementById('layersValue').textContent = layers;
+            
+        //     const neurons = parseInt(document.getElementById('neuronsSlider').value);
+        //     document.getElementById('neuronsValue').textContent = neurons;
+            
+        //     const nnContainer = document.getElementById('neural-network');
+        //     nnContainer.innerHTML = '';
+            
+        //     // Create input layer
+        //     const inputLayer = document.createElement('div');
+        //     inputLayer.className = 'nn-layer';
+        //     for (let i = 0; i < 2; i++) {
+        //         const neuron = document.createElement('div');
+        //         neuron.className = 'nn-neuron';
+        //         inputLayer.appendChild(neuron);
+        //     }
+        //     nnContainer.appendChild(inputLayer);
+            
+        //     // Create hidden layers
+        //     const hiddenLayers = [];
+        //     for (let i = 0; i < layers; i++) {
+        //         const hiddenLayer = document.createElement('div');
+        //         hiddenLayer.className = 'nn-layer';
+        //         for (let j = 0; j < neurons; j++) {
+        //             const neuron = document.createElement('div');
+        //             neuron.className = 'nn-neuron';
+        //             hiddenLayer.appendChild(neuron);
+        //         }
+        //         nnContainer.appendChild(hiddenLayer);
+        //         hiddenLayers.push(hiddenLayer);
+        //     }
+            
+        //     // Create output layer
+        //     const outputLayer = document.createElement('div');
+        //     outputLayer.className = 'nn-layer';
+        //     const outputNeuron = document.createElement('div');
+        //     outputNeuron.className = 'nn-neuron';
+        //     outputLayer.appendChild(outputNeuron);
+        //     nnContainer.appendChild(outputLayer);
+            
+        //     // Draw connections
+        //     drawConnections(inputLayer, hiddenLayers[0] || outputLayer);
+            
+        //     for (let i = 0; i < hiddenLayers.length - 1; i++) {
+        //         drawConnections(hiddenLayers[i], hiddenLayers[i + 1]);
+        //     }
+            
+        //     if (hiddenLayers.length > 0) {
+        //         drawConnections(hiddenLayers[hiddenLayers.length - 1], outputLayer);
+        //     }
+        // }
+        
+        function drawConnections(fromLayer, toLayer) {
+            const fromNeurons = fromLayer.getElementsByClassName('nn-neuron');
+            const toNeurons = toLayer.getElementsByClassName('nn-neuron');
+            
+            for (let i = 0; i < fromNeurons.length; i++) {
+                for (let j = 0; j < toNeurons.length; j++) {
+                    const fromRect = fromNeurons[i].getBoundingClientRect();
+                    const toRect = toNeurons[j].getBoundingClientRect();
+                    
+                    const fromX = fromRect.left + fromRect.width / 2;
+                    const fromY = fromRect.top + fromRect.height / 2;
+                    const toX = toRect.left + toRect.width / 2;
+                    const toY = toRect.top + toRect.height / 2;
+                    
+                    const length = Math.sqrt(Math.pow(toX - fromX, 2) + Math.pow(toY - fromY, 2));
+                    const angle = Math.atan2(toY - fromY, toX - fromX) * 180 / Math.PI;
+                    
+                    const connection = document.createElement('div');
+                    connection.className = 'nn-connection';
+                    connection.style.width = length + 'px';
+                    connection.style.height = '2px';
+                    connection.style.position = 'absolute';
+                    connection.style.top = fromY + 'px';
+                    connection.style.left = fromX + 'px';
+                    connection.style.transformOrigin = '0 0';
+                    connection.style.transform = `rotate(${angle}deg)`;
+                    
+                    document.body.appendChild(connection);
+                }
+            }
+        }
+        
+        // Loan Application Simulator
+        function processLoanApplication() {
+            const income = parseInt(document.getElementById('income').value);
+            const creditScore = parseInt(document.getElementById('credit').value);
+            const debt = parseInt(document.getElementById('debt').value);
+            const history = parseInt(document.getElementById('history').value);
+            
+            // Calculate debt-to-income ratio
+            const dti = (debt / income) * 100;
+            
+            // Black box decision logic
+            let approved = false;
+            let confidence = 0;
+            
+            // Complex decision logic that's not transparent to the user
+            if (creditScore > 720 && dti < 40 && history > 2) {
+                approved = true;
+                confidence = 95;
+            } else if (creditScore > 680 && dti < 35 && income > 70000) {
+                approved = true;
+                confidence = 85;
+            } else if (creditScore > 650 && dti < 25 && history > 7) {
+                approved = true;
+                confidence = 78;
+            } else if (creditScore < 600 || dti > 50) {
+                approved = false;
+                confidence = 92;
+            } else if (income < 30000 && debt > 20000) {
+                approved = false;
+                confidence = 88;
+            } else {
+                // Middle ground - appear somewhat random to simulate black box nature
+                approved = Math.random() > 0.5;
+                confidence = Math.floor(60 + Math.random() * 20);
+            }
+            
+            // Display result
+            const resultContainer = document.getElementById('loanResult');
+            const decisionElement = document.getElementById('loanDecision');
+            const confidenceElement = document.getElementById('confidenceScore');
+            
+            resultContainer.style.display = 'block';
+            decisionElement.textContent = approved ? 
+                'Decision: APPROVED' : 
+                'Decision: DENIED';
+            decisionElement.style.color = approved ? 'green' : 'red';
+            confidenceElement.textContent = `AI Confidence: ${confidence}%`;
+            
+            // Hide explanation if showing
+            document.getElementById('explanation').style.display = 'none';
+        }
+        
+        function showExplanation() {
+            const income = parseInt(document.getElementById('income').value);
+            const creditScore = parseInt(document.getElementById('credit').value);
+            const debt = parseInt(document.getElementById('debt').value);
+            const history = parseInt(document.getElementById('history').value);
+            const dti = (debt / income) * 100;
+            
+            let explanation = '<h4>Factors that influenced this decision:</h4><ul>';
+            
+            // Credit score analysis
+            if (creditScore > 750) {
+                explanation += '<li><strong>Credit Score:</strong> Excellent - strongly positive factor</li>';
+            } else if (creditScore > 700) {
+                explanation += '<li><strong>Credit Score:</strong> Good - positive factor</li>';
+            } else if (creditScore > 650) {
+                explanation += '<li><strong>Credit Score:</strong> Fair - neutral factor</li>';
+            } else if (creditScore > 600) {
+                explanation += '<li><strong>Credit Score:</strong> Poor - concerning factor</li>';
+            } else {
+                explanation += '<li><strong>Credit Score:</strong> Very poor - strongly negative factor</li>';
+            }
+            
+            // DTI analysis
+            if (dti < 20) {
+                explanation += '<li><strong>Debt-to-Income Ratio:</strong> Very low ('+dti.toFixed(1)+'%) - strongly positive factor</li>';
+            } else if (dti < 30) {
+                explanation += '<li><strong>Debt-to-Income Ratio:</strong> Low ('+dti.toFixed(1)+'%) - positive factor</li>';
+            } else if (dti < 40) {
+                explanation += '<li><strong>Debt-to-Income Ratio:</strong> Moderate ('+dti.toFixed(1)+'%) - neutral factor</li>';
+            } else if (dti < 50) {
+                explanation += '<li><strong>Debt-to-Income Ratio:</strong> High ('+dti.toFixed(1)+'%) - concerning factor</li>';
+            } else {
+                explanation += '<li><strong>Debt-to-Income Ratio:</strong> Very high ('+dti.toFixed(1)+'%) - strongly negative factor</li>';
+            }
+            
+            // Income analysis
+            if (income > 100000) {
+                explanation += '<li><strong>Annual Income:</strong> High - positive factor</li>';
+            } else if (income > 50000) {
+                explanation += '<li><strong>Annual Income:</strong> Moderate - neutral factor</li>';
+            } else {
+                explanation += '<li><strong>Annual Income:</strong> Low - concerning factor</li>';
+            }
+            
+            // History analysis
+            if (history > 10) {
+                explanation += '<li><strong>Credit History:</strong> Extensive - positive factor</li>';
+            } else if (history > 5) {
+                explanation += '<li><strong>Credit History:</strong> Established - neutral factor</li>';
+            } else if (history > 2) {
+                explanation += '<li><strong>Credit History:</strong> Limited - slight concern</li>';
+            } else {
+                explanation += '<li><strong>Credit History:</strong> Minimal - concerning factor</li>';
+            }
+            
+            explanation += '</ul><p>This explanation represents how an XAI (Explainable AI) system might provide transparency, compared to a black box model that only provides decisions without explanations.</p>';
+            
+            document.getElementById('explanation').innerHTML = explanation;
+            document.getElementById('explanation').style.display = 'block';
+        }
+        
+        // Initialize Neural Network on load
+        // window.onload = function() {
+        //     updateNeuralNetwork();
+        // };
+    </script>
+</body>
+</html>
