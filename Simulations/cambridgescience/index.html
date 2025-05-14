@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Living or Non-Living?</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f2f5; /* Softer background */
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 25px;
+            border-radius: 12px; /* Softer radius */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 550px; /* Slightly wider */
+            text-align: center;
+        }
+
+        h1 {
+            color: #1c1e21; /* Darker heading */
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 2em; /* Larger heading */
+        }
+
+        .instructions {
+            font-size: 0.95em;
+            color: #555e69; /* Softer instruction text */
+            margin-bottom: 25px;
+        }
+
+        .score-area {
+            font-size: 1.3em;
+            font-weight: 600; /* Semi-bold */
+            margin-bottom: 25px;
+            color: #007bff;
+        }
+
+        .question-area #object-image {
+            max-width: 100%;
+            height: auto;
+            width: 100%; /* Make image responsive within its container */
+            max-height: 280px; /* Increased max height */
+            min-height: 180px;
+            border: 1px solid #ccd0d5; /* Softer border */
+            border-radius: 8px; /* Rounded corners for image */
+            margin-bottom: 15px;
+            background-color: #f0f2f5;
+            object-fit: contain; /* Ensures text on placeholder is visible */
+            display: block; /* Ensure it behaves as a block */
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .question-area #object-name-display {
+            font-size: 1.4em; /* Larger object name */
+            font-weight: 600;
+            margin-bottom: 25px;
+            color: #1c1e21;
+        }
+
+        .button-area {
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .button-area button, #play-again-btn {
+            padding: 14px 22px; /* More padding */
+            font-size: 1.05em;
+            font-weight: 600;
+            color: #fff;
+            border: none;
+            border-radius: 8px; /* Softer radius for buttons */
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+            flex-grow: 1; 
+            max-width: 220px; 
+        }
+        .button-area button:hover:not(:disabled), #play-again-btn:hover:not(:disabled) {
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .button-area button:active:not(:disabled), #play-again-btn:active:not(:disabled) {
+            transform: translateY(1px);
+            box-shadow: none;
+        }
+        .button-area button:disabled, #play-again-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        #living-btn {
+            background-color: #42b72a; /* Brighter Green */
+        }
+        #living-btn:hover:not(:disabled) {
+            background-color: #36a420;
+        }
+
+        #nonliving-btn {
+            background-color: #fa383e; /* Brighter Red */
+        }
+        #nonliving-btn:hover:not(:disabled) {
+            background-color: #e02c32;
+        }
+
+        .feedback-area {
+            min-height: 80px;
+            margin-bottom: 25px;
+            padding: 15px;
+            border-radius: 8px;
+            display: flex; /* For aligning icon and text */
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .feedback-area.correct {
+             background-color: #e9f7ef; 
+             border: 1px solid #c3e6cb; /* Border for correct feedback */
+        }
+        .feedback-area.incorrect {
+            background-color: #fce8e6;
+            border: 1px solid #f5c6cb; /* Border for incorrect feedback */
+        }
+
+        #feedback-icon {
+            font-size: 2.2em; /* Larger icon */
+            display: block; 
+            margin-bottom: 8px;
+        }
+
+        .feedback-area.correct #feedback-icon {
+            color: #155724; /* Darker green for icon text */
+        }
+
+        .feedback-area.incorrect #feedback-icon {
+            color: #721c24; /* Darker red for icon text */
+        }
+
+        #feedback-text {
+            font-size: 1em;
+            line-height: 1.5;
+            color: #333;
+        }
+
+        #game-over-area {
+            padding: 25px;
+            border-top: 1px solid #e0e0e0;
+            margin-top: 25px;
+        }
+        #game-over-area h2 {
+            margin-bottom: 15px;
+            color: #1c1e21;
+            font-size: 1.8em;
+        }
+        #game-over-area p {
+            font-size: 1.2em;
+            margin-bottom: 25px;
+        }
+
+        #play-again-btn {
+            background-color: #007bff;
+            display: inline-block; 
+            width: auto;
+            padding: 14px 35px; /* More padding for play again */
+        }
+        #play-again-btn:hover:not(:disabled) {
+            background-color: #0069d9;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            h1 { font-size: 1.8em; }
+            .question-area #object-name-display { font-size: 1.3em; }
+            .score-area { font-size: 1.2em; }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 20px; /* Adjusted padding */
+            }
+            .button-area {
+                flex-direction: column; 
+                gap: 12px;
+            }
+            .button-area button {
+                width: 100%; 
+                max-width: none;
+            }
+            h1 { font-size: 1.6em; }
+            .question-area #object-name-display { font-size: 1.2em; }
+            .question-area #object-image {
+                max-height: 220px;
+            }
+            .feedback-area { min-height: 100px; } /* More space for text on small screens */
+            #feedback-text { font-size: 0.95em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Living or Non-Living?</h1>
+        <p class="instructions">
+            Examine the object and click one of the buttons to classify it. <br>
+            Remember: Living things typically grow, move, breathe, and reproduce. Non-living things do not.
+        </p>
+        <div class="score-area">Score: <span id="score">0</span> / <span id="total-questions-display">10</span></div>
+
+        <div class="game-content">
+            <div class="question-area">
+                <img id="object-image" src="" alt="Object to classify">
+                <p id="object-name-display"></p>
+            </div>
+            <div class="button-area">
+                <button id="living-btn">Living Thing</button>
+                <button id="nonliving-btn">Non-Living Thing</button>
+            </div>
+            <div>
+                <button id="play-next" style="background-color: skyblue; padding: 14px 22px; font-size: 1.05em; font-weight: 600; color: #fff; border: none; border-radius: 8px; cursor: pointer; transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;">Next</button>
+            </div>
+            <div class="feedback-area">
+                <span id="feedback-icon"></span>
+                <p id="feedback-text"></p>
+            </div>
+        </div>
+
+        <div id="game-over-area" style="display:none;">
+            <h2>Game Over!</h2>
+            <p>Your final score: <span id="final-score">0</span> out of <span id="total-questions-final">10</span>.</p>
+            <button id="play-again-btn">Play Again</button>
+        </div>
+    </div>
+
+    <script>
+        const objects = [
+            { name: "Cat", type: "living", explanation: "grows, moves, breathes, eats, and reproduces." },
+            { name: "Tree", type: "living", explanation: "grows, photosynthesizes (a form of 'eating'), reproduces, and responds to its environment." },
+            { name: "Rock", type: "non-living", explanation: "does not grow, breathe, eat, or reproduce on its own." },
+            { name: "Car", type: "non-living", explanation: "is a manufactured object and does not possess characteristics of life like growth or reproduction." },
+            { name: "Flower", type: "living", explanation: "is part of a plant that grows, reproduces (produces seeds), and responds to its environment." },
+            { name: "Computer", type: "non-living", explanation: "is a manufactured machine; it doesn't grow, breathe, or reproduce." },
+            { name: "Dog", type: "living", explanation: "grows, moves, breathes, eats, and reproduces." },
+            { name: "Book", type: "non-living", explanation: "is a non-living object made of materials like paper; it doesn't have life processes." },
+            { name: "Fish", type: "living", explanation: "grows, moves, breathes (underwater), eats, and reproduces." },
+            { name: "Chair", type: "non-living", explanation: "is a manufactured object and doesn't exhibit life characteristics like growth or breathing." },
+            { name: "Bird", type: "living", explanation: "grows, moves (flies), breathes, eats, and reproduces." },
+            { name: "Bicycle", type: "non-living", explanation: "is a machine that requires a living thing (a person) to move and doesn't have life processes itself." }
+        ];
+
+        const TOTAL_QUESTIONS_PER_ROUND = 10;
+        let currentScore = 0;
+        let questionsAnswered = 0;
+        let currentObject = null;
+
+        // DOM Elements
+        const scoreEl = document.getElementById('score');
+        const totalQuestionsDisplayEl = document.getElementById('total-questions-display');
+        const objectImageEl = document.getElementById('object-image');
+        const objectNameDisplayEl = document.getElementById('object-name-display');
+        const livingBtn = document.getElementById('living-btn');
+        const nonlivingBtn = document.getElementById('nonliving-btn');
+        const feedbackIconEl = document.getElementById('feedback-icon');
+        const feedbackTextEl = document.getElementById('feedback-text');
+        const feedbackAreaEl = document.querySelector('.feedback-area');
+        const gameContentEl = document.querySelector('.game-content');
+        const gameOverAreaEl = document.getElementById('game-over-area');
+        const finalScoreEl = document.getElementById('final-score');
+        const totalQuestionsFinalEl = document.getElementById('total-questions-final');
+        const playAgainBtn = document.getElementById('play-again-btn');
+
+        function startGame() {
+            currentScore = 0;
+            questionsAnswered = 0;
+            currentObject = null; 
+            
+            scoreEl.textContent = currentScore;
+            totalQuestionsDisplayEl.textContent = TOTAL_QUESTIONS_PER_ROUND;
+            totalQuestionsFinalEl.textContent = TOTAL_QUESTIONS_PER_ROUND;
+
+            gameContentEl.style.display = 'block';
+            gameOverAreaEl.style.display = 'none';
+            
+            clearFeedback();
+            enableButtons();
+            displayNextObject();
+        }
+
+        function displayNextObject() {
+            let nextObjectCandidate;
+            // Ensure we don't pick the same object consecutively if possible
+            if (objects.length > 1 && currentObject) { 
+                do {
+                    const randomIndex = Math.floor(Math.random() * objects.length);
+                    nextObjectCandidate = objects[randomIndex];
+                } while (nextObjectCandidate === currentObject);
+            } else { 
+                 const randomIndex = Math.floor(Math.random() * objects.length);
+                 nextObjectCandidate = objects[randomIndex];
+            }
+            currentObject = nextObjectCandidate;
+            
+            const imageName = encodeURIComponent(currentObject.name);
+            // Using a placeholder service that generates images with text
+            // console.log(`Loading image for: ${currentObject.name}`, currentObject);
+            objectImageEl.src = `image/${currentObject.name}.jpg`; // Replace spaces with + for URL
+            objectImageEl.alt = `Image of a ${currentObject.name}`;
+            objectNameDisplayEl.textContent = currentObject.name;
+
+            clearFeedback();
+            enableButtons();
+        }
+
+        function clearFeedback() {
+            feedbackIconEl.textContent = '';
+            feedbackTextEl.textContent = '';
+            feedbackAreaEl.className = 'feedback-area'; // Reset class
+        }
+
+        function disableButtons() {
+            livingBtn.disabled = true;
+            nonlivingBtn.disabled = true;
+        }
+
+        function enableButtons() {
+            livingBtn.disabled = false;
+            nonlivingBtn.disabled = false;
+        }
+
+        function handleClassification(userChoice) {
+            if (livingBtn.disabled) return; // Prevent multiple clicks during feedback
+            
+            disableButtons();
+
+            const correct = userChoice === currentObject.type;
+
+            if (correct) {
+                currentScore++;
+                feedbackIconEl.textContent = '✔'; // Green Checkmark
+                feedbackTextEl.textContent = `Correct! Well done.A ${currentObject.name} is ${currentObject.type} because it ${currentObject.explanation}`;
+                feedbackAreaEl.className = 'feedback-area correct';
+            } else {
+                feedbackIconEl.textContent = '❌'; // Red X
+                let feedbackMsg = `Not quite. A ${currentObject.name} is ${currentObject.type} because it ${currentObject.explanation}`;
+                feedbackTextEl.textContent = feedbackMsg;
+                feedbackAreaEl.className = 'feedback-area incorrect';
+            }
+
+            scoreEl.textContent = currentScore;
+            questionsAnswered++;
+
+            // setTimeout(() => {
+            //     if (questionsAnswered < TOTAL_QUESTIONS_PER_ROUND) {
+            //         displayNextObject();
+            //     } else {
+            //         endGame();
+            //     }
+            // }, 2500); // Delay for feedback visibility (2.5 seconds)
+        }
+
+        function endGame() {
+            gameContentEl.style.display = 'none';
+            gameOverAreaEl.style.display = 'block';
+            finalScoreEl.textContent = currentScore;
+            // Buttons are already disabled by the last handleClassification call
+        }
+
+        // Event Listeners
+        livingBtn.addEventListener('click', () => handleClassification('living'));
+        nonlivingBtn.addEventListener('click', () => handleClassification('non-living'));
+        playAgainBtn.addEventListener('click', startGame);
+        const playNextBtn = document.getElementById('play-next');
+        playNextBtn.addEventListener('click', () => {
+            if (questionsAnswered < TOTAL_QUESTIONS_PER_ROUND) {
+            displayNextObject();
+            }
+            if (questionsAnswered >= TOTAL_QUESTIONS_PER_ROUND) {
+            endGame();
+            }
+        });
+        // Initial game start
+        // Set a default transparent image before the first object loads
+        objectImageEl.src = "image/car.jpg"; // Placeholder image
+        startGame();
+    </script>
+
+</body>
+</html>
