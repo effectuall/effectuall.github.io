@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Interactive Triangle Area (WebGL)</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+            display: block;
+            margin: auto;
+        }
+
+        body {
+            font-family: sans-serif;
+            text-align: left;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Area of the triangle</h2>
+    <div style="position: relative; display: inline-block; ">
+        <div style="position: relative; display: inline-block;">
+            <canvas id="glcanvas" width="600" height="600"
+                style="position: absolute; left: 0; top: 0; z-index: 0;"></canvas>
+            <canvas id="labelcanvas" width="600" height="600"
+                style="position: absolute; left: 0; top: 0; z-index: 1; pointer-events: none;"></canvas>
+        </div>
+        <p id="area-display" style="position: relative; margin-top: 620px;">Area: </p>
+    </div>
+
+    <script>
+        const canvas = document.getElementById("glcanvas");
+        const gl = canvas.getContext("webgl");
+        const labelCanvas = document.getElementById("labelcanvas");
+        const labelCtx = labelCanvas.getContext("2d");
+
+        function drawLabels() {
+            // testLine();
+            drawGrid(); // 👈 Draw background grid first
+            // labelCtx.clearRect(0, 0, labelCanvas.width, labelCanvas.height);
+
+            const names = ["A", "B", "C"];
+            for (let i = 0; i < 3; i++) {
+                const xNDC = vertices[i * 2];
+                const yNDC = vertices[i * 2 + 1];
+                const x = ((xNDC + 1) / 2) * labelCanvas.width;
+                const y = ((1 - yNDC) / 2) * labelCanvas.height;
+
+                labelCtx.fillStyle = "black";
+                labelCtx.font = "18px sans-serif";
+                labelCtx.fillText(names[i], x + 15, y - 15);
+            }
+
+            drawAngles(); // 👈 Add this to show angles
+        }
+
+        function drawAngles() {
+            const [ax, ay, bx, by, cx, cy] = vertices;
+
+            // Helper to compute angle at a vertex
+            function getAngleDegrees(px, py, qx, qy, rx, ry) {
+                const v1x = qx - px;
+                const v1y = qy - py;
+                const v2x = rx - px;
+                const v2y = ry - py;
+
+                const dot = v1x * v2x + v1y * v2y;
+                const mag1 = Math.sqrt(v1x * v1x + v1y * v1y);
+                const mag2 = Math.sqrt(v2x * v2x + v2y * v2y);
+                const angleRad = Math.acos(dot / (mag1 * mag2));
+                return (angleRad * 180) / Math.PI;
+            }
+
+            const angleA = getAngleDegrees(ax, ay, bx, by, cx, cy);
+            const angleB = getAngleDegrees(bx, by, ax, ay, cx, cy);
+            const angleC = getAngleDegrees(cx, cy, ax, ay, bx, by);
+            const angles = [
+                angleA, angleB, angleC,
+            ];
+            // Round angles to the nearest 0.5 degrees
+            // const angles = [
+            //     Math.round(angleA * 2) / 2,
+            //     Math.round(angleB * 2) / 2,
+            //     Math.round(angleC * 2) / 2,
+            // ];
+
+            const names = ["A", "B", "C"];
+            for (let i = 0; i < 3; i++) {
+                const xNDC = vertices[i * 2];
+                const yNDC = vertices[i * 2 + 1];
+                const x = ((xNDC + 1) / 2) * labelCanvas.width;
+                const y = ((1 - yNDC) / 2) * labelCanvas.height;
+
+                labelCtx.fillStyle = "red";
+                labelCtx.font = "14px sans-serif";
+                labelCtx.fillText(angles[i].toFixed(1) + "°", x + 5, y + 15);
+            }
+        }
+        function testLine() {
+            labelCtx.beginPath();
+            labelCtx.moveTo(0, 0);
+            labelCtx.lineTo(600, 600);
+            labelCtx.strokeStyle = "blue";
+            labelCtx.lineWidth = 2;
+            labelCtx.stroke();
+        }
+
+        function drawGrid() {
+            const ctx = labelCtx;
+            ctx.clearRect(0, 0, labelCanvas.width, labelCanvas.height);
+
+            const width = labelCanvas.width;
+            const height = labelCanvas.height;
+            const unitSize = 100; // 1 unit = 100 pixels
+            const subDiv = 10;
+            const subSize = unitSize / subDiv;
+
+            ctx.strokeStyle = "#e0e0e0"; // thin lines
+            ctx.lineWidth = 0.5;
+
+            // Draw thin subdivision lines
+            for (let i = 0; i <= subDiv * 6; i++) {
+                const pos = i * subSize;
+
+                // vertical
+                ctx.beginPath();
+                ctx.moveTo(pos, 0);
+                ctx.lineTo(pos, height);
+                ctx.stroke();
+
+                // horizontal
+                ctx.beginPath();
+                ctx.moveTo(0, pos);
+                ctx.lineTo(width, pos);
+                ctx.stroke();
+            }
+
+            // Draw thick main grid lines
+            ctx.strokeStyle = "#a0a0a0"; // thicker lines
+            ctx.lineWidth = 1.5;
+
+            for (let i = 0; i <= 6; i++) {
+                const pos = i * unitSize;
+
+                // vertical
+                ctx.beginPath();
+                ctx.moveTo(pos, 0);
+                ctx.lineTo(pos, height);
+                ctx.stroke();
+
+                // horizontal
+                ctx.beginPath();
+                ctx.moveTo(0, pos);
+                ctx.lineTo(width, pos);
+                ctx.stroke();
+            }
+
+            // Draw X and Y axes
+            ctx.strokeStyle = "#000000";
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(0, height / 2);
+            ctx.lineTo(width, height / 2);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(width / 2, 0);
+            ctx.lineTo(width / 2, height);
+            ctx.stroke();
+        }
+
+        if (!gl) {
+            alert("WebGL not supported!");
+        }
+
+        // Vertex Shader
+        const vsSource = `
+      attribute vec2 a_position;
+      void main() {
+        gl_Position = vec4(a_position, 0, 1);
+      }
+    `;
+
+        // Fragment Shader
+        const fsSource = `
+      precision mediump float;
+      void main() {
+        gl_FragColor = vec4(0.2, 0.6, 1.0, 1.0);
+      }
+    `;
+
+        function createShader(gl, type, source) {
+            const shader = gl.createShader(type);
+            gl.shaderSource(shader, source);
+            gl.compileShader(shader);
+            if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+                alert("Shader compile error: " + gl.getShaderInfoLog(shader));
+                gl.deleteShader(shader);
+                return null;
+            }
+            return shader;
+        }
+
+        const vertexShader = createShader(gl, gl.VERTEX_SHADER, vsSource);
+        const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fsSource);
+
+        function createProgram(gl, vShader, fShader) {
+            const program = gl.createProgram();
+            gl.attachShader(program, vShader);
+            gl.attachShader(program, fShader);
+            gl.linkProgram(program);
+            if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+                alert("Program link error: " + gl.getProgramInfoLog(program));
+                return null;
+            }
+            return program;
+        }
+
+        const program = createProgram(gl, vertexShader, fragmentShader);
+        const positionAttributeLocation = gl.getAttribLocation(program, "a_position");
+        const positionBuffer = gl.createBuffer();
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+
+        // Initial triangle vertices in NDC space
+        let vertices = [
+            -0.5, -0.5,  // A
+            0.5, -0.5,  // B
+            0.0, 0.5   // C
+        ];
+
+        function draw() {
+
+            gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+            gl.clearColor(1, 1, 1, 1);
+            gl.clear(gl.COLOR_BUFFER_BIT);
+
+            // drawGrid(); // 👈 draw grid first
+            gl.useProgram(program);
+            gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+            gl.enableVertexAttribArray(positionAttributeLocation);
+            gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
+            gl.drawArrays(gl.TRIANGLES, 0, 3);
+
+            updateArea();
+            drawLabels();  // 👈 draw labels each frame
+        }
+        function estimateTriangleAreaFromGrid() {
+            const offCanvas = document.createElement("canvas");
+            offCanvas.width = 600;
+            offCanvas.height = 600;
+            const ctx = offCanvas.getContext("2d");
+
+            // Draw triangle
+            ctx.beginPath();
+            ctx.moveTo(((vertices[0] + 1) / 2) * 600, ((1 - vertices[1]) / 2) * 600);
+            ctx.lineTo(((vertices[2] + 1) / 2) * 600, ((1 - vertices[3]) / 2) * 600);
+            ctx.lineTo(((vertices[4] + 1) / 2) * 600, ((1 - vertices[5]) / 2) * 600);
+            ctx.closePath();
+            ctx.fillStyle = "black";
+            ctx.fill();
+
+            const imageData = ctx.getImageData(0, 0, 600, 600);
+            let count = 0;
+
+            for (let y = 0; y < 600; y += 10) { // Step every 10 pixels (1 small square)
+                for (let x = 0; x < 600; x += 10) {
+                    const index = (y * 600 + x) * 4;
+                    if (imageData.data[index + 3] > 0) count++; // Alpha > 0 means filled
+                }
+            }
+
+            // Each 10x10 cell = 0.01 square units (1 unit = 100 pixels)
+            const areaApprox = count * 0.01;
+            return areaApprox;
+        }
+
+
+        function updateArea() {
+
+            const approxArea = estimateTriangleAreaFromGrid();
+            document.getElementById("area-display").innerText = "Area: " + approxArea;
+        }
+
+        // Mouse interaction
+        let draggingIndex = null;
+
+        canvas.addEventListener("mousedown", (e) => {
+            const [mx, my] = getMouseNDC(e);
+            for (let i = 0; i < vertices.length; i += 2) {
+                const dx = vertices[i] - mx;
+                const dy = vertices[i + 1] - my;
+                if (dx * dx + dy * dy < 0.02) {
+                    draggingIndex = i;
+                    break;
+                }
+            }
+        });
+
+        canvas.addEventListener("mousemove", (e) => {
+            if (draggingIndex !== null) {
+                const [mx, my] = getMouseNDC(e);
+                vertices[draggingIndex] = mx;
+                vertices[draggingIndex + 1] = my;
+                draw();
+            }
+        });
+
+        canvas.addEventListener("mouseup", () => draggingIndex = null);
+        canvas.addEventListener("mouseleave", () => draggingIndex = null);
+
+        function getMouseNDC(e) {
+            const rect = canvas.getBoundingClientRect();
+            const x = ((e.clientX - rect.left) / canvas.width) * 2 - 1;
+            const y = ((canvas.height - (e.clientY - rect.top)) / canvas.height) * 2 - 1;
+            return [x, y];
+        }
+
+        draw();
+    </script>
+</body>
+
+</html>
