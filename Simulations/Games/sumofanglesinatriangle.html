@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Triangle Angle Sum Demo (GLSL)</title>
+  <style>
+    body { margin: 0; overflow: hidden; }
+    canvas { display: block; width: 100vw; height: 100vh; }
+    #controls { position: absolute; top: 10px; left: 10px; color: white; z-index:10 }
+    button { margin: 2px; }
+    
+  </style>
+</head>
+<body>
+  <div id="controls">
+    <button onclick="selectVertex(0)">Select A (Red)</button>
+    <button onclick="selectVertex(1)">Select B (Green)</button>
+    <button onclick="selectVertex(2)">Select C (Blue)</button>
+  </div>
+  <div style="position: relative; display: inline-block; ">
+        <div style="position: relative; display: inline-block;">
+            <canvas id="canvas" width="600" height="600"
+                style="position: absolute; left: 0; top: 0; z-index: 0;"></canvas>
+            <canvas id="overlay" width="600" height="600"
+                style="position: absolute; left: 0; top: 0; z-index: 1; pointer-events: none;"></canvas>
+        </div>
+        <p id="area-display" style="position: relative; margin-top: 620px;">Area: </p>
+    </div>
+
+<script id="vertexShader" type="x-shader/x-vertex">
+  attribute vec2 a_position;
+  void main() {
+    gl_Position = vec4(a_position, 0.0, 1.0);
+  }
+</script>
+
+<script id="fragmentShader" type="x-shader/x-fragment">
+  precision mediump float;
+
+  uniform vec2 u_resolution;
+  uniform vec2 u_posA;
+  uniform vec2 u_posB;
+  uniform vec2 u_posC;
+  uniform int u_selected;
+
+  const float PI = 3.141592653589793;
+
+  // Helper to draw anti-aliased lines
+  float line(vec2 p, vec2 a, vec2 b, float width) {
+    vec2 pa = p - a, ba = b - a;
+    float h = clamp(dot(pa, ba) / dot(ba, ba), 0.0, 1.0);
+    return smoothstep(width, 0.0, length(pa - ba * h));
+  }
+
+  // Helper to draw angle arcs
+  float arc(vec2 p, vec2 center, vec2 v1, vec2 v2, float radius, float thickness) {
+    vec2 dir = normalize(v1);
+    vec2 dir2 = normalize(v2);
+    float angle1 = atan(dir.y, dir.x);
+    float angle2 = atan(dir2.y, dir2.x);
+
+    float ang = atan(p.y - center.y, p.x - center.x);
+    float dAngle = mod(ang - angle1 + 2.0 * PI, 2.0 * PI);
+
+    float arcAngle = mod(angle2 - angle1 + 2.0 * PI, 2.0 * PI);
+    float withinArc = step(0.0, dAngle) * step(dAngle, arcAngle);
+
+    float dist = abs(length(p - center) - radius);
+    return withinArc * smoothstep(thickness, 0.0, dist);
+  }
+
+  void main() {
+    vec2 uv = gl_FragCoord.xy / u_resolution;
+
+    // Convert to [-1,1] space
+    vec2 A = u_posA;
+    vec2 B = u_posB;
+    vec2 C = u_posC;
+    vec2 p = uv;
+
+    float width = 0.002;
+
+    // Draw triangle edges
+    float triLines = line(p, A, B, width) + line(p, B, C, width) + line(p, C, A, width);
+
+    // Draw angle arcs at A (Red), B (Green), C (Blue)
+    float arcA = arc(p, A, B - A, C - A, 0.05, 0.002);
+    float arcB = arc(p, B, C - B, A - B, 0.05, 0.002);
+    float arcC = arc(p, C, A - C, B - C, 0.05, 0.002);
+
+    // Draw parallel ray through selected vertex
+    vec2 dir;
+    if (u_selected == 0) dir = normalize(C - B);
+    if (u_selected == 1) dir = normalize(A - C);
+    if (u_selected == 2) dir = normalize(B - A);
+
+    vec2 sel = (u_selected == 0) ? A : (u_selected == 1) ? B : C;
+
+    float ray = line(p, sel - dir * 2.0, sel + dir * 2.0, width / 2.0);
+
+    // Combine all visuals
+    vec3 color = vec3(0.0);
+    color += vec3(1.0, 0.0, 0.0) * arcA;
+    color += vec3(0.0, 1.0, 0.0) * arcB;
+    color += vec3(0.0, 0.0, 1.0) * arcC;
+
+    color += vec3(1.0) * triLines;
+    color += vec3(1.0, 1.0, 0.0) * ray;
+
+    gl_FragColor = vec4(color, 1.0);
+  }
+</script>
+
+<script>
+  const canvas = document.getElementById('canvas');
+  const gl = canvas.getContext('webgl');
+  const overlay = document.getElementById('overlay');
+const ctx = overlay.getContext('2d');
+
+function renderOverlay() {
+  overlay.width = canvas.width;
+  overlay.height = canvas.height;
+
+  ctx.clearRect(0, 0, overlay.width, overlay.height);
+  ctx.fillStyle = 'white';
+  ctx.font = '20px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+
+  function drawLabel(label, pos) {
+    const x = pos[0] * overlay.width;
+    const y = (1.0 - pos[1]) * overlay.height;
+    ctx.fillText(label, x, y - 15);
+  }
+
+  drawLabel('A', posA);
+  drawLabel('B', posB);
+  drawLabel('C', posC);
+}
+  let selectedVertex = 0;
+
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+  }
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+
+  // Compile shaders
+  function createShader(gl, type, source) {
+    const shader = gl.createShader(type);
+    gl.shaderSource(shader, source);
+    gl.compileShader(shader);
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+      console.error(gl.getShaderInfoLog(shader));
+      gl.deleteShader(shader);
+      return null;
+    }
+    return shader;
+  }
+
+  const vertexShaderSource = document.getElementById('vertexShader').text;
+  const fragmentShaderSource = document.getElementById('fragmentShader').text;
+
+  const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
+  const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
+
+  const program = gl.createProgram();
+  gl.attachShader(program, vertexShader);
+  gl.attachShader(program, fragmentShader);
+  gl.linkProgram(program);
+  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+    console.error(gl.getProgramInfoLog(program));
+  }
+
+  const positionBuffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+  const positions = [
+    -1, -1,
+    1, -1,
+    -1, 1,
+    -1, 1,
+    1, -1,
+    1, 1,
+  ];
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+
+  const aPosition = gl.getAttribLocation(program, 'a_position');
+  const uResolution = gl.getUniformLocation(program, 'u_resolution');
+  const uPosA = gl.getUniformLocation(program, 'u_posA');
+  const uPosB = gl.getUniformLocation(program, 'u_posB');
+  const uPosC = gl.getUniformLocation(program, 'u_posC');
+  const uSelected = gl.getUniformLocation(program, 'u_selected');
+
+  let posA = [0.3, 0.3];
+  let posB = [0.7, 0.4];
+  let posC = [0.5, 0.7];
+
+  let dragging = null;
+
+  canvas.addEventListener('mousedown', (e) => {
+    const uv = [e.clientX / canvas.width, 1.0 - e.clientY / canvas.height];
+    if (distance(uv, posA) < 0.03) dragging = 'A';
+    else if (distance(uv, posB) < 0.03) dragging = 'B';
+    else if (distance(uv, posC) < 0.03) dragging = 'C';
+  });
+
+  canvas.addEventListener('mouseup', () => dragging = null);
+
+  canvas.addEventListener('mousemove', (e) => {
+    if (!dragging) return;
+    const uv = [e.clientX / canvas.width, 1.0 - e.clientY / canvas.height];
+    if (dragging === 'A') posA = uv;
+    if (dragging === 'B') posB = uv;
+    if (dragging === 'C') posC = uv;
+  });
+
+  function distance(a, b) {
+    const dx = a[0] - b[0];
+    const dy = a[1] - b[1];
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+
+  function selectVertex(index) {
+    selectedVertex = index;
+  }
+
+  function render() {
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.useProgram(program);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+    gl.enableVertexAttribArray(aPosition);
+    gl.vertexAttribPointer(aPosition, 2, gl.FLOAT, false, 0, 0);
+
+    gl.uniform2f(uResolution, canvas.width, canvas.height);
+    gl.uniform2fv(uPosA, posA);
+    gl.uniform2fv(uPosB, posB);
+    gl.uniform2fv(uPosC, posC);
+    gl.uniform1i(uSelected, selectedVertex);
+
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+    requestAnimationFrame(render);
+  }
+
+//   render();
+  function renderAll() {
+  render();
+  renderOverlay();
+  requestAnimationFrame(renderAll);
+}
+
+renderAll();
+</script>
+</body>
+</html>
