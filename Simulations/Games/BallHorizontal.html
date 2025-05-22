@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2D Ball Movement with Gravity</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom CSS for the canvas and overall layout */
+        body {
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f2f5;
+            /* Light gray background */
+            margin: 0;
+            overflow: hidden;
+            /* Prevent scrollbars */
+        }
+
+        canvas {
+            background-color: #ffffff;
+            /* White canvas background */
+            border: 2px solid #3b82f6;
+            /* Blue border */
+            border-radius: 12px;
+            /* Rounded corners for the canvas */
+            display: block;
+            /* Remove extra space below canvas */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            /* Soft shadow */
+            max-width: 90vw;
+            /* Ensure it fits on smaller screens */
+            max-height: 80vh;
+            /* Ensure it fits vertically */
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #1f2937;
+            /* Dark gray text */
+            font-size: 2.25rem;
+            /* Large heading */
+            font-weight: 700;
+            /* Bold */
+            text-align: center;
+        }
+
+        .controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            background-color: #ffffff;
+            padding: 15px 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            width: fit-content;
+            margin-bottom: 10px;
+        }
+
+        .controls label {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .controls input[type="range"] {
+            width: 250px;
+            height: 8px;
+            background: #d1d5db;
+            border-radius: 5px;
+            outline: none;
+            -webkit-appearance: none;
+            /* Remove default styling */
+            appearance: none;
+            cursor: pointer;
+        }
+
+        .controls input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #3b82f6;
+            cursor: grab;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+        }
+
+        .controls input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #3b82f6;
+            cursor: grab;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+        }
+
+        .controls p {
+            font-size: 1rem;
+            color: #4b5563;
+        }
+
+        .controls p span {
+            font-weight: 700;
+            color: #1f2937;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>2D Ball Movement with Gravity</h1>
+        <div class="controls">
+            <label for="velocityRange" class="text-lg font-medium text-gray-700">Initial Horizontal Velocity: <span
+                    id="velocityValue">3.0</span></label>
+            <input type="range" id="velocityRange" min="0" max="50" step="0.5" value="3">
+            <p class="text-md text-gray-600">Time to reach ground: <span id="timeToGround">0.00</span> seconds</p>
+        </div>
+        <canvas id="ballCanvas"></canvas>
+    </div>
+
+    <script type="module">
+        // Get the canvas element and its 2D rendering context
+        const canvas = document.getElementById('ballCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Ball properties
+        let ballRadius = 20; // Radius of the ball
+        let ballColor = '#ef4444'; // Red color for the ball
+        let x; // Current X position of the ball
+        let y; // Current Y position of the ball
+        let dx; // Horizontal velocity of the ball
+        let dy; // Vertical velocity of the ball
+        const gravity = 0.2; // Gravity factor (acceleration)
+
+        // Get control elements from the DOM
+        const velocityRange = document.getElementById('velocityRange');
+        const velocityValueSpan = document.getElementById('velocityValue');
+        const timeToGroundSpan = document.getElementById('timeToGround');
+
+        /**
+         * Calculates and displays the theoretical time it takes for the ball to fall
+         * from its initial top position to the bottom of the canvas, assuming
+         * an initial vertical velocity of zero and constant gravity.
+         */
+        function calculateTimeToGround() {
+            // The distance the ball needs to fall from its top edge to the canvas bottom edge.
+            // Initial Y position is ballRadius (top of ball at canvas top).
+            // Final Y position is canvas.height - ballRadius (bottom of ball at canvas bottom).
+            const fallDistance = canvas.height - (2 * ballRadius);
+
+            if (fallDistance <= 0) {
+                // If canvas is too small or ball is too large, it cannot fall.
+                timeToGroundSpan.textContent = 'N/A';
+                return;
+            }
+
+            // Using the kinematic equation: h = v_0*t + 0.5 * g * t^2
+            // Since initial vertical velocity (v_0) is 0, it simplifies to: h = 0.5 * g * t^2
+            // Solving for t: t = sqrt(2 * h / g)
+            const time = Math.sqrt((2 * fallDistance) / gravity);
+            timeToGroundSpan.textContent = time.toFixed(2); // Display time with 2 decimal places
+        }
+
+        /**
+         * Initializes the canvas dimensions and sets the ball's initial state.
+         * This function is called when the window loads and whenever the window is resized.
+         */
+        function initializeCanvasAndBall() {
+            // Set canvas dimensions to be responsive based on window size
+            canvas.width = Math.min(window.innerWidth * 0.8, 800); // Max width 800px or 80% of window
+            canvas.height = Math.min(window.innerHeight * 0.6, 400); // Max height 400px or 60% of window
+
+            // Reset ball to the top-left corner of the canvas, considering its radius
+            x = ballRadius;
+            y = ballRadius;
+            dy = 0; // Initial vertical velocity is set to zero
+
+            // Set the initial horizontal velocity based on the current value of the range input
+            dx = parseFloat(velocityRange.value);
+            velocityValueSpan.textContent = dx.toFixed(1); // Update the displayed velocity value
+
+            // Recalculate the time to ground as canvas dimensions might have changed
+            calculateTimeToGround();
+        }
+
+        /**
+         * Draws the ball on the canvas at its current (x, y) position.
+         */
+        function drawBall() {
+            ctx.beginPath(); // Start a new drawing path
+            // Draw a circle (arc) for the ball
+            ctx.arc(x, y, ballRadius, 0, Math.PI * 2);
+            ctx.fillStyle = ballColor; // Set the fill color of the ball
+            ctx.fill(); // Fill the circle with the specified color
+            ctx.closePath(); // Close the path
+        }
+
+        /**
+         * Updates the ball's position based on its current velocities and applies gravity.
+         * Handles collisions with all four canvas boundaries, reversing velocity and
+         * applying a slight energy loss on vertical bounces.
+         */
+        function update() {
+            // Apply gravity to the vertical velocity, increasing it downwards
+            dy += gravity;
+
+            // Update the ball's position based on its velocities
+            x += dx;
+            y += dy;
+
+            // --- Horizontal collision detection ---
+            // If the ball hits the right wall
+            if (x + ballRadius > canvas.width) {
+                dx = -dx; // Reverse horizontal direction
+                x = canvas.width - ballRadius; // Clamp ball position to prevent it from going outside
+            }
+            // If the ball hits the left wall
+            else if (x - ballRadius < 0) {
+                dx = -dx; // Reverse horizontal direction
+                x = ballRadius; // Clamp ball position
+            }
+
+            // --- Vertical collision detection ---
+            // If the ball hits the bottom wall (ground)
+            if (y + ballRadius > canvas.height) {
+                dy = -dy * 0.8; // Reverse vertical direction and reduce velocity (energy loss)
+                y = canvas.height - ballRadius; // Clamp ball position to the ground
+                // If the bounce velocity is very small, stop vertical movement to prevent tiny, infinite bounces
+                if (Math.abs(dy) < 0.5 && Math.abs(gravity) > 0) { // Check gravity > 0 to avoid issues if gravity is 0
+                    dy = 0;
+                    y = canvas.height - ballRadius; // Ensure it's perfectly on the ground
+                }
+            }
+            // If the ball hits the top wall
+            else if (y - ballRadius < 0) {
+                dy = -dy * 0.8; // Reverse vertical direction and reduce velocity (energy loss)
+                y = ballRadius; // Clamp ball position to the top
+            }
+        }
+
+        /**
+         * The main animation loop of the visualization.
+         * It clears the canvas, updates the ball's state, and then redraws the ball.
+         * Uses requestAnimationFrame for efficient and smooth animation.
+         */
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the entire canvas for the next frame
+            update(); // Update the ball's position and handle collisions
+            drawBall(); // Draw the ball at its new position
+            requestAnimationFrame(animate); // Request the browser to call animate again before the next repaint
+        }
+
+        // --- Event Listeners ---
+        // Initialize canvas and start animation when the window finishes loading
+        window.onload = function () {
+            initializeCanvasAndBall();
+            animate();
+        };
+
+        // Re-initialize canvas size and ball position when the window is resized
+        window.addEventListener('resize', initializeCanvasAndBall);
+
+        // Listen for changes on the velocity range input
+        velocityRange.addEventListener('input', () => {
+            dx = parseFloat(velocityRange.value); // Update horizontal velocity
+            velocityValueSpan.textContent = dx.toFixed(1); // Update displayed value
+            // Reset ball position to the top-left corner and reset vertical velocity
+            // This allows observing the new trajectory clearly with the changed horizontal speed.
+            x = ballRadius;
+            y = ballRadius;
+            dy = 0;
+        });
+    </script>
+</body>
+
+</html>
