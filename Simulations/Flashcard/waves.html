@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+     <title>Flashcard Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f2f2;
+            margin: 0;
+            height: 100vh;
+        }
+
+        .wrapper {
+            position: relative;
+            top: 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .flashcard-container {
+            width: 400px;
+            height: 250px;
+            perspective: 1000px;
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .flashcard {
+            width: 100%;
+            height: 100%;
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+            position: relative;
+        }
+
+        .flipped {
+            transform: rotateY(180deg);
+        }
+
+        .front,
+        .back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            padding: 20px;
+            overflow-y: auto;
+            box-sizing: border-box;
+        }
+
+        .back {
+            transform: rotateY(180deg);
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            width: 400px;
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            background-color: #029ba0;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #027674;
+        }
+
+        .answer-btn {
+            width: 400px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+<h1 style="text-align: center;"> Flashcard Generator</h1>
+    <div class="wrapper">
+        <div class="flashcard-container">
+            <div class="flashcard" id="flashcard">
+                <div class="front" id="cardFront"></div>
+                <div class="back" id="cardBack"></div>
+            </div>
+        </div>
+
+        <button class="answer-btn" onclick="flipCard()">Show Answer</button>
+
+        <div class="controls">
+            <button onclick="prevCard()">← Previous</button>
+            <button onclick="resetCards()">Reset</button>
+            <button onclick="nextCard()">Next →</button>
+        </div>
+    </div>
+
+    <script>
+        const flashcards = [
+            {
+                front: "What is a wave?",
+                back: "A wave is a periodic disturbance of a medium. All waves transfer energy from one place to another without transferring matter. The medium is the material that is disturbed as the wave passes through it."
+            },
+            {
+                front: "What are the two main types of waves and how do particles move in each?",
+                back: "Transverse waves: Particles of the medium oscillate at right angles to the direction the wave energy travels. Examples: Surface water waves, light, plucked guitar string. Longitudinal waves: Particles oscillate along the same line as the wave energy. Example: Sound."
+            },
+            {
+                front: "Define Wavelength (λ).",
+                back: "Wavelength (λ) is the distance between the same point on two adjacent disturbances. It is measured in metres."
+            },
+            {
+                front: "Define Amplitude.",
+                back: "Amplitude is the distance between a crest (peak) or a trough and the undisturbed position of the medium."
+            },
+            {
+                front: "Define Frequency.",
+                back: "Frequency is the number of waves per second produced by the source that pass through a given point. Measured in Hertz (Hz)."
+            },
+            {
+                front: "What is wave speed?",
+                back: "Wave speed is the distance travelled by a wave crest or compression in one second. The direction of wave motion is the direction of energy transfer."
+            },
+            {
+                front: "What is the formula for wave speed?",
+                back: "Wave speed (v) = frequency (f) × wavelength (λ). v is measured in metres/second (m/s), f in Hertz (Hz), and λ in metres (m)."
+            }
+        ];
+
+        let currentIndex = 0;
+        const flashcard = document.getElementById('flashcard');
+        const cardFront = document.getElementById('cardFront');
+        const cardBack = document.getElementById('cardBack');
+
+        function renderCard(index) {
+            cardFront.innerText = flashcards[index].front;
+            cardBack.innerText = flashcards[index].back;
+            flashcard.classList.remove('flipped');
+        }
+
+        function flipCard() {
+            flashcard.classList.toggle('flipped');
+        }
+
+        function prevCard() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                renderCard(currentIndex);
+            }
+        }
+
+        function nextCard() {
+            if (currentIndex < flashcards.length - 1) {
+                currentIndex++;
+                renderCard(currentIndex);
+            }
+        }
+
+        function resetCards() {
+            currentIndex = 0;
+            renderCard(currentIndex);
+        }
+
+        renderCard(currentIndex);
+    </script>
+
+</body>
+
+</html>
