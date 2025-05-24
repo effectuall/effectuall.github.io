@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Three.js Dynamic Points</title>
+    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.139.0/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.139.0/examples/js/controls/OrbitControls.js"></script>
+
+    <style>
+        /* Basic styling for body and canvas */
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: "Inter", sans-serif;
+            /* Using Inter font as per instructions */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            /* Full viewport height */
+            background-color: #1a202c;
+            /* Dark background */
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Info panel for user instructions */
+        #info {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 14px;
+            z-index: 10;
+            /* Ensure it's above the canvas */
+        }
+
+        /* Control panel for the button */
+        .control-panel {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 15px 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            z-index: 10;
+            /* Ensure it's above the canvas */
+        }
+
+        /* Button styling */
+        .control-panel button {
+            background-color: #6366f1;
+            /* Indigo 500 */
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.1s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .control-panel button:hover {
+            background-color: #4f46e5;
+            /* Indigo 600 */
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .control-panel button:active {
+            background-color: #4338ca;
+            /* Indigo 700 */
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+
+<body>
+    <div id="info">
+        <a><input type="range" id="pos" name="pos" min="2" max="10" value="5" step="0.5">
+            <label for="pos">radius = </label><a id="posDisplay"> </a>
+        </a><br>
+        <p id="infotext">Use mouse to orbit camera.</p>
+    </div>
+    <div id="canvas-container">
+        <canvas id="three-canvas"></canvas>
+    </div>
+    <div class="control-panel">
+        <button id="toggleAnimation">Toggle Point Arrangement</button>
+    </div>
+
+    <script type="module">
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('three-canvas'), antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true; // Enable shadows for realism
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap; // Use soft shadows
+
+        // Orbit Controls
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true; // Add damping for smoother interaction
+        controls.dampingFactor = 0.1;
+        controls.target.set(7, 1, 0); // Set the target point the camera orbits around
+
+        // Lighting
+        const ambientLight = new THREE.AmbientLight(0x404040); // Soft white light
+        scene.add(ambientLight);
+        const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 0.6); // Soft white light from above, dim light from below
+        hemiLight.position.set(0, 20, 0); // Position the light above the scene
+        scene.add(hemiLight);
+
+        const spotLight = new THREE.SpotLight(0xffffff, Math.PI);
+        spotLight.position.set(10, 10, 10);
+        spotLight.castShadow = true;
+        spotLight.shadow.mapSize.width = 1024; // Increase shadow map size for better quality
+        spotLight.shadow.mapSize.height = 1024;
+        spotLight.shadow.camera.near = 0.5;
+        spotLight.shadow.camera.far = 50;
+        spotLight.penumbra = 0.3; // Add penumbra for softer edges
+        scene.add(spotLight);
+
+        const pointLight = new THREE.PointLight(0xffffff, Math.PI);
+        pointLight.position.set(-10, -10, -10);
+        scene.add(pointLight);
+
+        // Grid helper
+        const gridHelper = new THREE.GridHelper(100, 20);
+        scene.add(gridHelper);
+
+        //code for the animating circle points
+        // --- Point Data Generation ---
+        let numPoints = 25; // Total number of points
+        let radius = 5;     // Radius of the circle
+
+        posDisplay.innerText = radius + " cm"; // Display the radius in the info panel
+        // Update radius based on slider input
+        const posSlider = document.getElementById('pos');
+        const infotext = document.getElementById('infotext');
+        posSlider.addEventListener('input', (event) => {
+            // const newRadius = parseFloat(event.target.value);
+            // posDisplay.innerText = newRadius + " cm"; // Update displayed radius
+            // Update the radius variable and regenerate positions
+            // radius = newRadius;
+            // numPoints = Math.max(2, Math.round(radius * 5)); // Adjust number of points based on radius
+            // regeneratePositions();
+
+            let X = `Use mouse to orbit camera. Contact us at
+             <a href="https://effectuall.com/">Effectual Learning</a> for Interactive modules`;
+            infotext.innerHTML = X.trim();
+        });
+        // Arrays to store target positions for circle and line formations
+        const circlePositions = [];
+        const linePositions = [];
+        // Array to store the current interpolated positions of the points
+        const currentPositions = [];
+        // Generate positions for points on a circle
+        // Points are evenly distributed around the circumference
+        for (let i = 0; i < numPoints; i++) {
+            const angle = (i / numPoints) * Math.PI * 2; // Angle in radians for even distribution
+            const x = radius * Math.cos(angle);
+            const y = radius * Math.sin(angle);
+            const z = 0; // Points are in the XY plane
+            circlePositions.push(x, y, z);
+            currentPositions.push(x, y, z); // Initialize current positions to the circle formation
+        }
+        // Generate positions for points along a straight line
+        // The line is centered at (0,0,0) along the X-axis, spanning the diameter of the circle
+        // const lineLength = radius * 2; // Total length of the line (diameter)
+        // for (let i = 0; i < numPoints; i++) {
+        //     // Distribute points evenly along the line segment from -lineLength/2 to +lineLength/2
+        //     const x = -lineLength / 2 + (i / (numPoints - 1)) * lineLength;
+        //     const y = 0; // Points are on the X-axis
+        //     const z = 0;
+        //     linePositions.push(x, y, z);
+        // }
+        // Generate positions for points along a straight line represnting circumfrence
+        // The line will start at (-radius,0,0) and extend along the X-axis for the circumference length
+        const circumference = 2 * Math.PI * radius; // Calculate the circumference
+        for (let i = 0; i < numPoints; i++) {
+            // Distribute points evenly along the line segment from 0 to circumference
+            const x = (i / (numPoints - 1)) * circumference;
+            const y = 0; // Points are on the X-axis
+            const z = 0;
+            linePositions.push(x, y, z);
+        }
+
+
+
+        // --- Three.js Points Object Creation ---
+        // BufferGeometry to hold the point positions efficiently
+        const geometry = new THREE.BufferGeometry();
+        // Set the 'position' attribute of the geometry using a Float32BufferAttribute
+        // This attribute takes an array of numbers (x, y, z for each point) and 3 components per vertex
+        geometry.setAttribute('position', new THREE.Float32BufferAttribute(currentPositions, 3));
+
+        // PointsMaterial defines how the points will look
+        const material = new THREE.PointsMaterial({
+            color: 0x6366f1, // Indigo 500 color for the points
+            size: 0.5,       // Size of each point
+            sizeAttenuation: true // Points appear smaller when further from the camera
+        });
+
+        // Create the Points object and add it to the scene
+        const points = new THREE.Points(geometry, material);
+        scene.add(points);
+        let cgroup = new THREE.Group();
+        let lgroup = new THREE.Group();
+        let circlemesh;
+        let presentPoint, nextPoint;
+
+        // console.log(linePositions.length)
+        for (let i = 0; i < circlePositions.length; i += 3) {
+            // console.log(circlePositions[i], circlePositions[i + 1], circlePositions[i + 2], "next",circlePositions[i+3], circlePositions[i + 4], circlePositions[i + 5])
+            presentPoint = new THREE.Vector3(circlePositions[i], circlePositions[i + 1], circlePositions[i + 2]);
+            nextPoint = new THREE.Vector3(circlePositions[i + 3], circlePositions[i + 4], circlePositions[i + 5]);
+            if (i == circlePositions.length - 3) {
+                nextPoint = new THREE.Vector3(circlePositions[0], circlePositions[1], circlePositions[2]);
+                let pline = initLine({
+                    points: [presentPoint, nextPoint],
+                    lineMaterial: new THREE.LineBasicMaterial({ color: "rgb(0%, 50%, 50%)" }),
+                    yRotation: 0,
+                    x: 0,
+                    y: 0,
+                    z: 0
+                });
+                // presentPoint = nextPoint;
+                cgroup.add(pline)
+            } else {
+                let pline = initLine({
+                    points: [presentPoint, nextPoint],
+                    lineMaterial: new THREE.LineBasicMaterial({ color: "rgb(0%, 50%, 50%)" }),
+                    yRotation: 0,
+                    x: 0,
+                    y: 0,
+                    z: 0
+                });
+                // presentPoint = nextPoint;
+                cgroup.add(pline)
+            }
+        }
+        
+        for (let i = 0; i < linePositions.length; i += 3) {
+            // console.log(circlePositions[i], circlePositions[i + 1], circlePositions[i + 2], "next",circlePositions[i+3], circlePositions[i + 4], circlePositions[i + 5])
+            presentPoint = new THREE.Vector3(linePositions[i], linePositions[i + 1], linePositions[i + 2]);
+            nextPoint = new THREE.Vector3(linePositions[i + 3], linePositions[i + 4], linePositions[i + 5]);
+            if (i == linePositions.length - 3) {
+                nextPoint = new THREE.Vector3(linePositions[0], linePositions[1], linePositions[2]);
+                let pline = initLine({
+                    points: [presentPoint, nextPoint],
+                    lineMaterial: new THREE.LineBasicMaterial({ color: "rgb(100%, 0%, 0%)" }),
+                    yRotation: 0,
+                    x: 0,
+                    y: 0,
+                    z: 0
+                });
+                // presentPoint = nextPoint;
+                lgroup.add(pline)
+            } else {
+                let pline = initLine({
+                    points: [presentPoint, nextPoint],
+                    lineMaterial: new THREE.LineBasicMaterial({ color: "rgb(100%, 0%, 0%)" }),
+                    yRotation: 0,
+                    x: 0,
+                    y: 0,
+                    z: 0
+                });
+                // presentPoint = nextPoint;
+                lgroup.add(pline)
+            }
+        }
+        scene.add(cgroup, lgroup);
+        // --- Animation Logic ---
+        let isCircleState = true; // Tracks the current state: true for circle, false for line
+        let animationProgress = 0; // Progress of the current animation (0 to 1)
+        const animationDuration = 90; // Number of frames for the animation to complete (adjust for speed)
+        let animationFrameCount = 0; // Counter for animation frames
+        let isAnimating = false; // Flag to indicate if an animation is currently running
+        let isCircle = false; // Flag to track if the current state is circle or line
+        // Get the button element and add an event listener
+        let X = new THREE.Object3D();
+        let Y = new THREE.Object3D();
+        const toggleAnimationButton = document.getElementById('toggleAnimation');
+        toggleAnimationButton.addEventListener('click', () => {
+            isCircle = !isCircle; // Toggle the circle state
+            // Log button click for debugging
+            // Only start a new animation if one is not already in progress
+            if (!isAnimating) {
+                isAnimating = true; // Set animation flag
+                animationFrameCount = 0; // Reset frame counter
+                isCircleState = !isCircleState; // Toggle the target state (circle to line or line to circle)
+          
+            } 
+ if (isCircle) {
+               X = circlemesh.clone()
+            Y = circlemesh.clone()
+            cgroup.add(X, Y)
+            circlemesh.position.set(radius, 0, 0); // Reset circle mesh position
+            X.position.set(3 * radius, 0, 0); // Reset circle mesh position
+            Y.position.set(5 * radius, 0, 0); // Reset circle mesh position
+           setTimeout(function () {
+                        cgroup.remove(X, Y);
+                        circlemesh.position.set(0, 0, 0); // Reset the position of the circle group
+                    }, 7500); // Optional delay before resetting
+                      // Clear the previous circle group  
+            }
+             
+        });
+
+        function circularCurve() {
+            let curvePoints = [];
+            let r = radius;
+            let rad = Math.PI / numPoints
+
+            for (let i = -numPoints; i <= numPoints - 1; ++i) {
+                curvePoints.push(new THREE.Vector3(r * Math.sin(rad * i), r * Math.cos(rad * i), 0))
+
+            }
+            let curve = new THREE.CatmullRomCurve3(curvePoints)
+            let geoPoints = curve.getPoints(1);
+            curve.curveType = 'chordal'; //centripetal, chordal and catmullrom.
+            curve.closed = true;
+            let tubeGeometry = new THREE.TubeGeometry(curve, r * 5, .05, 4, false);
+            let material = new THREE.MeshLambertMaterial({ color: 0x00b000 });
+            circlemesh = new THREE.Mesh(tubeGeometry, material);
+
+            scene.add(circlemesh);
+        }
+        circularCurve()
+        /**
+         * Interpolates between two sets of positions based on a given progress.
+         * @param {number[]} startPositions - The starting positions array.
+         * @param {number[]} endPositions - The ending positions array.
+         * @param {number} progress - The interpolation progress (0 to 1).
+         * @returns {number[]} The interpolated positions array.
+         */
+        function interpolatePositions(startPositions, endPositions, progress) {
+            const interpolated = [];
+            for (let i = 0; i < startPositions.length; i++) {
+                // Linear interpolation: start + (end - start) * progress
+                interpolated[i] = startPositions[i] + (endPositions[i] - startPositions[i]) * progress;
+            }
+            return interpolated;
+        }
+
+        //create a line geometry to represent the circumference
+        function initLine(data) {
+            let lineGeometry = new THREE.BufferGeometry().setFromPoints(data.points);
+            let line = new THREE.Line(lineGeometry, data.lineMaterial);
+
+            line.rotation.y = data.yRotation;
+            line.position.x = data.x;
+            line.position.y = data.y;
+            line.position.z = data.z;
+            return line;
+        }
+        camera.position.set(-radius * 2, radius, radius * 5);
+        controls.update();
+
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+
+            if (isAnimating) {
+                animationFrameCount++;
+                animationProgress = animationFrameCount / animationDuration;
+
+                // Clamp progress to 1 to ensure animation finishes cleanly
+                if (animationProgress >= 1) {
+                    animationProgress = 1;
+                    isAnimating = false; // Stop animating once complete
+                    
+                }
+
+                // Determine start and end positions based on the target state
+                const start = isCircleState ? linePositions : circlePositions;
+                const end = isCircleState ? circlePositions : linePositions;
+
+                // Calculate new interpolated positions
+                const newPositions = interpolatePositions(start, end, animationProgress);
+                // Update the position attribute of the geometry
+                geometry.setAttribute('position', new THREE.Float32BufferAttribute(newPositions, 3));
+                // Mark the attribute as needing an update to refresh the points on screen
+                geometry.attributes.position.needsUpdate = true;
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+
+</html>
