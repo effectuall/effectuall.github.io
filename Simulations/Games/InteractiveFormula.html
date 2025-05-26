@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Wave Speed Visualizer</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.2/p5.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        .triangle {
+            width: 0;
+            height: 0;
+            border-left: 150px solid transparent;
+            border-right: 150px solid transparent;
+            border-bottom: 260px solid #ccc;
+            margin: 20px auto;
+            position: relative;
+        }
+
+        .control-group {
+            position: absolute;
+            width: 140px;
+            background: white;
+            padding: 8px;
+            border: 1px solid #999;
+            border-radius: 5px;
+        }
+
+        #waveSpeedGroup {
+            top: 20px;
+            left: 55px;
+        }
+
+        #frequencyGroup {
+            top: 160px;
+            left: -145px;
+        }
+
+        #wavelengthGroup {
+            top: 160px;
+            left: 155px;
+        }
+
+        #constantSelect {
+            margin-top: 20px;
+        }
+
+        canvas {
+            display: block;
+            margin: 20px auto;
+        }
+
+        .highlight {
+            background-color: yellow;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>Wave Speed = Frequency × Wavelength</h2>
+
+    <div class="triangle">
+        <div class="control-group" id="waveSpeedGroup">
+            <label>Wave Speed: <span id="waveSpeedVal">100</span> m/s</label><br>
+            <input type="range" id="waveSpeed" min="10" max="500" value="100">
+        </div>
+
+        <div class="control-group" id="frequencyGroup">
+            <label>Frequency: <span id="frequencyVal">10</span> Hz</label><br>
+            <input type="range" id="frequency" min="0" max="100" value="10">
+        </div>
+
+        <div class="control-group" id="wavelengthGroup">
+            <label>Wavelength: <span id="wavelengthVal">10</span> m</label><br>
+            <input type="range" id="wavelength" min="1" max="100" value="10">
+        </div>
+    </div>
+
+    <div>
+        <label for="constantSelect">Select Constant Variable: </label>
+        <select id="constantSelect">
+            <option value="waveSpeed">Wave Speed</option>
+            <option value="frequency">Frequency</option>
+            <option value="wavelength">Wavelength</option>
+        </select>
+    </div>
+
+    <script>
+        let waveSpeedSlider, freqSlider, waveLenSlider;
+        let constant = "waveSpeed";
+        let phase = 0;       // For animating the wave
+        let f = 10;          // Initial frequency
+        let l = 10;          // Initial wavelength
+        function updateValues() {
+            let v = parseFloat(waveSpeedSlider.value);
+            let f = parseFloat(freqSlider.value);
+            let l = parseFloat(waveLenSlider.value);
+
+            if (constant === 'waveSpeed') {
+                v = f * l;
+                waveSpeedSlider.value = v;
+            } else if (constant === 'frequency') {
+                f = v / l;
+                freqSlider.value = f;
+            } else if (constant === 'wavelength') {
+                l = v / f;
+                waveLenSlider.value = l;
+            }
+
+            document.getElementById("waveSpeedVal").innerText = Math.round(v);
+            document.getElementById("frequencyVal").innerText = Math.round(f);
+            document.getElementById("wavelengthVal").innerText = Math.round(l);
+        }
+
+        function highlightConstant() {
+            ['waveSpeed', 'frequency', 'wavelength'].forEach(id => {
+                const el = document.getElementById(id + "Group");
+                el.classList.remove("highlight");
+            });
+            document.getElementById(constant + "Group").classList.add("highlight");
+        }
+
+        function setup() {
+            createCanvas(600, 200).parent(document.body);
+            waveSpeedSlider = document.getElementById("waveSpeed");
+            freqSlider = document.getElementById("frequency");
+            waveLenSlider = document.getElementById("wavelength");
+
+            waveSpeedSlider.addEventListener("input", () => {
+                if (constant !== 'waveSpeed') updateValues();
+            });
+            freqSlider.addEventListener("input", () => {
+                if (constant !== 'frequency') updateValues();
+            });
+            waveLenSlider.addEventListener("input", () => {
+                if (constant !== 'wavelength') updateValues();
+            });
+
+            document.getElementById("constantSelect").addEventListener("change", (e) => {
+                constant = e.target.value;
+                highlightConstant();
+                updateValues();
+            });
+
+            highlightConstant();
+            updateValues();
+        }
+
+        function draw() {
+            background(240);
+            // stroke(50);
+            // noFill();
+
+            stroke(0, 150, 200); // Blueish stroke for the wave
+            strokeWeight(2);
+            noFill();
+            beginShape();
+            let f = parseFloat(freqSlider.value);
+            let l = parseFloat(waveLenSlider.value);
+            phase += (TWO_PI * f * 0.01);
+            for (let x = 0; x <= width; x += l / 20) {
+                let y = height / 2 + 40 * sin((x / l) * TWO_PI + phase);
+                vertex(x, y);
+            }
+            endShape();
+        }
+    </script>
+
+</body>
+
+</html>
