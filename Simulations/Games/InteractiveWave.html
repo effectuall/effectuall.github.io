@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Sinusoidal Wave</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.js"></script>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+            color: #333;
+        }
+
+        h1 {
+            color: #0056b3;
+            margin-bottom: 20px;
+        }
+
+        #canvasContainer {
+            border: 1px solid #ccc;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+            /* Ensures no content overflows rounded corners */
+        }
+
+        .controls {
+            margin-top: 25px;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+
+        .control-group label {
+            width: 110px;
+            /* Fixed width for labels */
+            text-align: right;
+            color: #555;
+        }
+
+        /* p5.js creates actual input range elements inside these divs */
+        .control-group div[id$="Slider"] input[type="range"] {
+            width: 350px;
+            -webkit-appearance: none;
+            /* Override default style */
+            appearance: none;
+            height: 8px;
+            background: #d3d3d3;
+            outline: none;
+            opacity: 0.7;
+            transition: opacity .2s;
+            border-radius: 5px;
+        }
+
+        .control-group div[id$="Slider"] input[type="range"]:hover {
+            opacity: 1;
+        }
+
+        .control-group div[id$="Slider"] input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #007bff;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .control-group div[id$="Slider"] input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #007bff;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        #waveInfo {
+            margin-top: 20px;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #0056b3;
+            background-color: #e9f7ff;
+            padding: 10px 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Interactive Sinusoidal Wave</h1>
+    <div id="canvasContainer"></div>
+    <div class="controls">
+        <div class="control-group">
+            <label>Amplitude (A):</label>
+            <div id="amplitudeSlider"></div>
+        </div>
+        <div class="control-group">
+            <label>Frequency (f):</label>
+            <div id="frequencySlider"></div>
+        </div>
+        <div class="control-group">
+            <label>Wavelength (λ):</label>
+            <div id="wavelengthSlider"></div>
+        </div>
+    </div>
+    <div id="waveInfo"></div>
+
+    <script>
+        // Global variables to hold p5.js slider objects
+        let amplitudeSlider;
+        let frequencySlider;
+        let wavelengthSlider;
+
+        // Global variables to store the current wave parameters
+        let amplitude;
+        let frequency;
+        let wavelength;
+
+        // Variable to reference the HTML div where wave information will be displayed
+        let waveInfoDiv;
+
+        /**
+         * p5.js setup function.
+         * This function is called once when the program starts.
+         * It's used to define initial environment properties, create canvas, and sliders.
+         */
+        function setup() {
+            // Create the p5.js canvas with a width of 800 pixels and a height of 400 pixels.
+            // The canvas is then attached to the HTML div with the ID 'canvasContainer'.
+            let canvas = createCanvas(800, 400);
+            canvas.parent('canvasContainer');
+
+            // Create the Amplitude slider.
+            // Arguments: (min_value, max_value, initial_value, step_size)
+            // The max amplitude is set to half the canvas height minus a small margin to prevent overflow.
+            amplitudeSlider = createSlider(0, height / 2 - 10, height / 4, 0.1);
+            // Attach the slider to the HTML div with ID 'amplitudeSlider'.
+            amplitudeSlider.parent('amplitudeSlider');
+            // Register a callback function to be called whenever the slider's value changes.
+            amplitudeSlider.input(updateWaveParameters);
+
+            // Create the Frequency slider.
+            // Frequency controls how fast the wave oscillates over time.
+            frequencySlider = createSlider(0, 5, 0, 0.01);
+            frequencySlider.parent('frequencySlider');
+            frequencySlider.input(updateWaveParameters);
+
+            // Create the Wavelength slider.
+            // Wavelength controls the spatial period of the wave.
+            // Max wavelength is set to the canvas width.
+            wavelengthSlider = createSlider(10, width, width / 2, 1);
+            wavelengthSlider.parent('wavelengthSlider');
+            wavelengthSlider.input(updateWaveParameters);
+
+            // Select the HTML div element with the ID 'waveInfo' to display current parameters.
+            waveInfoDiv = select('#waveInfo');
+
+            // Call updateWaveParameters once initially to set the wave based on default slider values.
+            updateWaveParameters();
+        }
+
+        /**
+         * Function to update the global wave parameters based on the current slider values.
+         * This function is called whenever any slider's value changes.
+         */
+        function updateWaveParameters() {
+            amplitude = amplitudeSlider.value();
+            frequency = frequencySlider.value();
+            wavelength = wavelengthSlider.value();
+        }
+
+        /**
+         * p5.js draw function.
+         * This function is called repeatedly (by default, 60 times per second).
+         * It's used to draw and update the visual elements on the canvas.
+         */
+        function draw() {
+            background(245); // Set the background to a light grey color for each frame.
+
+            // Translate the origin (0,0) of the canvas to the vertical center.
+            // This makes the wave oscillate around the middle horizontal line, which acts as the x-axis.
+            translate(20, height / 2);
+
+            // Draw the central x-axis line for reference.
+            stroke(180); // Set stroke color to a lighter grey.
+            strokeWeight(1); // Set line thickness.
+            line(0, 0, width, 0); // Draw a line from (0,0) to (width,0) (relative to the translated origin).
+            noStroke();
+            fill(100);
+            textSize(14);
+            textAlign(CENTER, TOP);
+            text("X-axis (Position)", width / 2, 120);
+
+
+            // --- Visual representation of Amplitude ---
+            stroke(255, 100, 0, 150); // Orange, semi-transparent
+            strokeWeight(1);
+            // Set line dash pattern for amplitude reference lines
+            drawingContext.setLineDash([5, 5]); // Dashed line
+
+            // Draw dashed lines at +amplitude and -amplitude
+            line(0, -amplitude, width, -amplitude);
+            line(0, amplitude, width, amplitude);
+
+            // Reset line dash to solid for subsequent drawings
+            drawingContext.setLineDash([]);
+
+            // Draw vertical line indicating amplitude
+            stroke(255, 100, 0); // Solid orange
+            strokeWeight(2);
+            line(0, 0, 0, -amplitude); // Line from x-axis to peak
+            line(0, 0, 0, amplitude);  // Line from x-axis to trough
+
+            // Draw arrows for amplitude
+            drawArrow((3 * wavelength) / 4, -amplitude, (3 * wavelength) / 4, -9, 8, 255, 100, 0); // Arrow pointing down from peak to x-axis
+            drawArrow(wavelength / 4, amplitude, wavelength / 4, 9, 8, 255, 100, 0);  // Arrow pointing up from trough to x-axis
+
+
+            // Label for Amplitude
+            noStroke();
+            fill(255, 100, 0); // Orange text
+            textSize(16);
+            textAlign(LEFT, CENTER);
+            text("Amplitude", (3 * wavelength) / 4, -amplitude / 2);
+            text("Amplitude", wavelength / 4, amplitude / 2);
+
+
+            // --- Visual representation of Wavelength ---
+            // We'll mark the wavelength starting from an arbitrary point (e.g., x=50)
+            // to avoid overlapping with amplitude markers.
+            let wavelengthMarkerX = 0;
+
+            stroke(0, 150, 0); // Green color for wavelength
+            strokeWeight(2);
+            // Draw the horizontal line representing one wavelength
+            line(wavelengthMarkerX, 0, wavelengthMarkerX + wavelength, 0);
+
+            // Draw double-headed arrows for wavelength
+            drawArrow(wavelengthMarkerX, 0, wavelengthMarkerX - 8 + wavelength, 0, 8, 0, 150, 0); // Arrow pointing right
+            drawArrow(wavelength, 0, wavelengthMarkerX + 8, 0, 8, 0, 150, 0); // Arrow pointing left
+
+
+            // Label for Wavelength
+            noStroke();
+            fill(0, 150, 0); // Green text
+            textSize(16);
+            textAlign(CENTER, BOTTOM);
+            text("Wavelength", wavelengthMarkerX + wavelength / 2, -10);
+
+
+            // --- Draw the Sinusoidal Wave ---
+            stroke(0, 100, 200); // Blue color for the wave
+            strokeWeight(2.5);
+            noFill();
+
+            beginShape(); // Start drawing the wave as a series of connected points
+            // 'frameCount' provides a simple time variable for animation.
+            // Multiply by a small factor to control animation speed.
+            time = frameCount * 0.03; // Recalculate time for wave drawing
+
+            for (let x = 0; x <= width; x += 1) {
+                // Angular wavenumber (k = 2π / λ)
+                k = TWO_PI / wavelength;
+                // Angular frequency (ω = 2πf)
+                omega = TWO_PI * frequency;
+
+                // The core sinusoidal wave equation: y(x, t) = A * sin(kx - ωt)
+                // This calculates the y-coordinate for each x-coordinate at the current time 't'.
+                let y = amplitude * sin(k * x - omega * time);
+
+                vertex(x, y); // Add a point to the wave shape
+            }
+            endShape(); // Finish drawing the wave
+
+
+            // Display current parameter values in the HTML div
+            waveInfoDiv.html(`
+    Amplitude: ${amplitude.toFixed(1)} |
+    Frequency: ${frequency.toFixed(2)} |
+    Wavelength: ${wavelength.toFixed(1)}
+  `);
+        }
+
+        /**
+         * Helper function to draw an arrow.
+         * @param {number} x1 - Start x-coordinate.
+         * @param {number} y1 - Start y-coordinate.
+         * @param {number} x2 - End x-coordinate.
+         * @param {number} y2 - End y-coordinate.
+         * @param {number} arrowSize - Size of the arrow head.
+         * @param {number} r - Red component of arrow color.
+         * @param {number} g - Green component of arrow color.
+         * @param {number} b - Blue component of arrow color.
+         */
+        function drawArrow(x1, y1, x2, y2, arrowSize, r, g, b) {
+            push(); // Save current drawing style
+            stroke(r, g, b);
+            fill(r, g, b);
+            strokeWeight(2);
+            line(x1, y1, x2, y2); // Draw the main line
+
+            let angle = atan2(y2 - y1, x2 - x1); // Angle of the line
+            translate(x2, y2); // Move to the end of the line
+            rotate(angle); // Rotate to align with the line
+
+            // Draw the arrow head (triangle)
+            triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
+            pop(); // Restore previous drawing style
+        }
+    </script>
+</body>
+
+</html>
