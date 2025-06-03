@@ -1,0 +1,32 @@
+[
+    {
+        "question": "What primarily causes tides on Earth?",
+        "options": [
+            "Sunlight",
+            "Wind",
+            "Gravitational pull of Moon",
+            "Rainfall"
+        ],
+        "answer": 2
+    },
+    {
+        "question": "How many high tides usually occur in a day?",
+        "options": [
+            "One",
+            "Two",
+            "Three",
+            "Four"
+        ],
+        "answer": 1
+    },
+    {
+        "question": "What are spring tides?",
+        "options": [
+            "Tides that occur only in spring",
+            "Tides with the lowest range",
+            "Tides when Earth, Moon, and Sun align",
+            "Caused by ocean currents"
+        ],
+        "answer": 2
+    }
+]

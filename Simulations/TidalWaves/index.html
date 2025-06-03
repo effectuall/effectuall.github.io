@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>High & Low Tide Simulation</title>
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.4.2/lib/p5.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <main>
+
+        <button id="captionToggle" class="btn">📝 Captions</button>
+        <button id="voiceoverBtn" class="btn">🔊 Voiceover</button>
+        <button id="quizBtn" class="btn">🧠 Quiz</button>
+        <button id="learnMoreBtn" class="btn">📘 Learn More</button>
+
+
+    </main>
+    <script>
+
+        let earth, moon, sun;
+
+        let captionsEnabled = false;
+        let voiceoverEnabled = false;
+
+        let voiceoverText = "Great! You just moved the Moon around Earth. Now, let’s see what happens to the ocean. The Moon’s gravity pulls on the Earth’s water, creating a bulge — that’s called a high tide. On the side of Earth opposite the Moon, another bulge forms because Earth is also pulled slightly toward the Moon. As the Moon moves around Earth during its monthly cycle, these bulges move too. That’s why tides rise and fall at different times each day. When the Sun, Moon, and Earth line up during a full or new Moon, their gravitational forces combine, causing extra high and low tides called spring tides. When the Moon is at a right angle to the Sun, during the first and last quarters, their pulls partially cancel out, creating milder tides called neap tides.This dance between Earth, Moon, and Sun keeps the ocean tides constantly changing, shaping life along coastlines.";
+
+        function setup() {
+            createCanvas(windowWidth, windowHeight);
+            earth = createVector(width / 2, height / 2);
+            moon = createVector(width / 2 + 200, height / 2 - 100);
+            sun = createVector(width / 2 - 300, height / 2 - 150);
+
+            // Toggle captions
+            document.getElementById('captionToggle').addEventListener('click', () => {
+                captionsEnabled = !captionsEnabled;
+            });
+
+            // Toggle voiceover
+            document.getElementById('voiceoverBtn').addEventListener('click', () => {
+                voiceoverEnabled = !voiceoverEnabled;
+                if (voiceoverEnabled) {
+                    speak(voiceoverText);
+                } else {
+                    window.speechSynthesis.cancel();
+                }
+            });
+            document.getElementById('quizBtn').addEventListener('click', () => {
+                window.location.href = 'projectfolder/quiz.html';
+            });
+
+            document.getElementById('learnMoreBtn').addEventListener('click', () => {
+                window.location.href = 'projectfolder/learnmore.html';
+            });
+
+        }
+        // function setup() {
+        //     createCanvas(windowWidth, windowHeight);
+        //     earth = createVector(width / 2, height / 2);
+        //     moon = createVector(width / 2 + 200, height / 2 - 100);
+        //     sun = createVector(width / 2 - 300, height / 2 - 150);
+        // }
+
+        function draw() {
+            background(10);
+
+            // Earth
+            fill(0, 200, 0);
+            ellipse(earth.x, earth.y, 100);
+
+            // Calculate vector to Moon and Sun
+            let toMoon = p5.Vector.sub(moon, earth).normalize();
+            let toSun = p5.Vector.sub(sun, earth).normalize();
+
+            // Combine forces for dual bulge effect (Moon dominant)
+            let tideAxis = p5.Vector.add(toMoon.copy().mult(1), toSun.copy().mult(0.4)).normalize();
+
+            // Calculate perpendicular axis for vertical compression
+            let tidePerp = createVector(-tideAxis.y, tideAxis.x);
+
+            // Simulate bulge animation with slight oscillation
+            let bulgeLength = 140 + sin(frameCount * 0.05) * 5;
+            let bulgeWidth = 100 + cos(frameCount * 0.05) * 3;
+
+            // Apply rotation and draw ellipse
+            push();
+            translate(earth.x, earth.y);
+            rotate(tideAxis.heading());
+            noFill();
+            stroke(0, 150, 255, 150);
+            strokeWeight(3);
+            ellipse(0, 0, bulgeLength, bulgeWidth);  // Draw ocean distortion
+            pop();
+
+
+            // Moon
+            fill(180);
+            ellipse(moon.x, moon.y, 40);
+
+            // Sun
+            fill(255, 140, 0);
+            ellipse(sun.x, sun.y, 80);
+
+            // Arrows
+            drawArrow(moon, earth, 'white');
+            drawArrow(earth, sun, 'yellow');
+
+            // Labels
+            fill(255);
+            textSize(16);
+            textAlign(CENTER);
+            text('Earth', earth.x, earth.y + 70);
+            text('Moon', moon.x, moon.y + 30);
+            text('Sun', sun.x, sun.y + 60);
+            if (captionsEnabled) {
+                fill(255);
+                textSize(16);
+                textAlign(CENTER);
+                text("Moon's gravity causes high tide on the near and far side of Earth.", width / 2, height - 30);
+            }
+
+        }
+
+        function drawArrow(from, to, col) {
+            push();
+            stroke(col);
+            strokeWeight(2);
+            fill(col);
+            let dir = p5.Vector.sub(to, from);
+            translate(from.x, from.y);
+            line(0, 0, dir.x, dir.y);
+            rotate(dir.heading());
+            translate(dir.mag() - 10, 0);
+            triangle(0, 5, 0, -5, 10, 0);
+            pop();
+        }
+
+        // function mouseDragged() {
+        //     // Allow dragging the Moon only
+        //     if (dist(mouseX, mouseY, moon.x, moon.y) < 30) {
+        //         moon.x = mouseX;
+        //         moon.y = mouseY;
+        //     }
+        // }
+
+        function mouseDragged() {
+            let distanceFromEarth = dist(mouseX, mouseY, earth.x, earth.y);
+            let radius = 200; // fixed orbit radius
+
+            // Only allow dragging if user is near the orbit path
+            if (abs(distanceFromEarth - radius) < 30) {
+                let angle = atan2(mouseY - earth.y, mouseX - earth.x);
+                moon.x = earth.x + radius * cos(angle);
+                moon.y = earth.y + radius * sin(angle);
+            }
+        }
+
+
+        function speak(text) {
+            let utter = new SpeechSynthesisUtterance(text);
+            utter.rate = 1;
+            utter.pitch = 1;
+            window.speechSynthesis.speak(utter);
+        }
+
+    </script>
+</body>
+
+</html>
