@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module: The Water Planet</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+            /* Light blue-gray background */
+        }
+
+        /* Custom styles for active tab button */
+        .tab-button.active {
+            background-color: #2563eb;
+            /* Tailwind's bg-blue-600 */
+            color: #fff;
+            /* Tailwind's text-white */
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col items-center justify-start py-8 px-4 sm:px-6 lg:px-8">
+    <header class="w-full max-w-6xl text-center mb-8">
+        <h1 class="text-4xl font-extrabold text-gray-900 leading-tight mb-4">
+            Module 2: <span class="text-blue-600">The Water Planet</span>
+        </h1>
+        <a href="../index.html"
+            class="inline-flex items-center text-blue-600 hover:text-blue-800 transition-colors duration-300 text-lg font-medium">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18">
+                </path>
+            </svg>
+            Back to Modules
+        </a>
+    </header>
+
+    <main class="w-full max-w-6xl bg-white rounded-xl shadow-lg p-6 sm:p-8 lg:p-10 mb-8">
+        <!-- Module Content Section -->
+        <section class="mb-8">
+            <h2 class="text-3xl font-bold text-gray-800 mb-4">Understanding our planet</h2>
+            <p class="text-gray-700 leading-relaxed mb-4">
+                Explore the oceans, rivers, lakes, and glaciers, and the vital role of the hydrologic cycle. Earth as a dynamic planet where continents, atmosphere, oceans, ice, and life are constantly changing and interacting</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div>
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-2">The Hydrologic Cycle</h3>
+                    <p class="text-gray-700">
+                        Water on Earth is dynamic and continually in motion through the unending circulation known as the hydrologic cycle. This cycle involves the continuous exchange of water among the oceans, atmosphere, and continents. Processes like evaporation from surfaces, transpiration from plants, condensation to form clouds, precipitation falling back to Earth, infiltration into the ground, and runoff across the land all contribute to this cycle. This movement holds the key to distributing moisture across the planet.
+                    </p>
+                </div>
+                <div>
+                    <img src="https://placehold.co/400x250/dbeafe/1e40af?text=Earth+Crust" alt="Earth's Crust Diagram"
+                        class="rounded-lg shadow-md w-full h-auto object-cover">
+                </div>
+            </div>
+
+            <h3 class="text-2xl font-semibold text-gray-800 mb-2">Influence on Weather and Climate</h3>
+            <p class="text-gray-700 leading-relaxed mb-4">
+                Water, especially water vapor in the atmosphere, has a huge influence on our planet's weather and climate. Water vapor is the source of all clouds and precipitation. When water changes state, it absorbs or releases latent heat, which is a primary energy source that helps drive many storms and atmospheric processes. Ocean currents, driven by global winds that are themselves powered by unequal heating, play an important role in redistributing heat around the globe, influencing climate patterns. Climate patterns like El Niño and La Niña, which are related to the warming and cooling of Pacific Ocean waters, demonstrate how ocean conditions can significantly affect weather worldwide
+            </p>
+
+            <!-- Interactive Simulation Section -->
+            <div class="bg-gray-50 rounded-lg p-6 mb-6 border border-gray-200">
+                <h3 class="text-2xl font-semibold text-gray-800 mb-4">Interactive Simulation: Hydrosphere Dynamics
+                </h3>
+                <p class="text-gray-600 mb-4">
+                    Explore how unique property of water, such as its high specific heat capacity, surface tension, and solvent properties, influence Earth's systems. Click on the buttons below to switch between different water states and observe their effects on the environment.
+                </p>
+                <div id="plateTectonicsSimulation"
+                    class="w-full bg-white rounded-lg shadow-inner border border-gray-300 flex items-center justify-center h-64 sm:h-80 md:h-96 text-gray-400 font-medium text-lg">
+                    <!-- Simulation will be rendered here by JavaScript -->
+                    Loading Plate Tectonics Simulation...
+                </div>
+                <div class="flex flex-wrap justify-center gap-4 mt-6">
+                    <button id="divergentBtn"
+                        class="sim-button bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg shadow-md transition-colors">Divergent
+                        Boundary</button>
+                    <button id="convergentBtn"
+                        class="sim-button bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-6 rounded-lg shadow-md transition-colors">Convergent
+                        Boundary</button>
+                    <button id="transformBtn"
+                        class="sim-button bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-6 rounded-lg shadow-md transition-colors">Transform
+                        Boundary</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Assessment Tabs -->
+        <section class="mt-10">
+            <div class="flex border-b border-gray-200">
+                <button id="intoTabBtn"
+                    class="tab-button flex-1 py-3 px-4 text-center text-lg font-medium text-gray-700 hover:text-blue-600 transition-colors duration-300 rounded-t-lg bg-gray-100 border-r border-gray-200 focus:outline-none">Introduction</button>
+                <button id="simsTabBtn"
+                    class="tab-button flex-1 py-3 px-4 text-center text-lg font-medium text-gray-700 hover:text-blue-600 transition-colors duration-300 rounded-t-lg bg-gray-100 border-r border-gray-200 focus:outline-none">Simulation</button>
+                <button id="practiceTabBtn"
+                    class="tab-button flex-1 py-3 px-4 text-center text-lg font-medium text-gray-700 hover:text-blue-600 transition-colors duration-300 rounded-t-lg bg-gray-100 border-r border-gray-200 focus:outline-none">Practice</button>
+                <button id="wrapupTabBtn"
+                    class="tab-button flex-1 py-3 px-4 text-center text-lg font-medium text-gray-700 hover:text-blue-600 transition-colors duration-300 rounded-t-lg bg-gray-100 border-r border-gray-200 focus:outline-none">Wrap-up
+                    & Review</button>
+                <button id="quizTabBtn"
+                    class="tab-button flex-1 py-3 px-4 text-center text-lg font-medium text-gray-700 hover:text-blue-600 transition-colors duration-300 rounded-t-lg bg-gray-100 focus:outline-none">Quiz</button>
+            </div>
+
+            <div id="practiceTabContent"
+                class="tab-content active p-6 bg-gray-50 border border-gray-200 rounded-b-lg shadow-inner">
+                <h3 class="text-2xl font-bold text-gray-800 mb-4">Practice Exercises</h3>
+                <p class="text-gray-600 mb-4">Drag-and-drop the labels to the correct parts of the Earth's interior
+                    diagram.</p>
+                <!-- Placeholder for interactive practice exercise (e.g., drag & drop, labeling) -->
+                <div
+                    class="bg-white p-4 rounded-lg shadow border border-gray-200 min-h-[200px] flex items-center justify-center text-gray-500">
+                    Practice Content Goes Here (e.g., Drag & Drop, Fill-in-the-Blanks)
+                </div>
+            </div>
+
+            <div id="wrapupTabContent"
+                class="tab-content p-6 bg-gray-50 border border-gray-200 rounded-b-lg shadow-inner">
+                <h3 class="text-2xl font-bold text-gray-800 mb-4">Wrap-up & Review</h3>
+                <p class="text-gray-600 mb-4">Key concepts from this module:</p>
+                <ul class="list-disc list-inside text-gray-700 space-y-2">
+                    <li>Earth's layers: Crust, Mantle, Core.</li>
+                    <li>Plate Tectonics as the driving force for geological activity.</li>
+                    <li>Types of plate boundaries: Divergent, Convergent, Transform.</li>
+                    <li>Associated phenomena: Earthquakes, Volcanoes, Mountain Building.</li>
+                </ul>
+                <div
+                    class="bg-white p-4 rounded-lg shadow border border-gray-200 mt-6 min-h-[150px] flex items-center justify-center text-gray-500">
+                    Interactive Concept Map / Glossary Review
+                </div>
+            </div>
+
+            <div id="quizTabContent"
+                class="tab-content p-6 bg-gray-50 border border-gray-200 rounded-b-lg shadow-inner">
+                <h3 class="text-2xl font-bold text-gray-800 mb-4">Module Quiz</h3>
+                <div id="quiz-container" class="bg-white p-4 rounded-lg shadow border border-gray-200">
+                    <!-- Quiz questions will be loaded here by JavaScript -->
+                    <p class="text-gray-500">Loading quiz...</p>
+                </div>
+                <button id="submitQuizBtn"
+                    class="mt-6 bg-blue-600 text-white font-semibold py-3 px-8 rounded-lg shadow-md hover:bg-blue-700 transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
+                    Submit Quiz
+                </button>
+                <div id="quiz-results"
+                    class="mt-4 p-4 bg-blue-50 text-blue-800 rounded-lg border border-blue-200 hidden"></div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="w-full max-w-6xl text-center mt-8 text-gray-600 text-sm">
+        &copy; 2025 Fundamentals of Earth Science. All rights reserved.
+    </footer>
+
+    <script src="../assets/js/main.js"></script>
+    <script src="../assets/js/simulations.js"></script>
+    <script src="../assets/js/module-quiz.js"></script>
+</body>
+
+</html>

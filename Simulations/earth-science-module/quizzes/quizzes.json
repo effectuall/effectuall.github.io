@@ -1,0 +1,48 @@
+[
+  {
+    "id": "geosphere-quiz",
+    "title": "Earth's Interior & Plate Tectonics Quiz",
+    "questions": [
+      {
+        "questionText": "What is the outermost solid layer of the Earth?",
+        "type": "multiple-choice",
+        "options": ["Mantle", "Outer Core", "Crust", "Inner Core"],
+        "correctAnswer": "Crust",
+        "explanation": "The crust is the thin, outermost solid layer where we live."
+      },
+      {
+        "questionText": "True or False: The theory of plate tectonics explains the movement of Earth's lithosphere.",
+        "type": "true-false",
+        "options": ["True", "False"],
+        "correctAnswer": "True",
+        "explanation": "Plate tectonics describes the large-scale motion of Earth's lithospheric plates."
+      },
+      {
+        "questionText": "A boundary where two plates move away from each other is called a ________ boundary.",
+        "type": "fill-in-the-blank",
+        "correctAnswer": "divergent",
+        "explanation": "Divergent boundaries are where new crust is generated as plates pull apart."
+      },
+      {
+        "questionText": "Which type of plate boundary is primarily associated with the formation of large mountain ranges?",
+        "type": "multiple-choice",
+        "options": ["Divergent", "Convergent", "Transform", "Passive"],
+        "correctAnswer": "Convergent",
+        "explanation": "Convergent boundaries, especially continental-continental collisions, lead to significant mountain building."
+      }
+    ]
+  },
+  {
+    "id": "hydrosphere-quiz",
+    "title": "The Water Planet Quiz",
+    "questions": [
+      {
+        "questionText": "The continuous movement of water on, above, and below the surface of the Earth is known as the:",
+        "type": "multiple-choice",
+        "options": ["Carbon Cycle", "Nitrogen Cycle", "Hydrologic Cycle", "Rock Cycle"],
+        "correctAnswer": "Hydrologic Cycle",
+        "explanation": "The hydrologic cycle describes the circulation of water through evaporation, condensation, precipitation, etc."
+      }
+    ]
+  }
+]

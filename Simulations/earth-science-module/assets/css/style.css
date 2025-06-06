@@ -1,0 +1,73 @@
+/* General styling for the Earth Science module */
+
+/* Ensure smooth transitions for interactive elements */
+body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom button styles for simulations */
+.sim-button {
+    font-size: 1rem;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    outline: none; /* Remove outline on focus for better aesthetics */
+    border-radius: 0.5rem; /* Apply rounded corners */
+}
+
+.sim-button:active {
+    transform: scale(0.98);
+}
+
+/* Styles for tab buttons in modules */
+.tab-button {
+    border-bottom: 3px solid transparent; /* Highlight active tab */
+    padding-bottom: 0.75rem;
+    cursor: pointer;
+    white-space: nowrap; /* Prevent wrapping */
+}
+
+.tab-button:hover {
+    border-color: #60a5fa; /* Tailwind blue-300 */
+    color: #2563eb; /* Tailwind blue-700 */
+}
+
+/* Active tab style */
+.tab-button.active {
+    border-color: #2563eb; /* Tailwind blue-700 */
+    color: #2563eb; /* Tailwind blue-700 */
+    font-weight: 600; /* Semi-bold */
+}
+
+/* Hide content of inactive tabs */
+.tab-content {
+    display: none;
+}
+
+/* Show content of active tab */
+.tab-content.active {
+    display: block;
+}
+
+/* General typography enhancements */
+h1, h2, h3, h4, h5, h6 {
+    line-height: 1.25;
+}
+
+p {
+    line-height: 1.6;
+}
+
+/* Ensure images are responsive */
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Optional: Add a subtle shadow for content blocks */
+.content-block {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
