@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EffectualL - Experience STEM Learning</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Custom Styles -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* slate-50 */
+        }
+        .gradient-text {
+            background: linear-gradient(90deg, #4f46e5, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-fill-color: transparent;
+        }
+        .hero-bg {
+            background-image: radial-gradient(circle at top right, rgba(79, 70, 229, 0.1), transparent 40%),
+                              radial-gradient(circle at bottom left, rgba(168, 85, 247, 0.1), transparent 50%);
+        }
+        .section-title {
+            @apply text-3xl font-extrabold text-gray-900 sm:text-4xl;
+        }
+        .section-subtitle {
+            @apply mt-4 text-lg text-gray-600;
+        }
+        .cta-button-primary {
+            @apply inline-block rounded-lg bg-indigo-600 px-8 py-4 text-center font-semibold text-white shadow-md transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2;
+        }
+        .cta-button-secondary {
+            @apply inline-block rounded-lg bg-white px-8 py-4 text-center font-semibold text-indigo-600 shadow-md transition hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <!-- Header / Navigation -->
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 border-b border-gray-200">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="text-2xl font-bold gradient-text">EffectualL</a>
+            <div class="hidden md:flex items-center space-x-6">
+                <a href="#features" class="text-gray-600 hover:text-indigo-600">Features</a>
+                <a href="#use-cases" class="text-gray-600 hover:text-indigo-600">Use Cases</a>
+                <a href="#testimonials" class="text-gray-600 hover:text-indigo-600">Testimonials</a>
+                <a href="#contact" class="text-gray-600 hover:text-indigo-600">Contact</a>
+            </div>
+            <a href="#demo" class="cta-button-primary hidden md:inline-block px-6 py-2">Book a Demo</a>
+            <button id="mobile-menu-button" class="md:hidden text-gray-700">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                </svg>
+            </button>
+        </nav>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden px-6 pb-4">
+            <a href="#features" class="block py-2 text-gray-600 hover:text-indigo-600">Features</a>
+            <a href="#use-cases" class="block py-2 text-gray-600 hover:text-indigo-600">Use Cases</a>
+            <a href="#testimonials" class="block py-2 text-gray-600 hover:text-indigo-600">Testimonials</a>
+            <a href="#contact" class="block py-2 text-gray-600 hover:text-indigo-600">Contact</a>
+            <a href="#demo" class="mt-4 cta-button-primary w-full">Book a Demo</a>
+        </div>
+    </header>
+
+    <main>
+        <!-- 1. Hero Section -->
+        <section class="hero-bg py-20 sm:py-32">
+            <div class="container mx-auto px-6 text-center">
+                <h1 class="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl md:text-7xl">
+                    Don't Just Study STEM. <span class="gradient-text">Experience It.</span>
+                </h1>
+                <p class="mt-6 max-w-3xl mx-auto text-lg text-gray-600 sm:text-xl md:text-2xl">
+                    Master complex concepts with EffectualL, the AI-powered immersive platform that puts you in control of your learning. Go from abstract theories to tangible understanding.
+                </p>
+                <div id="demo" class="mt-10 flex flex-col sm:flex-row justify-center items-center gap-4">
+                    <a href="#" class="cta-button-primary">Book a School Demo</a>
+                    <a href="#" class="cta-button-secondary">Try a Free STEM Demo</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. The Challenge Section -->
+        <section class="py-20 sm:py-24 bg-white">
+            <div class="container mx-auto px-6">
+                <div class="text-center">
+                    <h2 class="section-title">Is This How We're Building the Future?</h2>
+                    <p class="section-subtitle max-w-3xl mx-auto">
+                        For too long, STEM education has been a one-way street. Abstract formulas, passive lectures, and a curriculum that struggles to connect with a student's natural curiosity.
+                    </p>
+                </div>
+                <div class="mt-12 grid md:grid-cols-3 gap-8 text-center">
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold text-gray-900">Low Engagement</h3>
+                        <p class="mt-2 text-gray-600">Students feel disconnected from subjects they can't see or touch.</p>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold text-gray-900">Conceptual Gaps</h3>
+                        <p class="mt-2 text-gray-600">Memorization takes the place of true understanding, leaving critical gaps.</p>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold text-gray-900">Lack of Confidence</h3>
+                        <p class="mt-2 text-gray-600">The fear of "not being a math person" holds brilliant minds back.</p>
+                    </div>
+                </div>
+                <div class="mt-12 text-center">
+                    <blockquote class="max-w-3xl mx-auto text-xl italic text-gray-700 font-medium">
+                        "Only 20% of high school graduates feel very confident in their physics and chemistry knowledge."
+                    </blockquote>
+                    <p class="mt-4 text-gray-600">This isn't a failure of our students; it's a failure of our tools.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Introducing EffectualL Section -->
+        <section id="features" class="py-20 sm:py-24">
+            <div class="container mx-auto px-6">
+                <div class="text-center">
+                    <h2 class="section-title">Where <span class="gradient-text">Curiosity Meets Clarity.</span></h2>
+                    <p class="section-subtitle max-w-3xl mx-auto">
+                        EffectualL transforms STEM learning from a passive experience into an active adventure. We combine immersive technology with powerful AI to create a space where every student can not just learn, but truly *understand*.
+                    </p>
+                </div>
+
+                <!-- Pillars -->
+                <div class="mt-16 grid md:grid-cols-3 gap-10">
+                    <div class="text-center p-6">
+                        <div class="flex items-center justify-center h-16 w-16 rounded-xl bg-indigo-100 text-indigo-600 mx-auto">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8"><path d="M15.5 2H8.6c-.4 0-.8.2-1.1.5-.3.3-.5.7-.5 1.1v12.8c0 .4.2.8.5 1.1.3.3.7.5 1.1.5h9.8c.4 0 .8-.2 1.1-.5.3-.3.5-.7.5-1.1V6.5L15.5 2z"></path><path d="M3 7.6v12.8c0 .4.2.8.5 1.1.3.3.7.5 1.1.5h9.8"></path><path d="M15 2v5h5"></path></svg>
+                        </div>
+                        <h3 class="mt-5 text-xl font-bold">Learner Agency</h3>
+                        <p class="mt-2 text-gray-600">You are the driver. Choose your path, learn at your own pace, and explore what interests you most.</p>
+                    </div>
+                    <div class="text-center p-6">
+                        <div class="flex items-center justify-center h-16 w-16 rounded-xl bg-purple-100 text-purple-600 mx-auto">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        </div>
+                        <h3 class="mt-5 text-xl font-bold">Visual-First Pedagogy</h3>
+                        <p class="mt-2 text-gray-600">We believe in showing, not just telling. Interact with complex systems in 3D and visualize abstract data.</p>
+                    </div>
+                    <div class="text-center p-6">
+                        <div class="flex items-center justify-center h-16 w-16 rounded-xl bg-sky-100 text-sky-600 mx-auto">
+                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8"><path d="m12 14 4-4"></path><path d="M12 18v-4"></path><path d="m16 10-4 4"></path><path d="M12 6V2"></path><path d="m4.93 4.93 2.83 2.83"></path><path d="M2 12h4"></path><path d="m16.24 16.24 2.83 2.83"></path><path d="M18 12h4"></path><path d="m4.93 19.07 2.83-2.83"></path><path d="M12 22v-4"></path></svg>
+                        </div>
+                        <h3 class="mt-5 text-xl font-bold">Generative AI Coach</h3>
+                        <p class="mt-2 text-gray-600">Your personal AI tutor asks the right questions to guide you toward your "aha!" moment.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. Benefits Section -->
+        <section class="py-20 sm:py-24 bg-white">
+            <div class="container mx-auto px-6">
+                <div class="text-center">
+                    <h2 class="section-title">Benefits for the Entire Learning Ecosystem</h2>
+                    <p class="section-subtitle">From individual confidence to school-wide insights, EffectualL creates value for everyone.</p>
+                </div>
+                <div class="mt-16 grid lg:grid-cols-2 gap-16 items-start">
+                    <div class="space-y-8">
+                        <h3 class="text-2xl font-bold text-gray-900 text-center lg:text-left">For Students</h3>
+                        <div class="flex items-start gap-4">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-lg bg-green-100 text-green-600 flex items-center justify-center">✓</div>
+                            <div>
+                                <h4 class="font-semibold">Build Unshakeable Confidence</h4>
+                                <p class="text-gray-600">Finally *see* the concepts and prove to yourself that you can master them.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-lg bg-green-100 text-green-600 flex items-center justify-center">✓</div>
+                            <div>
+                                <h4 class="font-semibold">Learn Your Way</h4>
+                                <p class="text-gray-600">Our multimodal platform supports every learning style, from visual to kinesthetic.</p>
+                            </div>
+                        </div>
+                         <div class="flex items-start gap-4">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-lg bg-green-100 text-green-600 flex items-center justify-center">✓</div>
+                            <div>
+                                <h4 class="font-semibold">Safe & Inclusive Space</h4>
+                                <p class="text-gray-600">Experiment without fear of failure or costly lab mistakes.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-8">
+                        <h3 class="text-2xl font-bold text-gray-900 text-center lg:text-left">For Teachers & Schools</h3>
+                        <div class="flex items-start gap-4">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center">✓</div>
+                            <div>
+                                <h4 class="font-semibold">Empower, Don't Just Lecture</h4>
+                                <p class="text-gray-600">Facilitate deep, inquiry-based learning and spend more time mentoring students.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center">✓</div>
+                            <div>
+                                <h4 class="font-semibold">Actionable Teacher Dashboards</h4>
+                                <p class="text-gray-600">Get real-time insights into student progress and identify learning gaps.</p>
+                            </div>
+                        </div>
+                         <div class="flex items-start gap-4">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center">✓</div>
+                            <div>
+                                <h4 class="font-semibold">Scalable & Easy to Implement</h4>
+                                <p class="text-gray-600">Integrates seamlessly with your existing curriculum and scales across districts.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. Use Cases Section -->
+        <section id="use-cases" class="py-20 sm:py-24">
+            <div class="container mx-auto px-6">
+                <div class="text-center">
+                    <h2 class="section-title">From Quantum Physics to DNA Strands</h2>
+                    <p class="section-subtitle max-w-3xl mx-auto">EffectualL brings every corner of the STEM world to life. Here's just a sample of what's possible.</p>
+                </div>
+                <div class="mt-16 grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="bg-white p-8 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300">
+                        <h3 class="text-xl font-bold text-indigo-600">Physics</h3>
+                        <p class="mt-2 text-gray-600">Launch projectiles to understand vectors or shrink down to visualize wave-particle duality.</p>
+                    </div>
+                    <div class="bg-white p-8 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300">
+                        <h3 class="text-xl font-bold text-indigo-600">Chemistry</h3>
+                        <p class="mt-2 text-gray-600">Build complex molecules and conduct experiments in our 100% safe virtual lab.</p>
+                    </div>
+                    <div class="bg-white p-8 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300">
+                        <h3 class="text-xl font-bold text-indigo-600">Biology</h3>
+                        <p class="mt-2 text-gray-600">Take a guided tour through the human heart or manipulate DNA strands to understand gene editing.</p>
+                    </div>
+                    <div class="bg-white p-8 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300">
+                        <h3 class="text-xl font-bold text-indigo-600">Mathematics</h3>
+                        <p class="mt-2 text-gray-600">Walk through 3D geometric proofs and visualize calculus as functions change over time.</p>
+                    </div>
+                    <div class="bg-white p-8 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300">
+                        <h3 class="text-xl font-bold text-indigo-600">Coding & Robotics</h3>
+                        <p class="mt-2 text-gray-600">Learn Python by programming a virtual robot to navigate a maze and test algorithms.</p>
+                    </div>
+                    <div class="bg-white p-8 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 flex items-center justify-center">
+                        <h3 class="text-xl font-bold text-gray-500">And much more...</h3>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. Testimonials Section -->
+        <section id="testimonials" class="py-20 sm:py-24 bg-indigo-700 text-white">
+            <div class="container mx-auto px-6">
+                <div class="text-center">
+                    <h2 class="text-3xl font-extrabold sm:text-4xl">What Students and Teachers Say</h2>
+                </div>
+                <div class="mt-16 grid lg:grid-cols-3 gap-8">
+                    <div class="bg-indigo-600 p-8 rounded-lg">
+                        <p class="italic">"For the first time, I felt like I was a scientist, not just a student. I built a volcano in VR, and I'll never forget the chemistry behind it."</p>
+                        <div class="mt-4 font-semibold">— Aisha, 10th Grade Student</div>
+                    </div>
+                    <div class="bg-indigo-600 p-8 rounded-lg">
+                        <p class="italic">"My students are more engaged, they ask deeper questions, and the 'lightbulb' moments are happening every day. The dashboard is a game-changer."</p>
+                        <div class="mt-4 font-semibold">— Mr. David Chen, High School Chemistry Teacher</div>
+                    </div>
+                    <div class="bg-indigo-600 p-8 rounded-lg">
+                        <p class="italic">"This is the most impactful EdTech investment we've made. It's not just about test scores; it's about teaching our students how to think and innovate."</p>
+                        <div class="mt-4 font-semibold">— Dr. Elena Rodriguez, School Principal</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 9. Footer CTA -->
+        <footer id="contact" class="bg-gray-900 text-white">
+            <div class="container mx-auto px-6 py-16 text-center">
+                <h2 class="text-3xl font-extrabold sm:text-4xl">Ready to Redefine What's Possible in STEM?</h2>
+                <div class="mt-8 flex flex-col sm:flex-row justify-center items-center gap-4">
+                    <a href="#" class="cta-button-primary">Request School Access</a>
+                    <a href="#" class="inline-block rounded-lg bg-gray-700 px-8 py-4 text-center font-semibold text-white transition hover:bg-gray-600">Contact Us</a>
+                </div>
+                <div class="mt-16 border-t border-gray-700 pt-8">
+                    <div class="flex justify-center space-x-6 mb-4">
+                         <a href="#" class="text-gray-400 hover:text-white">Social</a>
+                         <a href="#" class="text-gray-400 hover:text-white">Social</a>
+                         <a href="#" class="text-gray-400 hover:text-white">Social</a>
+                    </div>
+                    <p class="text-gray-500">&copy; 2025 EffectualL. All rights reserved.</p>
+                    <p class="text-gray-500 mt-2"><a href="#" class="hover:underline">Privacy Policy</a> | <a href="#" class="hover:underline">Terms of Service</a></p>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+    </script>
+
+</body>
+</html>
