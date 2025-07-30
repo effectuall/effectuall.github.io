@@ -17,7 +17,7 @@ const container = document.createElement('div');
 
 let selected = "Optics_Compound_Microscope";
 let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
-viewSrcButton.href = './Simulations/' + "Optics_Compound_Microscope" + '.html';
+// viewSrcButton.href = './Simulations/' + "Optics_Compound_Microscope" + '.html';
 init();
 
 async function init() {
@@ -205,7 +205,7 @@ function selectFile(file) {
     // Reveal "View source" button and set attributes to this example
     viewSrcButton.style.display = 'block';
 
-    // viewSrcButton.href = './Simulations/' + selected + '.html';
+    viewSrcButton.href = './Simulations/' + selected + '.html';
 
 }
 
