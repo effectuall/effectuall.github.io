@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1024 Game</title>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background-color: #faf8ef;
+            /* Same as 2048 background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        canvas {
+            display: block;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.js"></script>
+</head>
+
+<body>
+    <script>
+        // Game state variables
+        let grid;
+        let score;
+        let gameOver;
+        let gameWon;
+
+        // Layout variables
+        const GRID_SIZE = 4;
+        let cellSize;
+        const cellGap = 15;
+
+        // A color map inspired by the original 2048 game
+        let colorMap;
+
+        function setup() {
+            createCanvas(500, 620); // 500x500 for grid, 120 for score/title
+            cellSize = (width - cellGap * (GRID_SIZE + 1)) / GRID_SIZE;
+
+            // Initialize a color scheme for the tiles
+            colorMode(RGB);
+            colorMap = {
+                0: color(205, 193, 180),
+                2: color(238, 228, 218),
+                4: color(237, 224, 200),
+                8: color(242, 177, 121),
+                16: color(245, 149, 99),
+                32: color(246, 124, 95),
+                64: color(246, 94, 59),
+                128: color(237, 207, 114),
+                256: color(237, 204, 97),
+                512: color(237, 200, 80),
+                1024: color(237, 197, 63),
+                2048: color(237, 194, 46)
+            };
+
+            textAlign(CENTER, CENTER);
+            textFont('Helvetica Neue');
+
+            resetGame();
+        }
+
+        function resetGame() {
+            grid = createBlankGrid();
+            score = 0;
+            gameOver = false;
+            gameWon = false;
+            addNumber();
+            addNumber();
+        }
+
+        // Create a 2D array filled with zeros
+        function createBlankGrid() {
+            let blank = [];
+            for (let i = 0; i < GRID_SIZE; i++) {
+                blank.push(new Array(GRID_SIZE).fill(0));
+            }
+            return blank;
+        }
+
+        // Add a new '2' or '4' tile to a random empty spot
+        function addNumber() {
+            let options = [];
+            for (let i = 0; i < GRID_SIZE; i++) {
+                for (let j = 0; j < GRID_SIZE; j++) {
+                    if (grid[i][j] === 0) {
+                        options.push({ x: i, y: j });
+                    }
+                }
+            }
+            if (options.length > 0) {
+                let spot = random(options);
+                let r = random(1);
+                grid[spot.x][spot.y] = r > 0.1 ? 2 : 4;
+            }
+        }
+
+        // Main input handler
+        function keyPressed() {
+            if (key === 'r' || key === 'R') {
+                resetGame();
+                return;
+            }
+            if (gameOver) return;
+
+            let originalGrid = copyGrid(grid);
+
+            if (keyCode === LEFT_ARROW) {
+                grid = operateGrid(grid);
+            } else if (keyCode === RIGHT_ARROW) {
+                grid = flipGrid(grid);
+                grid = operateGrid(grid);
+                grid = flipGrid(grid);
+            } else if (keyCode === UP_ARROW) {
+                grid = rotateGrid(grid);
+                grid = operateGrid(grid);
+                grid = rotateGrid(grid);
+            } else if (keyCode === DOWN_ARROW) {
+                grid = rotateGrid(grid);
+                grid = flipGrid(grid);
+                grid = operateGrid(grid);
+                grid = flipGrid(grid);
+                grid = rotateGrid(grid);
+            } else {
+                return; // Ignore other keys
+            }
+
+            let moved = !compare(originalGrid, grid);
+
+            if (moved) {
+                addNumber();
+                checkGameState();
+            }
+        }
+
+        // Apply the slide-and-merge operation to each row of the grid
+        function operateGrid(g) {
+            let newGrid = copyGrid(g);
+            for (let i = 0; i < GRID_SIZE; i++) {
+                newGrid[i] = operateRow(newGrid[i]);
+            }
+            return newGrid;
+        }
+
+        // The core logic for sliding and merging a single row to the left
+        function operateRow(row) {
+            // 1. Slide: Filter out zeros to slide numbers left
+            let newRow = row.filter(val => val !== 0);
+
+            // 2. Combine: Merge adjacent identical numbers
+            for (let i = 0; i < newRow.length - 1; i++) {
+                if (newRow[i] === newRow[i + 1]) {
+                    newRow[i] *= 2;
+                    score += newRow[i];
+                    if (newRow[i] === 1024 && !gameWon) gameWon = true; // Check for win
+                    newRow.splice(i + 1, 1); // Remove the merged element
+                }
+            }
+
+            // 3. Pad: Add zeros back to the end
+            while (newRow.length < GRID_SIZE) {
+                newRow.push(0);
+            }
+            return newRow;
+        }
+
+        // --- GRID UTILITY FUNCTIONS ---
+
+        // Reverse each row of the grid
+        function flipGrid(g) {
+            let newGrid = createBlankGrid();
+            for (let i = 0; i < GRID_SIZE; i++) {
+                for (let j = 0; j < GRID_SIZE; j++) {
+                    newGrid[i][j] = g[i][GRID_SIZE - 1 - j];
+                }
+            }
+            return newGrid;
+        }
+
+        // Transpose the grid (swap rows and columns)
+        function rotateGrid(g) {
+            let newGrid = createBlankGrid();
+            for (let i = 0; i < GRID_SIZE; i++) {
+                for (let j = 0; j < GRID_SIZE; j++) {
+                    newGrid[i][j] = g[j][i];
+                }
+            }
+            return newGrid;
+        }
+
+        // Create a deep copy of the grid
+        function copyGrid(g) {
+            let newGrid = createBlankGrid();
+            for (let i = 0; i < GRID_SIZE; i++) {
+                for (let j = 0; j < GRID_SIZE; j++) {
+                    newGrid[i][j] = g[i][j];
+                }
+            }
+            return newGrid;
+        }
+
+        // Compare two grids to see if they are identical
+        function compare(a, b) {
+            for (let i = 0; i < GRID_SIZE; i++) {
+                for (let j = 0; j < GRID_SIZE; j++) {
+                    if (a[i][j] !== b[i][j]) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        // --- GAME STATE CHECKS ---
+        function checkGameState() {
+            let canMove = false;
+            // Check for empty cells
+            for (let i = 0; i < GRID_SIZE; i++) {
+                for (let j = 0; j < GRID_SIZE; j++) {
+                    if (grid[i][j] === 0) {
+                        return; // Game is not over if there's an empty cell
+                    }
+                }
+            }
+
+            // If grid is full, check for possible merges
+            for (let i = 0; i < GRID_SIZE; i++) {
+                for (let j = 0; j < GRID_SIZE; j++) {
+                    let val = grid[i][j];
+                    if (j < GRID_SIZE - 1 && val === grid[i][j + 1]) return; // Horizontal merge
+                    if (i < GRID_SIZE - 1 && val === grid[i + 1][j]) return; // Vertical merge
+                }
+            }
+
+            // If no empty cells and no possible merges, game is over
+            gameOver = true;
+        }
+
+        // --- DRAWING FUNCTIONS ---
+        function draw() {
+            background(187, 173, 160); // Board color
+            drawHeader();
+            drawGrid();
+
+            if (gameOver) {
+                drawOverlay("Game Over!");
+            } else if (gameWon) {
+                drawOverlay("You Win!");
+            }
+        }
+
+        function drawHeader() {
+            fill(119, 110, 101);
+            noStroke();
+            textAlign(LEFT, TOP);
+            textSize(64);
+            textStyle(BOLD);
+            text("1024", cellGap, 10);
+
+            textAlign(RIGHT, TOP);
+            textSize(14);
+            textStyle(NORMAL);
+            text("Use arrow keys to move.", width - cellGap, 25);
+            text("Press 'R' to restart.", width - cellGap, 45);
+
+            fill(119, 110, 101);
+            textSize(24);
+            text("SCORE", width - cellGap, 70);
+            textSize(36);
+            textStyle(BOLD);
+            text(score, width - cellGap, 90);
+        }
+
+        function drawGrid() {
+            push();
+            translate(cellGap, 120); // Offset for header
+
+            for (let i = 0; i < GRID_SIZE; i++) {
+                for (let j = 0; j < GRID_SIZE; j++) {
+                    let val = grid[i][j];
+                    let x = j * (cellSize + cellGap);
+                    let y = i * (cellSize + cellGap);
+
+                    noStroke();
+                    fill(colorMap[val] || color(255, 0, 0)); // Fallback red for > 2048
+                    rect(x, y, cellSize, cellSize, 6);
+
+                    if (val !== 0) {
+                        let textColor = val < 8 ? color(119, 110, 101) : color(249, 246, 242);
+                        fill(textColor);
+
+                        // Adjust text size based on number of digits
+                        let s;
+                        if (val >= 1024) s = 30;
+                        else if (val >= 128) s = 35;
+                        else if (val >= 16) s = 45;
+                        else s = 55;
+
+                        textSize(s);
+                        textStyle(BOLD);
+                        text(val, x + cellSize / 2, y + cellSize / 2);
+                    }
+                }
+            }
+            pop();
+        }
+
+        function drawOverlay(message) {
+            fill(238, 228, 218, 180);
+            rect(0, 0, width, height);
+
+            textAlign(CENTER, CENTER);
+            fill(119, 110, 101);
+            textSize(64);
+            textStyle(BOLD);
+            text(message, width / 2, height / 2);
+
+            if (message === "Game Over!") {
+                textSize(20);
+                textStyle(NORMAL);
+                text("Press 'R' to play again.", width / 2, height / 2 + 50);
+            }
+        }
+    </script>
+</body>
+
+</html>
