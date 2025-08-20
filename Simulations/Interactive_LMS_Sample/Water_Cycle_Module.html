@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Water Cycle Storyline</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            background: #121212;
+            color: #f1f1f1;
+        }
+
+        header {
+            background: #1e88e5;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+
+        section {
+            padding: 20px;
+            max-width: 900px;
+            margin: auto;
+        }
+
+        h2,
+        h3 {
+            color: #90caf9;
+        }
+
+        .module {
+            background: #1e1e1e;
+            border: 1px solid #333;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+        }
+
+        .simulation {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .quiz-question {
+            margin: 15px 0;
+        }
+
+        button {
+            background: #42a5f5;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background: #1e88e5;
+        }
+
+        input[type=range] {
+            width: 80%;
+        }
+
+        .result {
+            font-weight: bold;
+            margin-top: 10px;
+            color: #ffeb3b;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>The Water Cycle: Nature’s Recycling System</h1>
+    </header>
+
+    <section>
+        <div class="module" id="module1">
+            <h2>Module 1: Content</h2>
+            <p>The water cycle is nature’s way of recycling water. It involves processes like
+                <strong>evaporation</strong>, <strong>condensation</strong>, <strong>precipitation</strong>, and
+                <strong>collection</strong>. Energy from the sun powers the cycle, moving water from oceans, rivers, and
+                lakes into the atmosphere, forming clouds, and bringing it back as rain or snow.
+            </p>
+            <ul>
+                <li><strong>Evaporation:</strong> Water turns into vapor and rises into the air.</li>
+                <li><strong>Condensation:</strong> Water vapor cools and forms clouds.</li>
+                <li><strong>Precipitation:</strong> Water falls back as rain, snow, or hail.</li>
+                <li><strong>Collection:</strong> Water gathers in rivers, lakes, oceans, and soil.</li>
+            </ul>
+        </div>
+
+        <div class="module" id="module2">
+            <h2>Module 2: Simple Simulation</h2>
+            <p>Adjust the sliders to see how heat from the sun and temperature influence the water cycle:</p>
+            <div class="simulation">
+                <label>Sunlight Intensity: <input type="range" id="sunlight" min="0" max="100" value="50"></label>
+                <p id="evaporation-rate">Evaporation Rate: Moderate</p>
+
+                <label>Temperature: <input type="range" id="temperature" min="0" max="40" value="20"></label>
+                <p id="precipitation-level">Precipitation: Normal</p>
+            </div>
+        </div>
+
+        <div class="module" id="module3">
+            <h2>Module 3: Quizzes</h2>
+            <div class="quiz-question">
+                <p>1. What powers the water cycle?</p>
+                <button onclick="checkAnswer(1, 'Sun')">The Sun</button>
+                <button onclick="checkAnswer(1, 'Wind')">The Wind</button>
+                <button onclick="checkAnswer(1, 'Earth’s Core')">Earth’s Core</button>
+                <p id="result1" class="result"></p>
+            </div>
+
+            <div class="quiz-question">
+                <p>2. Which process forms clouds?</p>
+                <button onclick="checkAnswer(2, 'Condensation')">Condensation</button>
+                <button onclick="checkAnswer(2, 'Evaporation')">Evaporation</button>
+                <button onclick="checkAnswer(2, 'Precipitation')">Precipitation</button>
+                <p id="result2" class="result"></p>
+            </div>
+
+            <div class="quiz-question">
+                <p>3. Water gathering in lakes and oceans is called:</p>
+                <button onclick="checkAnswer(3, 'Collection')">Collection</button>
+                <button onclick="checkAnswer(3, 'Condensation')">Condensation</button>
+                <button onclick="checkAnswer(3, 'Infiltration')">Infiltration</button>
+                <p id="result3" class="result"></p>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        const sunlightSlider = document.getElementById('sunlight');
+        const evaporationRate = document.getElementById('evaporation-rate');
+        const temperatureSlider = document.getElementById('temperature');
+        const precipitationLevel = document.getElementById('precipitation-level');
+
+        sunlightSlider.addEventListener('input', () => {
+            if (sunlightSlider.value < 30) evaporationRate.textContent = 'Evaporation Rate: Low';
+            else if (sunlightSlider.value < 70) evaporationRate.textContent = 'Evaporation Rate: Moderate';
+            else evaporationRate.textContent = 'Evaporation Rate: High';
+        });
+
+        temperatureSlider.addEventListener('input', () => {
+            if (temperatureSlider.value < 10) precipitationLevel.textContent = 'Precipitation: Snowfall likely';
+            else if (temperatureSlider.value < 25) precipitationLevel.textContent = 'Precipitation: Normal';
+            else precipitationLevel.textContent = 'Precipitation: Heavy Rainfall likely';
+        });
+
+        function checkAnswer(question, answer) {
+            const results = {
+                1: 'Sun',
+                2: 'Condensation',
+                3: 'Collection'
+            };
+            const resultEl = document.getElementById('result' + question);
+            if (answer === results[question]) {
+                resultEl.textContent = '✅ Correct!';
+                resultEl.style.color = '#4caf50';
+            } else {
+                resultEl.textContent = '❌ Try Again!';
+                resultEl.style.color = '#e53935';
+            }
+        }
+    </script>
+</body>
+
+</html>
