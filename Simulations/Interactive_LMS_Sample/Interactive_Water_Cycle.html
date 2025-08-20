@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Water Cycle</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #1c2023;
+            /* Light blue background */
+        }
+
+        #app-container {
+            position: relative;
+            max-width: 1024px;
+            margin: auto;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        #water-cycle-image {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .hotspot {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.5);
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            font-weight: 600;
+            color: #1e40af;
+            /* Dark blue text */
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+        }
+
+        .hotspot:hover {
+            transform: scale(1.1);
+            background: #dbeafe;
+            /* Lighter blue on hover */
+            box-shadow: 0 0 10px #60a5fa;
+        }
+
+        .popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .popup-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            position: relative;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: transparent;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6b7280;
+        }
+
+        .close-btn:hover {
+            color: #1f2937;
+        }
+
+        /* Buttons and UI Controls */
+        button,
+        .btn {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid #fff;
+            border-radius: 8px;
+            color: #fff;
+            padding: 10px 15px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s ease;
+        }
+
+        button:hover,
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        /* Positioning specific buttons */
+        #quizBtn {
+            top: 20px;
+            right: 20px;
+        }
+
+        #captionToggle {
+            top: 20px;
+            left: 20px;
+        }
+
+        #chartBtn {
+            bottom: 20px;
+            right: 20px;
+        }
+
+        #voiceoverBtn {
+            bottom: 20px;
+            left: 20px;
+        }
+
+        #quizBtn {
+            top: 20px;
+            right: 20px;
+        }
+
+        #learnMoreBtn {
+            bottom: 20px;
+            right: 20px;
+        }
+
+
+        /* Responsive text */
+        @media (max-width: 768px) {
+
+            button,
+            .btn {
+                font-size: 12px;
+                padding: 8px 12px;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-black-50 flex items-center justify-center p-4">
+    <button id="captionToggle" class="btn">📝 Captions</button>
+    <button id="voiceoverBtn" class="btn">🔊 Voiceover</button>
+    <button id="quizBtn" class="btn">🧠 Quiz</button>
+    <button id="learnMoreBtn" class="btn">📘 Learn More</button>
+
+    <div id="app-container" class="bg-white rounded-xl shadow-lg relative">
+        <!-- Image with clickable hotspots -->
+        <img id="water-cycle-image" src="/assets/watercycle.png" alt="The Water Cycle Diagram"
+            style="width: 100%; height: fit-content;">
+
+        <!-- Hotspots positioned relative to the image container -->
+        <div id="evaporation-1" class="hotspot" style="top: 4%; left: 25%;">Evaporation</div>
+        <div id="evaporation-2" class="hotspot" style="top: 65%; left: 1%;">Evaporation</div>
+        <div id="evaporation-3" class="hotspot" style="top: 80%; left: 75%;">Evaporation</div>
+        <div id="transpiration" class="hotspot" style="top: 30%; left: 45%;">Transpiration</div>
+        <div id="condensation-1" class="hotspot" style="top: 35%; left: 25%;">Condensation</div>
+        <div id="condensation-2" class="hotspot" style="top: 20%; left: 55%;">Condensation</div>
+        <div id="sublimation" class="hotspot" style="top: 25%; left: 70%;">Sublimation</div>
+        <div id="precipitation-1" class="hotspot" style="top: 40%; left: 15%;">Precipitation</div>
+        <div id="precipitation-2" class="hotspot" style="top: 10%; left: 85%;">Precipitation</div>
+        <div id="runoff-1" class="hotspot" style="top: 70%; left: 35%;">Runoff</div>
+        <div id="runoff-2" class="hotspot" style="top: 60%; left: 75%;">Runoff</div>
+        <div id="groundwater" class="hotspot" style="top: 90%; left: 15%;">Groundwater</div>
+        <div id="infiltration" class="hotspot" style="top: 85%; left: 65%;">Infiltration</div>
+        <div id="plant-uptake" class="hotspot" style="top: 90%; left: 45%;">Plant uptake</div>
+        <div id="percolation" class="hotspot" style="top: 95%; left: 85%;">Percolation</div>
+        <div id="deposition" class="hotspot" style="top: 45%; left: 60%;">Deposition</div>
+    </div>
+
+    <!-- The popup container -->
+    <div id="popup-container" class="popup hidden">
+        <div class="popup-content">
+            <button id="close-popup" class="close-btn">&times;</button>
+            <h2 id="popup-title" class="text-2xl font-bold text-gray-800 mb-4"></h2>
+            <p id="popup-text" class="text-gray-600 leading-relaxed"></p>
+        </div>
+    </div>
+
+    <script>
+        const hotspots = [
+            { id: 'evaporation-1', title: 'Evaporation', text: 'Evaporation is the process by which water changes from a liquid to a gas or vapor. This is how water from oceans, lakes, and rivers rises into the atmosphere, driven by the sun\'s heat.' },
+            { id: 'evaporation-2', title: 'Evaporation', text: 'Evaporation is the process by which water changes from a liquid to a gas or vapor. This is how water from oceans, lakes, and rivers rises into the atmosphere, driven by the sun\'s heat.' },
+            { id: 'evaporation-3', title: 'Evaporation', text: 'Evaporation is the process by which water changes from a liquid to a gas or vapor. This is how water from oceans, lakes, and rivers rises into the atmosphere, driven by the sun\'s heat.' },
+            { id: 'transpiration', title: 'Transpiration', text: 'Transpiration is the process of water movement through a plant and its evaporation from aerial parts, such as leaves, stems, and flowers. Essentially, it\'s how plants "sweat" water vapor into the air.' },
+            { id: 'condensation-1', title: 'Condensation', text: 'Condensation is the process by which water vapor in the air is changed into liquid water. This is what forms clouds and fog. As warm, moist air rises, it cools and the water vapor condenses around tiny particles in the air, forming clouds.' },
+            { id: 'condensation-2', title: 'Condensation', text: 'Condensation is the process by which water vapor in the air is changed into liquid water. This is what forms clouds and fog. As warm, moist air rises, it cools and the water vapor condenses around tiny particles in the air, forming clouds.' },
+            { id: 'sublimation', title: 'Sublimation', text: 'Sublimation is the process where a solid, such as ice or snow, changes directly into a gas without first becoming a liquid. This can happen in very cold and dry conditions, like on high mountain peaks.' },
+            { id: 'precipitation-1', title: 'Precipitation', text: 'Precipitation is water released from clouds in the form of rain, freezing rain, sleet, snow, or hail. It is the primary connection in the water cycle that provides for the delivery of atmospheric water to the Earth.' },
+            { id: 'precipitation-2', title: 'Precipitation', text: 'Precipitation is water released from clouds in the form of rain, freezing rain, sleet, snow, or hail. It is the primary connection in the water cycle that provides for the delivery of atmospheric water to the Earth.' },
+            { id: 'runoff-1', title: 'Runoff', text: 'Runoff is the flow of water that occurs when excess stormwater, meltwater, or other sources flow over the Earth\'s surface. It can flow into rivers, lakes, and oceans, or be collected as groundwater.' },
+            { id: 'runoff-2', title: 'Runoff', text: 'Runoff is the flow of water that occurs when excess stormwater, meltwater, or other sources flow over the Earth\'s surface. It can flow into rivers, lakes, and oceans, or be collected as groundwater.' },
+            { id: 'groundwater', title: 'Groundwater', text: 'Groundwater is water located beneath the Earth\'s surface in soil pore spaces and in the fractures of rock formations. It is a vital part of the water cycle, supplying water to streams and rivers.' },
+            { id: 'infiltration', title: 'Infiltration', text: 'Infiltration is the process by which water on the ground surface enters the soil. This water can be absorbed by plant roots, or it can continue to move downward, becoming groundwater.' },
+            { id: 'plant-uptake', title: 'Plant Uptake', text: 'Plant uptake is the process where plants absorb water from the soil through their roots. This water is essential for the plant\'s growth and is later released back into the atmosphere through transpiration.' },
+            { id: 'percolation', title: 'Percolation', text: 'Percolation is the movement of water through the porous spaces in soil or rock. This process recharges groundwater aquifers and is a key step in the journey of water back to the surface or into underground reservoirs.' },
+            { id: 'deposition', title: 'Deposition', text: 'Deposition is the process by which water vapor changes directly into a solid, like ice, without first becoming a liquid. This forms frost and ice crystals on surfaces or as part of the atmospheric water cycle in clouds.' },
+        ];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const popupContainer = document.getElementById('popup-container');
+            const popupTitle = document.getElementById('popup-title');
+            const popupText = document.getElementById('popup-text');
+            const closeBtn = document.getElementById('close-popup');
+
+            hotspots.forEach(hotspotData => {
+                const hotspotElement = document.getElementById(hotspotData.id);
+                if (hotspotElement) {
+                    hotspotElement.addEventListener('click', () => {
+                        popupTitle.textContent = hotspotData.title;
+                        popupText.textContent = hotspotData.text;
+                        popupContainer.classList.remove('hidden');
+                    });
+                }
+            });
+
+            closeBtn.addEventListener('click', () => {
+                popupContainer.classList.add('hidden');
+            });
+
+            popupContainer.addEventListener('click', (event) => {
+                if (event.target === popupContainer) {
+                    popupContainer.classList.add('hidden');
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
