@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Damped Pendulum Simulation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <!-- Add CSS2D Renderer and OrbitControls imports -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/renderers/CSS2DRenderer.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <style>
+        /* Force HTML and BODY to cover the entire viewport and prevent scrolling */
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+
+        /* Full-screen container for the 3D scene */
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #1f2937;
+            /* Dark background for 3D */
+            z-index: 1;
+        }
+
+        /* Overlay container for the title and instructions */
+        #header-overlay {
+            position: fixed;
+            top: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            background: rgba(31, 41, 55, 0.7);
+            /* Translucent dark header */
+            color: white;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+            max-width: 90%;
+        }
+
+        /* Overlay container for the translucent control panel */
+        #control-panel-overlay {
+            position: fixed;
+            bottom: 2rem;
+            /* Position at the bottom */
+            left: 50%;
+            transform: translateX(-50%);
+            /* Center horizontally */
+            z-index: 10;
+            max-width: 800px;
+            width: 90%;
+
+            /* Translucent background for the panel */
+            background-color: rgba(255, 255, 255, 0.85);
+            /* 85% opacity white */
+            backdrop-filter: blur(5px);
+            /* Optional: Adds a nice blur effect */
+
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        canvas {
+            display: block;
+        }
+
+        .control-group input[type="range"] {
+            width: 100%;
+            height: 6px;
+        }
+
+        .control-group label {
+            font-weight: 600;
+        }
+
+        /* Styles for the 3D label */
+        .length-label {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 0.5rem;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.8rem;
+            color: #1f2937;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header Overlay -->
+    <div id="header-overlay">
+        <h1 class="text-2xl font-extrabold mb-1 text-center">
+            Damped Pendulum ($\theta(t) = A e^{-\gamma t} \cos(\omega t)$)
+        </h1>
+        <p class="text-center text-xs opacity-80">
+            Use your mouse to zoom, rotate, and pan the 3D view.
+        </p>
+    </div>
+
+    <!-- Full-Screen Canvas Container -->
+    <div id="canvas-container">
+        <!-- The Three.js canvas and CSS2DRenderer will be appended here -->
+    </div>
+
+    <!-- Controls Panel Overlay -->
+    <div id="control-panel-overlay">
+        <!-- Controls Panel Content -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+            <div class="control-group">
+                <label for="length" class="text-sm text-gray-700 block mb-1">Length (L) cm</label>
+                <input type="range" id="length" min="50" max="200" value="100" step="5" class="accent-blue-500">
+                <span id="length-val" class="text-blue-600 text-lg font-mono">100</span>
+            </div>
+
+            <div class="control-group">
+                <label for="amplitude" class="text-sm text-gray-700 block mb-1">Initial Angle (A) radians</label>
+                <input type="range" id="amplitude" min="0.1" max="1.5" value="1.0" step="0.05" class="accent-green-500">
+                <span id="amplitude-val" class="text-green-600 text-lg font-mono">1.00</span>
+            </div>
+
+            <div class="control-group">
+                <label for="dampCoeff" class="text-sm text-gray-700 block mb-1">Damping Coeff ($\gamma$)</label>
+                <input type="range" id="dampCoeff" min="0" max="0.5" value="0.1" step="0.01" class="accent-red-500">
+                <span id="dampCoeff-val" class="text-red-600 text-lg font-mono">0.10</span>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // --- FIREBASE AND THREE.JS SETUP (Minimal) ---
+
+        // Define dummy params needed by pendulumEquation
+        let params = {
+            g: 9.81, // Gravity
+            len: 100, // Pendulum length in cm
+            amp: 1.0, // Initial amplitude (angle in radians)
+            dampCoeff: 0.1, // Damping coefficient (gamma)
+            startTime: Date.now() / 1000,
+        };
+
+        // Define the scale factor: 1 cm in physics = 0.5 unit in 3D scene
+        const SCALE_FACTOR = 0.5;
+        const PIVOT_Y_POS = 0; // Y-position for the pivot point
+
+        // Global THREE.js variables
+        let scene, camera, renderer, pendulumBob, pendulumRod, controls, labelRenderer, lengthLabel;
+        let pivotVisual, pendulumGroup; // Added pendulumGroup for rotation control
+        const canvasContainer = document.getElementById('canvas-container');
+        const { CSS2DRenderer, CSS2DObject } = THREE; // Destructure CSS2D classes
+
+        // --- UTILITY FUNCTIONS ---
+
+        /**
+         * Calculates the natural angular frequency (w) and period (T) for a simple pendulum.
+         */
+        function pendulumEquation() {
+            // Convert length from cm to meters (divide by 100)
+            let w = Math.sqrt(params.g / (params.len * 0.01));
+            let T = 2 * Math.PI / w;
+
+            return { T, w };
+        }
+
+        /**
+         * Calculates the angular displacement (theta) for a DAMPED pendulum.
+         */
+        function getDampedAngle(t, amp, dampCoeff) {
+            // Calculate natural frequency (w0) based on current length
+            const w0 = pendulumEquation().w;
+
+            // Exponential Decay Term (e^(-gamma*t))
+            const decay = Math.exp(-dampCoeff * t);
+
+            // Cosine Oscillation Term (cos(w0*t))
+            const oscillation = Math.cos(w0 * t);
+
+            // Combined Damped Angular Displacement (theta)
+            const angle = amp * decay * oscillation;
+
+            return angle;
+        }
+
+        // --- THREE.JS SIMULATION LOGIC ---
+
+        /**
+         * Updates the rod and bob geometry/position when the length parameter changes.
+         * This function is called in init() and when the length slider changes.
+         * @param {number} newLen - The new length in cm.
+         */
+        function updatePendulumLength(newLen) {
+            // 1. Calculate scaled dimensions
+            const L_scaled = newLen * SCALE_FACTOR;
+            const rodHeight = L_scaled * 2; // Rod geometry height must be the full length
+
+            // 2. Handle Rod (Recreate geometry since dimensions are immutable)
+            if (pendulumRod) {
+                pendulumGroup.remove(pendulumRod);
+            }
+            const rodGeometry = new THREE.CylinderGeometry(0.5, 0.5, rodHeight, 32);
+            const rodMaterial = new THREE.MeshBasicMaterial({ color: 0x4b5563 });
+            pendulumRod = new THREE.Mesh(rodGeometry, rodMaterial);
+
+            // Position rod center at -rodHeight/2 so the top edge is at the group's origin (the pivot)
+            pendulumRod.position.y = -rodHeight / 2;
+            pendulumGroup.add(pendulumRod);
+
+            // 3. Reposition Bob
+            // The bob should be at the bottom of the rod, which is -rodHeight from the group origin
+            pendulumBob.position.y = -rodHeight;
+
+            // 4. Update Rod dimensions/scale in the scene
+            params.len = newLen;
+        }
+
+        function init() {
+            // Use window dimensions for full screen
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+
+            // 1. WebGL Renderer Setup (for 3D objects)
+            renderer = new THREE.WebGLRenderer({ antialias: true, canvas: document.createElement('canvas') });
+            renderer.setSize(width, height);
+            renderer.setClearColor(0x1f2937);
+            canvasContainer.appendChild(renderer.domElement);
+
+            // 2. CSS2D Renderer Setup (for HTML labels)
+            labelRenderer = new CSS2DRenderer();
+            labelRenderer.setSize(width, height);
+            labelRenderer.domElement.style.position = 'absolute';
+            labelRenderer.domElement.style.top = '0px';
+            labelRenderer.domElement.style.pointerEvents = 'none'; // Allow clicking through to the canvas
+            canvasContainer.appendChild(labelRenderer.domElement);
+
+            // Scene Setup
+            scene = new THREE.Scene();
+
+            // 3. Camera Setup (Front-facing)
+            camera = new THREE.PerspectiveCamera(
+                75, // FOV
+                width / height, // Aspect Ratio
+                0.1, // Near
+                1000 // Far
+            );
+            // Camera position is front-facing (X=0, looking along Z)
+            camera.position.set(0, PIVOT_Y_POS, 80);
+            camera.lookAt(0, PIVOT_Y_POS, 0);
+
+            // 4. Orbit Controls Setup
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.target.set(0, -35 + PIVOT_Y_POS, 0); // Focus on the pivot point
+            controls.update(); // Initial update
+
+            // Lights
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+            scene.add(ambientLight);
+
+            const pointLight = new THREE.PointLight(0xffffff, 1, 100);
+            pointLight.position.set(20, 30, 50);
+            scene.add(pointLight);
+
+            // --- Pendulum Components ---
+
+            // A. Pivot Point (Visual sphere, static)
+            const pivotGeometry = new THREE.SphereGeometry(2, 32, 32);
+            const pivotMaterial = new THREE.MeshPhongMaterial({ color: 0xcccccc });
+            pivotVisual = new THREE.Mesh(pivotGeometry, pivotMaterial);
+            pivotVisual.position.set(0, PIVOT_Y_POS, 0); // Static location
+            scene.add(pivotVisual);
+
+            // B. Pendulum Group (The object that rotates)
+            pendulumGroup = new THREE.Group();
+            pendulumGroup.position.set(0, PIVOT_Y_POS, 0); // Set the rotation origin to the pivot point
+            scene.add(pendulumGroup);
+
+            // C. Initial Bob setup (required globally before updatePendulumLength)
+            const bobGeometry = new THREE.SphereGeometry(4, 32, 32);
+            const bobMaterial = new THREE.MeshPhongMaterial({ color: 0xef4444, shininess: 80 });
+            pendulumBob = new THREE.Mesh(bobGeometry, bobMaterial);
+            pendulumGroup.add(pendulumBob); // Add to group, position will be set by updatePendulumLength
+
+            // D. Initial Rod setup (required globally before updatePendulumLength)
+            // Note: pendulumRod is initialized here, but its geometry/position is set in updatePendulumLength
+            pendulumRod = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 1, 32), new THREE.MeshBasicMaterial({ color: 0x4b5563 }));
+            pendulumGroup.add(pendulumRod);
+
+            // E. Length Label Creation
+            const lengthDiv = document.createElement('div');
+            lengthDiv.className = 'length-label';
+            lengthDiv.textContent = `L: ${params.len} cm`;
+
+            lengthLabel = new CSS2DObject(lengthDiv);
+            lengthLabel.position.set(-10, PIVOT_Y_POS, 0); // Position slightly away from the rod 
+            pivotVisual.add(lengthLabel); // Attach label to the static pivot visual
+
+            // Set initial geometry and position based on current params.len
+            updatePendulumLength(params.len);
+            updatePendulum(params.amp); // Set initial rotation
+
+            // Handle window resizing
+            window.addEventListener('resize', onWindowResize, false);
+        }
+
+        function onWindowResize() {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+
+            renderer.setSize(width, height);
+            labelRenderer.setSize(width, height); // Resize CSS2D Renderer
+
+            // Update Perspective Camera aspect ratio
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
+        }
+
+
+        /**
+         * Updates the rotation of the pendulum group based on the current angle.
+         * All children (rod, bob) rotate automatically.
+         * @param {number} theta - The angular displacement in radians.
+         */
+        function updatePendulum(theta) {
+            // 1. Update Length Label text (This stays the same)
+            if (lengthLabel) {
+                lengthLabel.element.textContent = `L: ${params.len} cm`;
+            }
+
+            // 2. Apply rotation directly to the parent group
+            pendulumGroup.rotation.z = theta;
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            const currentTime = Date.now() / 1000;
+            const t = currentTime - params.startTime;
+
+            // Get the current damped angle
+            const currentAngle = getDampedAngle(t, params.amp, params.dampCoeff);
+
+            // Update the rotation and label text
+            updatePendulum(currentAngle);
+
+            // Update Orbit Controls
+            controls.update();
+
+            // Render both the 3D scene and the HTML labels
+            renderer.render(scene, camera);
+            labelRenderer.render(scene, camera);
+        }
+
+        // --- UI CONTROLS AND EVENT LISTENERS ---
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Get elements
+            const lengthInput = document.getElementById('length');
+            const amplitudeInput = document.getElementById('amplitude');
+            const dampCoeffInput = document.getElementById('dampCoeff');
+            const lengthVal = document.getElementById('length-val');
+            const amplitudeVal = document.getElementById('amplitude-val');
+            const dampCoeffVal = document.getElementById('dampCoeff-val');
+
+            // Initial update of display values
+            lengthVal.textContent = params.len;
+            amplitudeVal.textContent = params.amp.toFixed(2);
+            dampCoeffVal.textContent = params.dampCoeff.toFixed(2);
+
+            // Function to restart the simulation with new parameters
+            const restartSimulation = () => {
+                // Reset start time to measure t from zero again
+                params.startTime = Date.now() / 1000;
+            };
+
+            // Event listeners for UI updates
+            lengthInput.addEventListener('input', (e) => {
+                const newLen = parseFloat(e.target.value);
+                lengthVal.textContent = newLen;
+                updatePendulumLength(newLen); // <--- Call new length update function
+                restartSimulation();
+            });
+
+            amplitudeInput.addEventListener('input', (e) => {
+                params.amp = parseFloat(e.target.value);
+                amplitudeVal.textContent = params.amp.toFixed(2);
+                restartSimulation();
+            });
+
+            dampCoeffInput.addEventListener('input', (e) => {
+                params.dampCoeff = parseFloat(e.target.value);
+                dampCoeffVal.textContent = params.dampCoeff.toFixed(2);
+                restartSimulation();
+            });
+
+            // Start the Three.js visualization
+            init();
+            animate();
+
+            // Initial resizing for correct camera setup
+            onWindowResize();
+        });
+
+        // --- Placeholder for original functions not used in the 3D logic but included for context ---
+
+        function valueCal(len, amp) {
+            let data = [], dataX = [], dataY = [], dataV = [], points = [];
+            let period = pendulumEquation().w;
+
+            for (let i = 0; i < (10); i += 0.002) {
+                let t = i;
+                let wt = t * period;
+                // SHM Angle: a = amp * cos(wt)
+                let a = amp * (Math.cos(wt));
+                // Position (using SHM angle 'a')
+                let b = (len * Math.sin(a)).toFixed(2);
+                let c = (len * Math.cos(a)).toFixed(2);
+                // SHM Angular Velocity: v = -A * w * sin(wt)
+                let v = -amp * period * Math.sin(wt);
+                // points.push(new THREE.Vector3(b, -10, -i * 5)); 
+                data.push(a);
+                dataX.push(c);
+                dataY.push(b);
+                dataV.push(v);
+            }
+            console.log("SHM Data Trace Generated (Angular Displacement, X Pos, Y Pos, Velocity)");
+        }
+
+    </script>
+</body>
+
+</html>
