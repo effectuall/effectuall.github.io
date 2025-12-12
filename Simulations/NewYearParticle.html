@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2025 to 2026 High Density</title>
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #050505; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+            #logo { position: absolute; top: 10px; right: 10px; z-index: 20; }
+        
+        #canvas-container { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1; }
+        
+        /* UI Panel - Left Aligned */
+        #ui-layer {
+            position: absolute; top: 25%; left: 0px; 
+            transform: translateY(-50%);
+            z-index: 10;
+            background: rgba(10, 10, 12, 0.85);
+            backdrop-filter: blur(16px);
+            padding: 10px; border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: white; width: 280px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+        }
+
+        /* Webcam feedback */
+        .input_video { 
+            position: absolute; bottom: 20px; right: 20px; 
+            width: 120px; height: 90px; 
+            border-radius: 8px; transform: scaleX(-1); 
+            opacity: 0.3; z-index: 2; 
+            border: 1px solid rgba(255,255,255,0.1); 
+        }
+
+        h1 { font-size: 1.4rem; margin: 0 0 20px 0; font-weight: 400; letter-spacing: 4px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; text-transform: uppercase;}
+        
+        .control-group { margin-bottom: 20px; }
+        label { display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; color: #888; margin-bottom: 8px; font-weight: 600; }
+        
+        input[type="color"] { -webkit-appearance: none; border: none; width: 100%; height: 45px; cursor: pointer; background: none; }
+        input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+        input[type="color"]::-webkit-color-swatch { border: none; border-radius: 6px; }
+
+        #status { font-size: 0.9rem; color: #00ffcc; margin-bottom: 25px; display: flex; align-items: center; gap: 10px; background: rgba(0, 255, 204, 0.05); padding: 10px; border-radius: 8px; border: 1px solid rgba(0, 255, 204, 0.1); }
+        .dot { width: 8px; height: 8px; background: #00ffcc; border-radius: 50%; box-shadow: 0 0 10px #00ffcc; animation: pulse 1.5s infinite; }
+        
+        #countdown {
+            font-size: 1.3rem; font-weight: 700; text-align: center; margin-top: 25px; padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1); font-family: 'Courier New', monospace;
+            background: linear-gradient(90deg, #fff, #888); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        .instructions { font-size: 0.8rem; color: #999; line-height: 1.6; }
+        .instructions strong { color: #fff; }
+
+        .loading-screen {
+            position: fixed; top:0; left:0; width:100%; height:100%; background: #050505; z-index: 100;
+            display: flex; justify-content: center; align-items: center; color: white; flex-direction: column;
+            transition: opacity 0.5s;
+        }
+
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+
+        #logo { position: absolute; top: 10px; right: 10px; z-index: 20; }
+    </style>
+
+</head>
+<body>
+
+    <div id="loading" class="loading-screen">
+        <h2 style="font-weight: 300; letter-spacing: 2px;">GENERATING PARTICLES...</h2>
+    </div>
+
+<img src="/assets/icons/Logo.png" alt="Effectual LLC Logo" style="width: 150px; height: auto;" id="logo" />
+
+    <div id="ui-layer">
+        <h1>Future 2026</h1>
+        
+        <div id="status">
+            <div class="dot"></div>
+            <span id="status-text">Waiting for hands...</span>
+        </div>
+
+        <div class="control-group">
+            <label>Particle Color</label>
+            <input type="color" id="colorPicker" value="#00DDFF">
+        </div>
+
+        <div class="instructions">
+            1. Show both hands.<br>
+            2. <strong>Clench fists</strong> to morph.<br>
+            3. Release to return.
+        </div>
+
+        <div id="countdown">00d 00h 00m 00s</div>
+    </div>
+
+    <video class="input_video" autoplay playsinline muted></video>
+    <div id="canvas-container"></div>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/",
+                "@mediapipe/hands": "https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js",
+                "@mediapipe/camera_utils": "https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        import { FontLoader } from 'three/addons/loaders/FontLoader.js';
+        import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
+        import { MeshSurfaceSampler } from 'three/addons/math/MeshSurfaceSampler.js'; // Crucial for even distribution
+
+        let scene, camera, renderer, particles;
+        let posArrayStart, posArrayEnd; 
+        let currentPositions;
+        let material;
+        let morphTarget = 0; 
+        let handTension = 0; 
+        
+        // Massive increase in particles for high definition
+        const particleCount = 10000; 
+        
+        const videoElement = document.getElementsByClassName('input_video')[0];
+        const loadingScreen = document.getElementById('loading');
+        const statusText = document.getElementById('status-text');
+
+        init();
+
+        async function init() {
+            scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2(0x050505, 0.002);
+
+            // Camera Setup: Offset to LEFT so content is on RIGHT
+            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(-50, 0, 140);
+            
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Cap pixel ratio for performance
+            document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+            const controls = new OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.target.set(25, 0, 0); // Look at the text position
+
+            const loader = new FontLoader();
+            loader.load('https://unpkg.com/three@0.160.0/examples/fonts/helvetiker_bold.typeface.json', function (font) {
+                
+                // Increased curveSegments for smoother "2" and "5"
+                const config = {
+                    font: font, size: 50, height: 5, 
+                    curveSegments: 12, // Smooth curves
+                    bevelEnabled: true, bevelThickness: 1, bevelSize: 0.5, bevelOffset: 0, bevelSegments: 3
+                };
+
+                const textGeo2025 = new TextGeometry('2025', config);
+                const textGeo2026 = new TextGeometry('2026', config);
+
+                textGeo2025.center();
+                textGeo2026.center();
+
+                // Use Surface Sampler for uniform distribution
+                posArrayStart = sampleSurface(textGeo2025, particleCount);
+                posArrayEnd = sampleSurface(textGeo2026, particleCount);
+
+                const geometry = new THREE.BufferGeometry();
+                currentPositions = new Float32Array(particleCount * 3);
+                
+                // Fill initial positions
+                for(let i=0; i<particleCount*3; i++) {
+                    currentPositions[i] = posArrayStart[i];
+                }
+
+                geometry.setAttribute('position', new THREE.BufferAttribute(currentPositions, 3));
+
+                // Smaller, sharper particles
+                const sprite = new THREE.TextureLoader().load('https://threejs.org/examples/textures/sprites/spark1.png');
+
+                material = new THREE.PointsMaterial({ 
+                    color: 0x00DDFF, 
+                    size: 2,  // Smaller size for higher density
+                    map: sprite, 
+                    transparent: true,
+                    opacity: 0.9,
+                    blending: THREE.AdditiveBlending,
+                    depthWrite: false
+                });
+
+                particles = new THREE.Points(geometry, material);
+                particles.position.x = 25; // Shift to right side of screen
+                
+                scene.add(particles);
+
+                animate();
+                initMediaPipe();
+            });
+
+            document.getElementById('colorPicker').addEventListener('input', (e) => {
+                if(material) material.color.set(e.target.value);
+            });
+
+            window.addEventListener('resize', onWindowResize);
+            startCountdown();
+        }
+
+        // --- IMPROVED SAMPLING: Uses MeshSurfaceSampler ---
+        function sampleSurface(geo, count) {
+            const mat = new THREE.MeshBasicMaterial();
+            const mesh = new THREE.Mesh(geo, mat);
+            
+            // Create the sampler
+            const sampler = new MeshSurfaceSampler(mesh).build();
+            
+            const positions = new Float32Array(count * 3);
+            const tempPosition = new THREE.Vector3();
+
+            for (let i = 0; i < count; i++) {
+                // Sample a point on the surface
+                sampler.sample(tempPosition);
+                
+                positions[i * 3] = tempPosition.x;
+                positions[i * 3 + 1] = tempPosition.y;
+                positions[i * 3 + 2] = tempPosition.z;
+            }
+            return positions;
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            if (particles) {
+                // Smooth easing
+                morphTarget += (handTension - morphTarget) * 0.08;
+
+                const positions = particles.geometry.attributes.position.array;
+                const time = Date.now() * 0.008;
+
+                for (let i = 0; i < particleCount; i++) {
+                    const ix = i * 3;
+                    const iy = i * 3 + 1;
+                    const iz = i * 3 + 2;
+
+                    // Subtle organic noise
+                    const noiseX = Math.sin(time + positions[iy] * 0.05) * 0.1;
+                    const noiseY = Math.cos(time + positions[ix] * 0.05) * 0.1;
+
+                    const tx = posArrayStart[ix] + (posArrayEnd[ix] - posArrayStart[ix]) * morphTarget;
+                    const ty = posArrayStart[iy] + (posArrayEnd[iy] - posArrayStart[iy]) * morphTarget;
+                    const tz = posArrayStart[iz] + (posArrayEnd[iz] - posArrayStart[iz]) * morphTarget;
+
+                    positions[ix] = tx + noiseX;
+                    positions[iy] = ty + noiseY;
+                    positions[iz] = tz;
+                }
+                particles.geometry.attributes.position.needsUpdate = true;
+                
+                // Slow global rotation for 3D feel
+                particles.rotation.y = Math.sin(time * 0.1) * 0.1;
+            }
+            renderer.render(scene, camera);
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        async function initMediaPipe() {
+            loadScript("https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js")
+            .then(() => loadScript("https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js"))
+            .then(() => loadScript("https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"))
+            .then(() => loadScript("https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"))
+            .then(() => { startHands(); });
+        }
+
+        function loadScript(src) {
+            return new Promise((resolve, reject) => {
+                const s = document.createElement('script');
+                s.src = src;
+                s.onload = resolve;
+                s.onerror = reject;
+                document.head.appendChild(s);
+            });
+        }
+
+        function startHands() {
+            const hands = new window.Hands({locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`});
+            hands.setOptions({ maxNumHands: 2, modelComplexity: 1, minDetectionConfidence: 0.5, minTrackingConfidence: 0.5 });
+            hands.onResults(onResults);
+
+            const cameraUtils = new window.Camera(videoElement, {
+                onFrame: async () => { await hands.send({image: videoElement}); },
+                width: 640, height: 480
+            });
+            cameraUtils.start();
+            
+            loadingScreen.style.opacity = 0;
+            setTimeout(() => loadingScreen.remove(), 800);
+        }
+
+        function onResults(results) {
+            if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+                statusText.innerText = "Hands Detected";
+                statusText.style.color = "#00ffcc";
+                let totalTension = 0;
+                let handsCount = 0;
+
+                for (const landmarks of results.multiHandLandmarks) {
+                    const wrist = landmarks[0];
+                    const tips = [8, 12, 16, 20];
+                    let avgDist = 0;
+                    tips.forEach(idx => {
+                        const tip = landmarks[idx];
+                        avgDist += Math.sqrt(Math.pow(tip.x - wrist.x, 2) + Math.pow(tip.y - wrist.y, 2));
+                    });
+                    avgDist /= 4;
+                    
+                    let tension = 0;
+                    if(avgDist < 0.25) tension = 1; 
+                    else if(avgDist > 0.45) tension = 0;
+                    else tension = 1 - ((avgDist - 0.25) / 0.2);
+                    
+                    totalTension += tension;
+                    handsCount++;
+                }
+                handTension = totalTension / handsCount;
+            } else {
+                statusText.innerText = "Waiting for hands...";
+                statusText.style.color = "#aaa";
+                handTension = 0;
+            }
+        }
+
+        function startCountdown() {
+            const targetDate = new Date("January 1, 2026 00:00:00").getTime();
+            const el = document.getElementById("countdown");
+            setInterval(() => {
+                const now = new Date().getTime();
+                const distance = targetDate - now;
+                if (distance < 0) { el.innerText = "HAPPY NEW YEAR!"; handTension = 1; return; }
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                el.innerText = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+            }, 1000);
+        }
+    </script>
+
+    
+</body>
+</html>
