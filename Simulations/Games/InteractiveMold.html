@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Interactive Mold Growth</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #2c3e50;
+            color: white;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        
+        /* Responsive Layout Grid */
+        .app-container {
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+            height: 100%;
+            padding: 10px;
+            gap: 10px;
+        }
+
+        header { text-align: center; padding: 5px; }
+        header h1 { font-size: 1.2rem; color: #ecf0f1; }
+
+        .main-scene {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 15px;
+            overflow: hidden;
+        }
+
+        /* Bread Stage */
+        .stage {
+            position: relative;
+            background: #34495e;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .bread {
+            position: relative;
+            width: 280px;
+            height: 280px;
+            background: #f3e5ab;
+            border: 12px solid #8d6e63;
+            border-radius: 40px 40px 10px 10px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+        .mold {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(circle, #2d3a15 0%, #4a5d23 60%, transparent 100%);
+            border-radius: 50%;
+            filter: blur(3px);
+            opacity: 0.9;
+            transition: width 0.1s linear, height 0.1s linear;
+        }
+
+        /* Dashboard & Controls */
+        .sidebar {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .graph-container {
+            flex-grow: 1;
+            background: white;
+            border-radius: 10px;
+            padding: 5px;
+            min-height: 150px;
+        }
+
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            background: rgba(0,0,0,0.2);
+            padding: 10px;
+            border-radius: 10px;
+        }
+        label { font-size: 0.8rem; display: flex; justify-content: space-between; }
+        input[type="range"] { width: 100%; }
+
+        .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+        button {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        #startBtn { background: #27ae60; color: white; }
+        #stopBtn { background: #e74c3c; color: white; }
+        #resetBtn { background: #7f8c8d; color: white; grid-column: span 2; }
+
+        .data-readout {
+            font-family: monospace;
+            background: #1a252f;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            border-left: 4px solid #3498db;
+        }
+
+        /* Tablet/Mobile Adjustments */
+        @media (max-width: 768px) {
+            .main-scene { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
+            .bread { width: 200px; height: 200px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <header>
+        <h1>Interactive Mold Growth on Bread</h1>
+    </header>
+
+    <div class="main-scene">
+        <div class="stage">
+            <div class="bread">
+                <div id="moldVisual" class="mold"></div>
+            </div>
+        </div>
+
+        <div class="sidebar">
+            <div class="data-readout">
+                Day: <span id="dayNum">0</span> | Hr: <span id="hrNum">0</span><br>
+                Area: <span id="areaNum">50.00</span> mm²
+            </div>
+
+            <div class="controls">
+                <label>Initial Area (M): <span id="mVal">50</span></label>
+                <input type="range" id="mSlider" min="10" max="100" value="50">
+                
+                <label>Growth Factor (G): <span id="gVal">3.0</span></label>
+                <input type="range" id="gSlider" min="1.1" max="5.0" step="0.1" value="3.0">
+                
+                <div class="btn-group">
+                    <button id="startBtn">START</button>
+                    <button id="stopBtn">STOP</button>
+                    <button id="resetBtn">RESET BREAD</button>
+                </div>
+            </div>
+
+            <div class="graph-container">
+                <canvas id="growthChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let hours = 0;
+    let timer = null;
+    let chart;
+    const targetArea = 6400;
+
+    // Initialize Chart
+    const ctx = document.getElementById('growthChart').getContext('2d');
+    chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: [0],
+            datasets: [{
+                label: 'Area (mm²)',
+                data: [50],
+                borderColor: '#27ae60',
+                tension: 0.3,
+                pointRadius: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: { beginAtZero: true, grid: { color: '#eee' } },
+                x: { title: { display: true, text: 'Days' }, grid: { display: false } }
+            },
+            plugins: { legend: { display: false } }
+        }
+    });
+
+    function update() {
+        const M = parseFloat(document.getElementById('mSlider').value);
+        const G = parseFloat(document.getElementById('gSlider').value);
+        
+        // Calculate current area: m = M * G^(d) where d = hours/24
+        const currentDays = hours / 24;
+        const area = M * Math.pow(G, currentDays);
+
+        // Visual scaling: 50mm² = 10px diameter
+        const diameter = 10 * Math.sqrt(area / 50);
+        const mold = document.getElementById('moldVisual');
+        mold.style.width = diameter + 'px';
+        mold.style.height = diameter + 'px';
+
+        // Update Text
+        document.getElementById('dayNum').innerText = Math.floor(currentDays);
+        document.getElementById('hrNum').innerText = hours % 24;
+        document.getElementById('areaNum').innerText = area.toFixed(2);
+
+        // Update Graph every 6 simulated hours for performance
+        if (hours % 6 === 0) {
+            chart.data.labels.push(currentDays.toFixed(1));
+            chart.data.datasets[0].data.push(area);
+            chart.update('none');
+        }
+
+        if (area >= targetArea) stop();
+    }
+
+    function start() {
+        if (timer) return;
+        document.getElementById('mSlider').disabled = true;
+        document.getElementById('gSlider').disabled = true;
+        timer = setInterval(() => {
+            hours++;
+            update();
+        }, 50); // Speed: 1 hour every 50ms
+    }
+
+    function stop() {
+        clearInterval(timer);
+        timer = null;
+    }
+
+    function reset() {
+        stop();
+        hours = 0;
+        document.getElementById('mSlider').disabled = false;
+        document.getElementById('gSlider').disabled = false;
+        chart.data.labels = [0];
+        chart.data.datasets[0].data = [parseFloat(document.getElementById('mSlider').value)];
+        chart.update();
+        update();
+    }
+
+    // Event Listeners
+    document.getElementById('mSlider').oninput = function() {
+        document.getElementById('mVal').innerText = this.value;
+        reset();
+    };
+    document.getElementById('gSlider').oninput = function() {
+        document.getElementById('gVal').innerText = this.value;
+        reset();
+    };
+    document.getElementById('startBtn').onclick = start;
+    document.getElementById('stopBtn').onclick = stop;
+    document.getElementById('resetBtn').onclick = reset;
+
+    update();
+
+    /**
+ * Auto-update layout on window resize to maintain 
+ * the "No Scrolling" fullscreen requirement.
+ */
+window.onresize = function() {
+    // 1. Force the Chart to resize to its new container dimensions
+    if (chart) {
+        chart.resize();
+    }
+
+    // 2. Adjust the Bread Stage scaling for very small mobile screens
+    const stage = document.querySelector('.stage');
+    const bread = document.querySelector('.bread');
+    
+    // If the stage is smaller than the bread, scale the bread down
+    if (stage.offsetWidth < 320 || stage.offsetHeight < 320) {
+        const scale = Math.min(stage.offsetWidth / 350, stage.offsetHeight / 350);
+        bread.style.transform = `scale(${scale})`;
+    } else {
+        bread.style.transform = `scale(1)`;
+    }
+
+    // 3. Re-run the visual update to ensure mold position is correct
+    update();
+};
+</script>
+</body>
+</html>
