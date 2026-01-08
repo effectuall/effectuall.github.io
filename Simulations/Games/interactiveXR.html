@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8" />
+	<title>Three.js AR Cube</title>
+
+	<script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+
+	<style>
+		body {
+			margin: 0;
+			overflow: hidden;
+		}
+	</style>
+</head>
+
+<body>
+
+	<script type="module">
+		import * as THREE from 'three';
+		import { ARButton } from 'three/addons/webxr/ARButton.js';
+
+		const scene = new THREE.Scene();
+		const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 20);
+
+		const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+		renderer.setSize(window.innerWidth, window.innerHeight);
+		renderer.xr.enabled = true;
+		document.body.appendChild(renderer.domElement);
+
+		document.body.appendChild(
+			ARButton.createButton(renderer, { requiredFeatures: ['hit-test'] })
+		);
+
+		// Light
+		const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
+		scene.add(light);
+
+		// Cube
+		const geometry = new THREE.BoxGeometry(0.2, 0.2, 0.2);
+		const material = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
+		const cube = new THREE.Mesh(geometry, material);
+		cube.position.set(0, 0, -0.5);
+		scene.add(cube);
+
+		// Raycaster
+		const raycaster = new THREE.Raycaster();
+		const pointer = new THREE.Vector2();
+		let isHovered = false;
+		let isScaled = false;
+
+		function onPointerMove(event) {
+			pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
+			pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
+		}
+
+		function onClick() {
+			if (isHovered) {
+				isScaled = !isScaled;
+				cube.scale.setScalar(isScaled ? 1.5 : 1);
+			}
+		}
+
+		window.addEventListener('pointermove', onPointerMove);
+		window.addEventListener('click', onClick);
+
+		renderer.setAnimationLoop(() => {
+			cube.rotation.y += 0.01;
+
+			raycaster.setFromCamera(pointer, camera);
+			const intersects = raycaster.intersectObject(cube);
+
+			if (intersects.length > 0) {
+				if (!isHovered) {
+					cube.material.color.set(0xff0000);
+					isHovered = true;
+				}
+			} else {
+				if (isHovered) {
+					cube.material.color.set(0x00ff00);
+					isHovered = false;
+				}
+			}
+
+			renderer.render(scene, camera);
+		});
+
+		window.addEventListener('resize', () => {
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+			renderer.setSize(window.innerWidth, window.innerHeight);
+		});
+	</script>
+
+</body>
+
+</html>
