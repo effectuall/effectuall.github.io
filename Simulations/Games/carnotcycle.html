@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Three.js Carnot Cycle Simulation</title>
+    <style>
+        body { margin: 0; overflow: hidden; font-family: sans-serif; background: #111; }
+        #canvas-container { position: absolute; top: 10px; left: 10px; background: rgba(255, 255, 255, 0.9); border-radius: 8px; padding: 10px; }
+        #info { position: absolute; bottom: 20px; width: 100%; text-align: center; color: white; pointer-events: none; }
+        .label { font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div id="canvas-container">
+    <canvas id="pvDiagram" width="300" height="250"></canvas>
+    <div id="status" style="text-align: center; font-size: 14px; margin-top: 5px;">Phase: Isothermal Expansion</div>
+</div>
+
+<div id="info">
+    <h2>Carnot Cycle Simulation</h2>
+    <p>Red: High Temp ($T_H$) | Blue: Low Temp ($T_L$)</p>
+</div>
+
+<script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+        }
+    }
+</script>
+
+<script type="module">
+    import * as THREE from 'three';
+
+    // --- Configuration & Constants ---
+    let step = 0;
+    const speed = 0.005;
+    let phase = "A"; // A->B, B->C, C->D, D->A
+
+    // --- Three.js Setup ---
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    // Lights
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    scene.add(ambientLight);
+    const pointLight = new THREE.PointLight(0xffffff, 1);
+    pointLight.position.set(5, 5, 5);
+    scene.add(pointLight);
+
+    // Chamber (Cylinder)
+    const chamberGeo = new THREE.CylinderGeometry(1.1, 1.1, 4, 32, 1, true);
+    const chamberMat = new THREE.MeshPhongMaterial({ color: 0xaaaaaa, side: THREE.DoubleSide, transparent: true, opacity: 0.3 });
+    const chamber = new THREE.Mesh(chamberGeo, chamberMat);
+    scene.add(chamber);
+
+    // Piston (Disc)
+    const pistonGeo = new THREE.CylinderGeometry(1.05, 1.05, 0.2, 32);
+    const pistonMat = new THREE.MeshPhongMaterial({ color: 0x555555 });
+    const piston = new THREE.Mesh(pistonGeo, pistonMat);
+    scene.add(piston);
+
+    // Fluid (Variable height cylinder)
+    const fluidGeo = new THREE.CylinderGeometry(1, 1, 1, 32);
+    const fluidMat = new THREE.MeshBasicMaterial({ color: 0xff0000, transparent: true, opacity: 0.6 });
+    const fluid = new THREE.Mesh(fluidGeo, fluidMat);
+    fluid.position.y = -2; // Base of chamber
+    scene.add(fluid);
+
+    camera.position.z = 7;
+    camera.position.y = 1;
+
+    // --- Canvas PV Diagram Setup ---
+    const cvs = document.getElementById('pvDiagram');
+    const ctx = cvs.getContext('2d');
+    const statusDiv = document.getElementById('status');
+
+    function drawGraph() {
+        ctx.clearRect(0, 0, cvs.width, cvs.height);
+        
+        // Axes
+        ctx.beginPath();
+        ctx.strokeStyle = '#000';
+        ctx.moveTo(40, 20); ctx.lineTo(40, 220); ctx.lineTo(280, 220);
+        ctx.stroke();
+        ctx.fillText("P", 25, 30);
+        ctx.fillText("V", 270, 235);
+
+        // Define Points (Conceptual)
+        const A = { x: 70,  y: 60,  label: 'A' };
+        const B = { x: 150, y: 100, label: 'B' };
+        const C = { x: 230, y: 180, label: 'C' };
+        const D = { x: 120, y: 160, label: 'D' };
+
+        // Draw Curves
+        ctx.setLineDash([5, 5]);
+        ctx.strokeStyle = '#999';
+        // (Simplified paths for visual representation)
+        drawCurve(A, B, 'red');   // Isothermal
+        drawCurve(B, C, 'black'); // Adiabatic
+        drawCurve(C, D, 'blue');  // Isothermal
+        drawCurve(D, A, 'black'); // Adiabatic
+        ctx.setLineDash([]);
+
+        // Highlight Current Position
+        let currentPos = { x: 0, y: 0 };
+        if (phase === "A") currentPos = interpolate(A, B, step);
+        if (phase === "B") currentPos = interpolate(B, C, step);
+        if (phase === "C") currentPos = interpolate(C, D, step);
+        if (phase === "D") currentPos = interpolate(D, A, step);
+
+        ctx.fillStyle = 'orange';
+        ctx.beginPath();
+        ctx.arc(currentPos.x, currentPos.y, 5, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Labels
+        ctx.fillStyle = '#000';
+        [A, B, C, D].forEach(p => ctx.fillText(p.label, p.x - 5, p.y - 10));
+    }
+
+    function drawCurve(p1, p2, color) {
+        ctx.beginPath();
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2;
+        ctx.moveTo(p1.x, p1.y);
+        ctx.quadraticCurveTo((p1.x + p2.x) / 2, (p1.y + p2.y) / 2 + 10, p2.x, p2.y);
+        ctx.stroke();
+    }
+
+    function interpolate(p1, p2, t) {
+        return {
+            x: p1.x + (p2.x - p1.x) * t,
+            y: p1.y + (p2.y - p1.y) * t + Math.sin(t * Math.PI) * 10 // mimics curve
+        };
+    }
+
+    // --- Animation Loop ---
+    function animate() {
+        requestAnimationFrame(animate);
+
+        step += speed;
+        if (step > 1) {
+            step = 0;
+            if (phase === "A") phase = "B";
+            else if (phase === "B") phase = "C";
+            else if (phase === "C") phase = "D";
+            else phase = "A";
+        }
+
+        let height = 0;
+        let color = new THREE.Color();
+
+        // Logic for Piston movement and Fluid color
+        if (phase === "A") { // Isothermal Expansion
+            height = 1 + (step * 1); // Grows
+            fluidMat.color.setHex(0xff0000); 
+            statusDiv.innerText = "A -> B: Isothermal Expansion (Hot)";
+        } 
+        else if (phase === "B") { // Adiabatic Expansion
+            height = 2 + (step * 1); // Grows more
+            fluidMat.color.lerpColors(new THREE.Color(0xff0000), new THREE.Color(0x0000ff), step);
+            statusDiv.innerText = "B -> C: Adiabatic Expansion (Cooling)";
+        }
+        else if (phase === "C") { // Isothermal Compression
+            height = 3 - (step * 1.5); // Shrinks
+            fluidMat.color.setHex(0x0000ff);
+            statusDiv.innerText = "C -> D: Isothermal Compression (Cold)";
+        }
+        else if (phase === "D") { // Adiabatic Compression
+            height = 1.5 - (step * 0.5); // Back to start
+            fluidMat.color.lerpColors(new THREE.Color(0x0000ff), new THREE.Color(0xff0000), step);
+            statusDiv.innerText = "D -> A: Adiabatic Compression (Heating)";
+        }
+
+        // Update 3D Objects
+        fluid.scale.y = height;
+        fluid.position.y = -2 + height / 2;
+        piston.position.y = -2 + height;
+
+        drawGraph();
+        renderer.render(scene, camera);
+    }
+
+    animate();
+
+    // Handle Resize
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+</script>
+</body>
+</html>
