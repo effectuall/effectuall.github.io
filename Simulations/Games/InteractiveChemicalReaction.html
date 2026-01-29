@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zinc Reaction with Dil. Sulfuric Acid | EffectualL</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-dark: #012c59;
+            --orange-vivid: #fc5206;
+            --cyan-bright: #0dcfb2;
+            --teal-deep: #0490a1;
+            --orange-light: #faa630;
+        }
+
+        body {
+            background-color: #f8fafc;
+            color: var(--primary-dark);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .tab-active {
+            border-bottom: 4px solid var(--orange-vivid);
+            color: var(--orange-vivid);
+            font-weight: bold;
+        }
+
+        .bg-cyan-custom { background-color: var(--cyan-bright); }
+        .text-cyan-custom { color: var(--cyan-bright); }
+        .bg-primary-custom { background-color: var(--primary-dark); }
+        .border-primary-custom { border-color: var(--primary-dark); }
+
+        /* Knowledge Graph Styles */
+        #kg-container {
+            width: 100%;
+            height: 500px;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+        }
+
+        .node text {
+            font-size: 12px;
+            font-weight: 600;
+            fill: var(--primary-dark);
+        }
+
+        /* Flashcard Styles */
+        .flashcard-inner {
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+        .flashcard-flipped .flashcard-inner {
+            transform: rotateY(180deg);
+        }
+        .flashcard-front, .flashcard-back {
+            backface-visibility: hidden;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            text-align: center;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .flashcard-back {
+            transform: rotateY(180deg);
+            background-color: var(--teal-deep);
+            color: white;
+        }
+        .flashcard-front {
+            background-color: white;
+            border: 2px solid var(--cyan-bright);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-primary-custom text-white p-4 shadow-lg flex justify-between items-center px-8">
+        <div class="flex items-center space-x-3">
+            <div class="bg-cyan-custom w-10 h-10 flex items-center justify-center rounded font-bold text-white text-xl">EL</div>
+            <h1 class="text-2xl font-semibold tracking-tight">EffectualL</h1>
+        </div>
+        <div class="hidden md:block text-sm font-light text-slate-300">
+            Topic: Single Displacement Reaction (Zn + H₂SO₄)
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow container mx-auto p-4 md:p-8">
+        
+        <!-- Navigation Tabs -->
+        <div class="flex border-b border-gray-200 mb-6 bg-white rounded-t-lg overflow-hidden">
+            <button onclick="showTab('sim')" id="tab-sim" class="flex-1 py-4 px-2 text-center transition hover:bg-gray-50 tab-active">
+                <i class="fas fa-flask mr-2"></i>3D Simulation
+            </button>
+            <button onclick="showTab('graph')" id="tab-graph" class="flex-1 py-4 px-2 text-center transition hover:bg-gray-50">
+                <i class="fas fa-project-diagram mr-2"></i>Knowledge Graph
+            </button>
+            <button onclick="showTab('cards')" id="tab-cards" class="flex-1 py-4 px-2 text-center transition hover:bg-gray-50">
+                <i class="fas fa-layer-group mr-2"></i>Flashcards
+            </button>
+            <button onclick="showTab('quiz')" id="tab-quiz" class="flex-1 py-4 px-2 text-center transition hover:bg-gray-50">
+                <i class="fas fa-tasks mr-2"></i>Quiz
+            </button>
+        </div>
+
+        <!-- Simulation Tab -->
+        <div id="content-sim" class="tab-content">
+            <div class="bg-white p-2 rounded-xl shadow-md border border-gray-100 overflow-hidden" style="height: 650px;">
+                <iframe src="https://inphics.com/demo/simulations/acid_reacts_with_metal/" class="w-full h-full rounded-lg" frameborder="0" allowfullscreen></iframe>
+            </div>
+            <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-cyan-bright">
+                    <h3 class="text-xl font-bold mb-3" style="color: var(--teal-deep)">Chemical Equation</h3>
+                    <p class="text-lg bg-slate-50 p-4 rounded font-mono">
+                        Zn(s) + H₂SO₄(aq) → ZnSO₄(aq) + H₂(g)↑
+                    </p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-orange-vivid">
+                    <h3 class="text-xl font-bold mb-3" style="color: var(--orange-vivid)">Observations</h3>
+                    <ul class="list-disc list-inside space-y-2 text-slate-600">
+                        <li>Evolution of colorless, odorless bubbles (Hydrogen).</li>
+                        <li>Exothermic reaction (test tube gets warm).</li>
+                        <li>Zinc granules gradually disappear.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Knowledge Graph Tab -->
+        <div id="content-graph" class="tab-content hidden">
+            <div class="bg-white p-6 rounded-xl shadow-md">
+                <h3 class="text-2xl font-bold mb-4">Conceptual Map</h3>
+                <p class="text-slate-500 mb-4">Explore how different chemical concepts link to this specific reaction. Drag nodes to explore connections.</p>
+                <div id="kg-container"></div>
+            </div>
+        </div>
+
+        <!-- Flashcards Tab -->
+        <div id="content-cards" class="tab-content hidden">
+            <div class="flex flex-col items-center">
+                <div id="flashcard" class="relative w-full max-w-md h-64 flashcard-inner-container cursor-pointer" onclick="toggleCard()">
+                    <div class="flashcard-inner w-full h-full relative" id="card-inner">
+                        <div class="flashcard-front">
+                            <h2 id="card-question" class="text-2xl font-bold text-slate-700"></h2>
+                        </div>
+                        <div class="flashcard-back">
+                            <p id="card-answer" class="text-xl"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-8 flex space-x-4">
+                    <button onclick="prevCard()" class="bg-slate-200 hover:bg-slate-300 px-6 py-2 rounded-full font-bold transition">Previous</button>
+                    <button onclick="nextCard()" class="bg-primary-custom text-white hover:opacity-90 px-6 py-2 rounded-full font-bold transition">Next</button>
+                </div>
+                <p class="mt-4 text-slate-400" id="card-counter"></p>
+            </div>
+        </div>
+
+        <!-- Quiz Tab -->
+        <div id="content-quiz" class="tab-content hidden">
+            <div class="max-w-2xl mx-auto bg-white p-8 rounded-xl shadow-md border border-gray-100">
+                <div id="quiz-intro">
+                    <h3 class="text-2xl font-bold mb-4">Test Your Knowledge</h3>
+                    <p class="mb-6">Answer these questions based on the simulation and the chemical principles of the Zinc-Acid reaction.</p>
+                    <button onclick="startQuiz()" class="bg-orange-vivid text-white px-8 py-3 rounded-lg font-bold hover:opacity-90 transition w-full shadow-lg">Start Quiz</button>
+                </div>
+                <div id="quiz-box" class="hidden">
+                    <div class="mb-4 text-sm font-bold text-orange-vivid tracking-widest uppercase" id="quiz-progress">Question 1/5</div>
+                    <h2 class="text-xl font-bold mb-6" id="quiz-question"></h2>
+                    <div id="quiz-options" class="space-y-3"></div>
+                    <button id="next-btn" onclick="handleNextQuestion()" class="mt-8 hidden w-full bg-primary-custom text-white py-3 rounded-lg font-bold">Next Question</button>
+                </div>
+                <div id="quiz-result" class="hidden text-center">
+                    <div class="text-6xl mb-4">🏆</div>
+                    <h2 class="text-3xl font-bold mb-2">Quiz Completed!</h2>
+                    <p class="text-xl mb-6">Your Score: <span id="final-score" class="font-bold text-cyan-bright"></span>/5</p>
+                    <button onclick="location.reload()" class="bg-teal-deep text-white px-8 py-3 rounded-lg font-bold">Restart Module</button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-100 p-6 text-center text-slate-500 text-sm border-t">
+        &copy; 2024 EffectualL - Interactive Science Learning Modules.
+    </footer>
+
+    <script>
+        // --- Tab Management ---
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+            document.querySelectorAll('nav button, .flex button').forEach(b => b.classList.remove('tab-active'));
+            
+            document.getElementById('content-' + tabId).classList.remove('hidden');
+            document.getElementById('tab-' + tabId).classList.add('tab-active');
+
+            if(tabId === 'graph') {
+                initKnowledgeGraph();
+            }
+        }
+
+        // --- Knowledge Graph Data & Logic ---
+        function initKnowledgeGraph() {
+            // Clean existing SVG
+            d3.select("#kg-container").html("");
+
+            const nodes = [
+                { id: 'Zn + H2SO4 Reaction', group: 1, type: 'Main Topic' },
+                { id: 'Zinc (Zn)', group: 2, type: 'Reactant' },
+                { id: 'Dil. Sulfuric Acid', group: 2, type: 'Reactant' },
+                { id: 'Zinc Sulfate', group: 3, type: 'Product' },
+                { id: 'Hydrogen Gas (H2)', group: 3, type: 'Product' },
+                { id: 'Single Displacement', group: 4, type: 'Reaction Type' },
+                { id: 'Exothermic', group: 4, type: 'Nature' },
+                { id: 'Effervescence', group: 5, type: 'Observation' },
+                { id: 'Pop Test', group: 5, type: 'Identification' },
+                { id: 'Reactivity Series', group: 4, type: 'Concept' }
+            ];
+
+            const links = [
+                { source: 'Zn + H2SO4 Reaction', target: 'Zinc (Zn)', value: 2 },
+                { source: 'Zn + H2SO4 Reaction', target: 'Dil. Sulfuric Acid', value: 2 },
+                { source: 'Zn + H2SO4 Reaction', target: 'Zinc Sulfate', value: 2 },
+                { source: 'Zn + H2SO4 Reaction', target: 'Hydrogen Gas (H2)', value: 2 },
+                { source: 'Zn + H2SO4 Reaction', target: 'Single Displacement', value: 1 },
+                { source: 'Zn + H2SO4 Reaction', target: 'Exothermic', value: 1 },
+                { source: 'Hydrogen Gas (H2)', target: 'Effervescence', value: 1 },
+                { source: 'Hydrogen Gas (H2)', target: 'Pop Test', value: 1 },
+                { source: 'Zinc (Zn)', target: 'Reactivity Series', value: 1 },
+                { source: 'Single Displacement', target: 'Reactivity Series', value: 1 }
+            ];
+
+            const width = document.getElementById('kg-container').clientWidth;
+            const height = 500;
+
+            const svg = d3.select("#kg-container")
+                .append("svg")
+                .attr("width", width)
+                .attr("height", height);
+
+            const simulation = d3.forceSimulation(nodes)
+                .force("link", d3.forceLink(links).id(d => d.id).distance(100))
+                .force("charge", d3.forceManyBody().strength(-300))
+                .force("center", d3.forceCenter(width / 2, height / 2));
+
+            const link = svg.append("g")
+                .selectAll("line")
+                .data(links)
+                .join("line")
+                .attr("stroke", "#cbd5e1")
+                .attr("stroke-opacity", 0.6)
+                .attr("stroke-width", d => Math.sqrt(d.value) * 2);
+
+            const node = svg.append("g")
+                .selectAll("g")
+                .data(nodes)
+                .join("g")
+                .call(drag(simulation));
+
+            node.append("circle")
+                .attr("r", 10)
+                .attr("fill", d => {
+                    if(d.group === 1) return "#fc5206";
+                    if(d.group === 2) return "#0dcfb2";
+                    if(d.group === 3) return "#0490a1";
+                    return "#012c59";
+                });
+
+            node.append("text")
+                .attr("x", 12)
+                .attr("y", 4)
+                .text(d => d.id);
+
+            simulation.on("tick", () => {
+                link.attr("x1", d => d.source.x)
+                    .attr("y1", d => d.source.y)
+                    .attr("x2", d => d.target.x)
+                    .attr("y2", d => d.target.y);
+
+                node.attr("transform", d => `translate(${d.x},${d.y})`);
+            });
+
+            function drag(simulation) {
+                function dragstarted(event) {
+                    if (!event.active) simulation.alphaTarget(0.3).restart();
+                    event.subject.fx = event.subject.x;
+                    event.subject.fy = event.subject.y;
+                }
+                function dragged(event) {
+                    event.subject.fx = event.x;
+                    event.subject.fy = event.y;
+                }
+                function dragended(event) {
+                    if (!event.active) simulation.alphaTarget(0);
+                    event.subject.fx = null;
+                    event.subject.fy = null;
+                }
+                return d3.drag()
+                    .on("start", dragstarted)
+                    .on("drag", dragged)
+                    .on("end", dragended);
+            }
+        }
+
+        // --- Flashcard Logic ---
+        const cards = [
+            { q: "What gas is released in this reaction?", a: "Hydrogen Gas (H₂)" },
+            { q: "What type of chemical reaction is this?", a: "Single Displacement Reaction" },
+            { q: "Is this reaction exothermic or endothermic?", a: "Exothermic (it releases heat)" },
+            { q: "What is the physical state of Zinc used?", a: "Solid (usually as granules)" },
+            { q: "What test identifies the gas produced?", a: "The 'Pop' test with a burning splinter" }
+        ];
+        let currentCardIndex = 0;
+
+        function updateCard() {
+            document.getElementById('card-inner').classList.remove('flashcard-flipped');
+            document.getElementById('card-question').innerText = cards[currentCardIndex].q;
+            document.getElementById('card-answer').innerText = cards[currentCardIndex].a;
+            document.getElementById('card-counter').innerText = `Card ${currentCardIndex + 1} of ${cards.length}`;
+        }
+
+        function toggleCard() {
+            document.getElementById('card-inner').classList.toggle('flashcard-flipped');
+        }
+
+        function nextCard() {
+            currentCardIndex = (currentCardIndex + 1) % cards.length;
+            updateCard();
+        }
+
+        function prevCard() {
+            currentCardIndex = (currentCardIndex - 1 + cards.length) % cards.length;
+            updateCard();
+        }
+
+        updateCard();
+
+        // --- Quiz Logic ---
+        const quizData = [
+            {
+                q: "What is the chemical formula for Zinc Sulfate?",
+                options: ["ZnSO4", "ZnS", "Zn2SO4", "Zn(SO4)2"],
+                correct: 0
+            },
+            {
+                q: "What happens to the temperature of the test tube during the reaction?",
+                options: ["Decreases", "Stays the same", "Increases", "Fluctuates"],
+                correct: 2
+            },
+            {
+                q: "Why does Zinc displace Hydrogen from Sulfuric Acid?",
+                options: ["Zinc is less reactive", "Zinc is more reactive", "Hydrogen is a metal", "Sulfuric acid is a catalyst"],
+                correct: 1
+            },
+            {
+                q: "What is the visual evidence of gas production?",
+                options: ["Color change to red", "Formation of a precipitate", "Effervescence (bubbles)", "The solution turning cloudy"],
+                correct: 2
+            },
+            {
+                q: "What would happen if we used Copper instead of Zinc?",
+                options: ["Same reaction occurs", "Reaction happens faster", "No reaction (Copper is below Hydrogen)", "Explosion"],
+                correct: 2
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+
+        function startQuiz() {
+            document.getElementById('quiz-intro').classList.add('hidden');
+            document.getElementById('quiz-box').classList.remove('hidden');
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const q = quizData[currentQuestion];
+            document.getElementById('quiz-progress').innerText = `Question ${currentQuestion + 1}/${quizData.length}`;
+            document.getElementById('quiz-question').innerText = q.q;
+            
+            const optionsDiv = document.getElementById('quiz-options');
+            optionsDiv.innerHTML = '';
+            
+            q.options.forEach((opt, i) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-4 border-2 border-slate-200 rounded-lg hover:border-cyan-bright transition font-medium";
+                btn.innerText = opt;
+                btn.onclick = () => selectOption(i, btn);
+                optionsDiv.appendChild(btn);
+            });
+            document.getElementById('next-btn').classList.add('hidden');
+        }
+
+        function selectOption(index, btn) {
+            const q = quizData[currentQuestion];
+            const allBtns = document.querySelectorAll('#quiz-options button');
+            allBtns.forEach(b => b.disabled = true);
+
+            if(index === q.correct) {
+                btn.classList.add('bg-green-100', 'border-green-500', 'text-green-700');
+                score++;
+            } else {
+                btn.classList.add('bg-red-100', 'border-red-500', 'text-red-700');
+                allBtns[q.correct].classList.add('bg-green-50', 'border-green-400');
+            }
+            document.getElementById('next-btn').classList.remove('hidden');
+        }
+
+        function handleNextQuestion() {
+            currentQuestion++;
+            if(currentQuestion < quizData.length) {
+                showQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('quiz-box').classList.add('hidden');
+            document.getElementById('quiz-result').classList.remove('hidden');
+            document.getElementById('final-score').innerText = score;
+        }
+
+        // Initialize display
+        showTab('sim');
+    </script>
+</body>
+</html>
