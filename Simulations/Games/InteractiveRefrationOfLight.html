@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EffectualL - Refraction Module</title>
+    <!-- Load D3.js for the Knowledge Graph -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    <!-- Using Lucide for modern icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --dark-blue: #012c59;
+            --orange: #fc5206;
+            --orange-bg: #fff7ed;
+            --cyan: #0dcfb2;
+            --cyan-dark: #0490a1;
+            --orange-light: #faa630;
+            --white: #ffffff;
+            --bg: #f8fafc;
+            --text-muted: #64748b;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg);
+            color: var(--dark-blue);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Sticky Header and Nav */
+        .sticky-nav-container {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        header {
+            background-color: var(--dark-blue);
+            padding: 0.8rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-container { display: flex; align-items: center; gap: 12px; }
+        .logo-box {
+            background-color: var(--cyan);
+            color: white;
+            font-weight: 800;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 1.1rem;
+        }
+        .logo-text { color: white; font-size: 1.3rem; font-weight: 600; }
+
+        .tabs {
+            background: white;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            padding: 0.5rem 1rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .tab-btn {
+            padding: 10px 16px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text-muted);
+            border-radius: 12px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.95rem;
+        }
+
+        .tab-btn i { width: 18px; height: 18px; color: #6366f1; }
+
+        .tab-btn.active { 
+            color: var(--orange); 
+            background: var(--orange-bg); 
+        }
+
+        .tab-btn.active i { color: var(--orange); }
+
+        main { padding: 2rem; max-width: 1200px; margin: 0 auto; }
+        .tab-content { display: none; animation: fadeIn 0.4s ease; }
+        .tab-content.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2rem;
+            border-top: 5px solid var(--cyan);
+            position: relative;
+        }
+
+        /* Simulation Controls */
+        .sim-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .sim-btn {
+            padding: 10px 18px;
+            border: 1px solid #e2e8f0;
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text-muted);
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .sim-btn.active {
+            background: var(--cyan);
+            color: white;
+            border-color: var(--cyan);
+        }
+
+        .iframe-container {
+            position: relative;
+            width: 100%;
+            height: 650px;
+            background: #000;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+        }
+
+        iframe { width: 100%; height: 100%; border: none; }
+
+        /* Graph Styles */
+        #graph-container { position: relative; width: 100%; height: 500px; }
+        #graph-svg {
+            width: 100%;
+            height: 100%;
+            background: #fafafa;
+            border-radius: 12px;
+            cursor: grab;
+        }
+
+        .node circle { stroke: #fff; stroke-width: 2px; transition: stroke-width 0.2s; }
+        .node:hover circle { stroke-width: 4px; stroke: var(--orange-light); }
+        .node text { font-size: 12px; font-weight: 600; pointer-events: none; fill: var(--dark-blue); }
+        .link { stroke: #cbd5e1; stroke-opacity: 0.6; stroke-width: 2px; }
+
+        .tooltip {
+            position: absolute;
+            background: rgba(1, 44, 89, 0.95);
+            color: white;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 13px;
+            pointer-events: none;
+            display: none;
+            max-width: 280px;
+            z-index: 2000;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+            line-height: 1.5;
+        }
+
+        /* Flashcards */
+        .flashcard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
+        .flashcard { height: 220px; perspective: 1000px; cursor: pointer; }
+        .flashcard-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+        .flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
+        .flashcard-front, .flashcard-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            font-size: 1.1rem;
+        }
+        .flashcard-front { background: white; border: 2px solid var(--cyan); color: var(--dark-blue); font-weight: 600; }
+        .flashcard-back { background: var(--orange); color: white; transform: rotateY(180deg); }
+
+        /* Quiz */
+        .quiz-container { max-width: 700px; margin: 0 auto; }
+        .option-btn {
+            display: block; width: 100%; padding: 18px; background: #f8fafc;
+            border: 2px solid #e2e8f0; border-radius: 12px; cursor: pointer;
+            text-align: left; transition: all 0.2s; margin-bottom: 12px;
+            font-size: 1rem; font-weight: 500;
+        }
+        .option-btn:hover { border-color: var(--cyan); background: #f0fdfa; transform: translateX(5px); }
+        .option-btn.correct { background: #dcfce7; border-color: #22c55e; color: #166534; }
+        .option-btn.wrong { background: #fee2e2; border-color: #ef4444; color: #991b1b; }
+        .feedback { margin-top: 1.5rem; padding: 1.2rem; border-radius: 10px; display: none; font-weight: 600; text-align: center; }
+    </style>
+</head>
+<body>
+
+    <div class="sticky-nav-container">
+        <header>
+            <div class="logo-container">
+                <div class="logo-box">EL</div>
+                <span class="logo-text">EffectualL</span>
+            </div>
+        </header>
+
+        <nav class="tabs">
+            <button class="tab-btn active" onclick="showTab('module', this)">
+                <i data-lucide="compass"></i> Refraction
+            </button>
+            <button class="tab-btn" onclick="showTab('graph', this)">
+                <i data-lucide="network"></i> Knowledge Graph
+            </button>
+            <button class="tab-btn" onclick="showTab('flashcards', this)">
+                <i data-lucide="layers"></i> Flashcards
+            </button>
+            <button class="tab-btn" onclick="showTab('quiz', this)">
+                <i data-lucide="file-text"></i> Quiz
+            </button>
+        </nav>
+    </div>
+
+    <main>
+        <!-- Simulation Tab -->
+        <section id="module" class="tab-content active">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
+                    <div>
+                        <h2 style="font-size: 1.75rem; color: var(--dark-blue); font-weight: 700;">Refraction Simulations</h2>
+                        <p style="color: var(--text-muted);">Choose a simulation to explore light behavior.</p>
+                    </div>
+                    <a id="ext-link" href="https://effectuall-sims.netlify.app/simulations/optics_refraction_of_light" target="_blank" class="external-link" style="text-decoration:none; padding: 8px 16px; border-radius: 8px; background: #f0fdfa; color: var(--cyan-dark); font-weight: 600; display: flex; align-items: center; gap: 8px;">
+                        <i data-lucide="external-link" style="width: 16px;"></i> Full Screen
+                    </a>
+                </div>
+
+                <div class="sim-selector">
+                    <button class="sim-btn active" onclick="changeSim('refraction', this)">Basic Refraction</button>
+                    <button class="sim-btn" onclick="changeSim('tir', this)">Total Internal Reflection</button>
+                    <button class="sim-btn" onclick="changeSim('depth', this)">Apparent Depth</button>
+                </div>
+
+                <div class="iframe-container">
+                    <iframe id="sim-frame" src="https://effectuall-sims.netlify.app/simulations/optics_refraction_of_light" title="EffectualL Refraction Simulation"></iframe>
+                </div>
+            </div>
+        </section>
+
+        <!-- Knowledge Graph Tab -->
+        <section id="graph" class="tab-content">
+            <div class="card">
+                <h2 style="margin-bottom: 10px;">Refraction Concepts</h2>
+                <p style="color: var(--text-muted); margin-bottom: 25px;">Hover over nodes to explore optical density, Snell's Law, and critical angles.</p>
+                <div id="graph-container">
+                    <svg id="graph-svg"></svg>
+                    <div id="tooltip" class="tooltip"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Flashcards Tab -->
+        <section id="flashcards" class="tab-content">
+            <div class="card">
+                <h2 style="margin-bottom: 25px;">Refraction Master Set</h2>
+                <div class="flashcard-grid" id="flashcard-container"></div>
+            </div>
+        </section>
+
+        <!-- Quiz Tab -->
+        <section id="quiz" class="tab-content">
+            <div class="card">
+                <div class="quiz-container">
+                    <h2 style="margin-bottom: 20px;">Refraction Proficiency Quiz</h2>
+                    <div id="quiz-body"></div>
+                    <div id="quiz-feedback" class="feedback"></div>
+                </div>
+            </div>
+        </section>
+        
+        <div style="height: 100px;"></div>
+    </main>
+
+    <script>
+        lucide.createIcons();
+
+        // Simulation Switcher
+        const simUrls = {
+            refraction: "https://effectuall-sims.netlify.app/simulations/optics_refraction_of_light",
+            tir: "https://effectuall-sims.netlify.app/simulations/optics_total_internal_reflection",
+            depth: "https://effectuall-sims.netlify.app/simulations/optics_apparent_depth"
+        };
+
+        function changeSim(type, btn) {
+            document.querySelectorAll('.sim-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const url = simUrls[type];
+            document.getElementById('sim-frame').src = url;
+            document.getElementById('ext-link').href = url;
+        }
+
+        // Updated Knowledge Graph Data for Refraction
+        const nodes = [
+            { id: 'Refraction', group: 1, desc: 'The bending of light as it passes from one medium to another due to a change in speed.' },
+            { id: "Snell's Law", group: 2, desc: 'The ratio of the sines of the angles of incidence and refraction is constant: $n_1 \\sin \\theta_1 = n_2 \\sin \\theta_2$.' },
+            { id: 'Refractive Index', group: 2, desc: 'A measure of how much light slows down in a medium. $n = c/v$.' },
+            { id: 'Optical Density', group: 2, desc: 'A property of a medium that indicates its ability to slow down light waves.' },
+            { id: 'Critical Angle', group: 3, desc: 'The angle of incidence for which the angle of refraction is 90 degrees.' },
+            { id: 'Total Internal Reflection', group: 3, desc: 'Occurs when light travels from a denser to a less dense medium at an angle greater than the critical angle.' },
+            { id: 'Normal Line', group: 4, desc: 'An imaginary line perpendicular to the surface at the point of incidence.' },
+            { id: 'Apparent Depth', group: 5, desc: 'The perceived depth of an object under water, appearing shallower than its real depth due to refraction.' },
+            { id: 'Angle of Incidence', group: 4, desc: 'The angle between the incident ray and the normal.' },
+            { id: 'Angle of Refraction', group: 4, desc: 'The angle between the refracted ray and the normal.' }
+        ];
+
+        const links = [
+            { source: 'Refraction', target: "Snell's Law", value: 1 },
+            { source: 'Refraction', target: 'Refractive Index', value: 1 },
+            { source: 'Refraction', target: 'Optical Density', value: 1 },
+            { source: 'Refractive Index', target: "Snell's Law", value: 1 },
+            { source: 'Refraction', target: 'Normal Line', value: 1 },
+            { source: 'Refraction', target: 'Critical Angle', value: 1 },
+            { source: 'Critical Angle', target: 'Total Internal Reflection', value: 1 },
+            { source: 'Refraction', target: 'Apparent Depth', value: 1 },
+            { source: 'Normal Line', target: 'Angle of Incidence', value: 1 },
+            { source: 'Normal Line', target: 'Angle of Refraction', value: 1 }
+        ];
+
+        function showTab(tabId, btn) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            btn.classList.add('active');
+            if(tabId === 'graph') initD3Graph();
+        }
+
+        let graphInitialized = false;
+        function initD3Graph() {
+            if (graphInitialized) return;
+            graphInitialized = true;
+
+            const svg = d3.select("#graph-svg");
+            const tooltip = d3.select("#tooltip");
+            const container = document.getElementById('graph-container');
+            const width = container.clientWidth;
+            const height = 500;
+
+            const simulation = d3.forceSimulation(nodes)
+                .force("link", d3.forceLink(links).id(d => d.id).distance(120))
+                .force("charge", d3.forceManyBody().strength(-600))
+                .force("center", d3.forceCenter(width / 2, height / 2));
+
+            const link = svg.append("g")
+                .selectAll("line")
+                .data(links)
+                .enter().append("line")
+                .attr("class", "link");
+
+            const node = svg.append("g")
+                .selectAll("g")
+                .data(nodes)
+                .enter().append("g")
+                .attr("class", "node")
+                .call(d3.drag()
+                    .on("start", dragstarted)
+                    .on("drag", dragged)
+                    .on("end", dragended))
+                .on("mouseover", (event, d) => {
+                    tooltip.style("display", "block")
+                           .html(`<strong>${d.id}</strong><br/>${d.desc}`);
+                })
+                .on("mousemove", (event) => {
+                    const rect = container.getBoundingClientRect();
+                    tooltip.style("left", (event.clientX - rect.left + 15) + "px")
+                           .style("top", (event.clientY - rect.top + 15) + "px");
+                })
+                .on("mouseout", () => tooltip.style("display", "none"));
+
+            node.append("circle")
+                .attr("r", d => d.group === 1 ? 32 : 24)
+                .attr("fill", d => {
+                    if (d.group === 1) return "var(--dark-blue)";
+                    if (d.group === 2) return "var(--cyan)";
+                    if (d.group === 3) return "var(--orange)";
+                    return "var(--orange-light)";
+                });
+
+            node.append("text")
+                .attr("dy", 45)
+                .attr("text-anchor", "middle")
+                .text(d => d.id);
+
+            simulation.on("tick", () => {
+                link.attr("x1", d => d.source.x).attr("y1", d => d.source.y)
+                    .attr("x2", d => d.target.x).attr("y2", d => d.target.y);
+                node.attr("transform", d => `translate(${d.x},${d.y})`);
+            });
+
+            function dragstarted(event, d) { if (!event.active) simulation.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y; }
+            function dragged(event, d) { d.fx = event.x; d.fy = event.y; }
+            function dragended(event, d) { if (!event.active) simulation.alphaTarget(0); d.fx = null; d.fy = null; }
+        }
+
+        const flashcardData = [
+            { q: "What is Refraction?", a: "The bending of light as it passes from one medium to another of different optical density." },
+            { q: "Light moving: Air → Glass", a: "It slows down and bends TOWARDS the normal line." },
+            { q: "Light moving: Water → Air", a: "It speeds up and bends AWAY from the normal line." },
+            { q: "Total Internal Reflection Requirement", a: "1. Light travels from denser to less dense. 2. Angle of incidence > Critical angle." },
+            { q: "Refractive Index formula", a: "$n = c/v$ (Speed in vacuum / Speed in medium)" },
+            { q: "Apparent Depth", a: "The optical illusion where underwater objects look closer to the surface than they really are." }
+        ];
+
+        function initFlashcards() {
+            const container = document.getElementById('flashcard-container');
+            flashcardData.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'flashcard';
+                card.innerHTML = `<div class="flashcard-inner"><div class="flashcard-front">${item.q}</div><div class="flashcard-back">${item.a}</div></div>`;
+                card.onclick = () => card.classList.toggle('flipped');
+                container.appendChild(card);
+            });
+        }
+
+        const questions = [
+            { q: "When light travels from air into a glass block, it:", opts: ["Speeds up", "Bends away from the normal", "Bends towards the normal", "Keeps the same speed"], correct: 2 },
+            { q: "Total Internal Reflection can only occur when light travels from:", opts: ["Less dense to more dense", "More dense to less dense", "Air to Water", "Vacuum to Glass"], correct: 1 },
+            { q: "The ratio $n = \\sin i / \\sin r$ is known as:", opts: ["Newton's Law", "Snell's Law", "Einstein's Equation", "Critical Angle Law"], correct: 1 }
+        ];
+        let curQ = 0;
+
+        function renderQuiz() {
+            const body = document.getElementById('quiz-body');
+            const q = questions[curQ];
+            body.innerHTML = `
+                <p style="font-weight: 600; margin-bottom: 20px;">Question ${curQ + 1} of ${questions.length}:</p>
+                <p style="font-size: 1.1rem; margin-bottom: 25px;">${q.q}</p>
+                <div class="options">${q.opts.map((o,i) => `<button class="option-btn" onclick="checkQ(${i})">${o}</button>`).join('')}</div>`;
+        }
+
+        function checkQ(idx) {
+            const fb = document.getElementById('quiz-feedback');
+            fb.style.display = 'block';
+            if(idx === questions[curQ].correct) {
+                fb.innerHTML = "✅ Correct!"; fb.style.background = "#dcfce7"; fb.style.color = "#166534";
+            } else {
+                fb.innerHTML = "❌ Incorrect. Light bends towards the normal in denser media."; fb.style.background = "#fee2e2"; fb.style.color = "#991b1b";
+            }
+            setTimeout(() => { curQ = (curQ + 1) % questions.length; renderQuiz(); fb.style.display='none'; }, 2000);
+        }
+
+        window.onload = () => { initFlashcards(); renderQuiz(); };
+    </script>
+</body>
+</html>
