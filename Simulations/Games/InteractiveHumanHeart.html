@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anatomy of the Human Heart | EffectualL</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-dark: #012c59;
+            --orange-vivid: #fc5206;
+            --cyan-bright: #0dcfb2;
+            --teal-deep: #0490a1;
+            --orange-light: #faa630;
+        }
+
+        body {
+            background-color: #f8fafc;
+            color: var(--primary-dark);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .tab-active {
+            border-bottom: 4px solid var(--orange-vivid);
+            color: var(--orange-vivid);
+            font-weight: bold;
+        }
+
+        .bg-cyan-custom { background-color: var(--cyan-bright); }
+        .text-cyan-custom { color: var(--cyan-bright); }
+        .bg-primary-custom { background-color: var(--primary-dark); }
+        .border-primary-custom { border-color: var(--primary-dark); }
+
+        /* Knowledge Graph Styles */
+        #kg-container {
+            width: 100%;
+            height: 500px;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+        }
+
+        .node text {
+            font-size: 12px;
+            font-weight: 600;
+            fill: var(--primary-dark);
+        }
+
+        /* Flashcard Styles - 3D Flip Effect */
+        .flashcard-inner-container {
+            perspective: 1000px;
+        }
+        .flashcard-inner {
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        .flashcard-flipped {
+            transform: rotateY(180deg);
+        }
+        .flashcard-front, .flashcard-back {
+            backface-visibility: hidden;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            text-align: center;
+            border-radius: 1rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .flashcard-front {
+            background-color: white;
+            border: 2px solid var(--cyan-bright);
+            z-index: 2;
+        }
+        .flashcard-back {
+            transform: rotateY(180deg);
+            background-color: var(--teal-deep);
+            color: white;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-primary-custom text-white p-4 shadow-lg flex justify-between items-center px-8">
+        <div class="flex items-center space-x-3">
+            <div class="bg-cyan-custom w-10 h-10 flex items-center justify-center rounded font-bold text-white text-xl">EL</div>
+            <h1 class="text-2xl font-semibold tracking-tight">EffectualL</h1>
+        </div>
+        <div class="hidden md:block text-sm font-light text-slate-300">
+            Topic: Human Anatomy - The Heart
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow container mx-auto p-4 md:p-8">
+        
+        <!-- Navigation Tabs -->
+        <div class="flex border-b border-gray-200 mb-6 bg-white rounded-t-lg overflow-hidden">
+            <button onclick="showTab('sim')" id="tab-sim" class="flex-1 py-4 px-2 text-center transition hover:bg-gray-50 tab-active">
+                <i class="fas fa-heartbeat mr-2"></i>3D Simulation
+            </button>
+            <button onclick="showTab('graph')" id="tab-graph" class="flex-1 py-4 px-2 text-center transition hover:bg-gray-50">
+                <i class="fas fa-project-diagram mr-2"></i>Knowledge Graph
+            </button>
+            <button onclick="showTab('cards')" id="tab-cards" class="flex-1 py-4 px-2 text-center transition hover:bg-gray-50">
+                <i class="fas fa-layer-group mr-2"></i>Flashcards
+            </button>
+            <button onclick="showTab('quiz')" id="tab-quiz" class="flex-1 py-4 px-2 text-center transition hover:bg-gray-50">
+                <i class="fas fa-tasks mr-2"></i>Quiz
+            </button>
+        </div>
+
+        <!-- Simulation Tab -->
+        <div id="content-sim" class="tab-content">
+            <div class="bg-white p-2 rounded-xl shadow-md border border-gray-100 overflow-hidden" style="height: 650px;">
+                <iframe src="https://kriyazone.com/pramod_ramdurg/science_simulations/human_heart/" class="w-full h-full rounded-lg" frameborder="0" allowfullscreen></iframe>
+            </div>
+            <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-cyan-bright">
+                    <h3 class="text-xl font-bold mb-3" style="color: var(--teal-deep)">Circulatory Paths</h3>
+                    <p class="text-slate-600">
+                        The heart functions as a double pump: <br>
+                        <strong>Pulmonary:</strong> Deoxygenated blood to the lungs. <br>
+                        <strong>Systemic:</strong> Oxygenated blood to the rest of the body.
+                    </p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-orange-vivid">
+                    <h3 class="text-xl font-bold mb-3" style="color: var(--orange-vivid)">Cardiac Components</h3>
+                    <ul class="list-disc list-inside space-y-2 text-slate-600">
+                        <li>Four Chambers: Two Atria and Two Ventricles.</li>
+                        <li>Valves ensure one-way blood flow.</li>
+                        <li>Coronary arteries supply the heart muscle itself.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Knowledge Graph Tab -->
+        <div id="content-graph" class="tab-content hidden">
+            <div class="bg-white p-6 rounded-xl shadow-md">
+                <h3 class="text-2xl font-bold mb-4">Anatomy Conceptual Map</h3>
+                <p class="text-slate-500 mb-4">Understand the hierarchical relationships between chambers, valves, and vessels.</p>
+                <div id="kg-container"></div>
+            </div>
+        </div>
+
+        <!-- Flashcards Tab -->
+        <div id="content-cards" class="tab-content hidden">
+            <div class="flex flex-col items-center py-10">
+                <div class="w-full max-w-md h-80 flashcard-inner-container">
+                    <div id="card-inner" class="flashcard-inner" onclick="toggleCard()">
+                        <!-- Front -->
+                        <div class="flashcard-front">
+                            <div class="flex flex-col items-center">
+                                <span class="text-cyan-bright mb-4 text-sm font-bold uppercase tracking-widest">Question</span>
+                                <h2 id="card-question" class="text-2xl font-bold text-slate-700"></h2>
+                                <p class="mt-6 text-slate-400 text-xs italic">Click card to see answer</p>
+                            </div>
+                        </div>
+                        <!-- Back -->
+                        <div class="flashcard-back">
+                            <div class="flex flex-col items-center">
+                                <span class="text-orange-light mb-4 text-sm font-bold uppercase tracking-widest">Answer</span>
+                                <p id="card-answer" class="text-xl leading-relaxed"></p>
+                                <p class="mt-6 text-white/50 text-xs italic">Click card to see question</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-12 flex items-center space-x-8">
+                    <button onclick="prevCard()" class="text-primary-custom hover:text-orange-vivid transition p-2">
+                        <i class="fas fa-chevron-left fa-2x"></i>
+                    </button>
+                    <div class="bg-white px-6 py-2 rounded-full shadow-sm border border-slate-100 font-bold text-slate-500" id="card-counter"></div>
+                    <button onclick="nextCard()" class="text-primary-custom hover:text-orange-vivid transition p-2">
+                        <i class="fas fa-chevron-right fa-2x"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quiz Tab -->
+        <div id="content-quiz" class="tab-content hidden">
+            <div class="max-w-2xl mx-auto bg-white p-8 rounded-xl shadow-md border border-gray-100">
+                <div id="quiz-intro">
+                    <h3 class="text-2xl font-bold mb-4">Test Your Heart Knowledge</h3>
+                    <p class="mb-6">Evaluate your understanding of heart anatomy and the pathway of blood flow.</p>
+                    <button onclick="startQuiz()" class="bg-orange-vivid text-white px-8 py-3 rounded-lg font-bold hover:opacity-90 transition w-full shadow-lg">Start Quiz</button>
+                </div>
+                <div id="quiz-box" class="hidden">
+                    <div class="mb-4 text-sm font-bold text-orange-vivid tracking-widest uppercase" id="quiz-progress">Question 1/5</div>
+                    <h2 class="text-xl font-bold mb-6" id="quiz-question"></h2>
+                    <div id="quiz-options" class="space-y-3"></div>
+                    <button id="next-btn" onclick="handleNextQuestion()" class="mt-8 hidden w-full bg-primary-custom text-white py-3 rounded-lg font-bold">Next Question</button>
+                </div>
+                <div id="quiz-result" class="hidden text-center">
+                    <div class="text-6xl mb-4">❤️</div>
+                    <h2 class="text-3xl font-bold mb-2">Quiz Completed!</h2>
+                    <p class="text-xl mb-6">Your Score: <span id="final-score" class="font-bold text-cyan-bright"></span>/5</p>
+                    <button onclick="location.reload()" class="bg-teal-deep text-white px-8 py-3 rounded-lg font-bold">Restart Module</button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-100 p-6 text-center text-slate-500 text-sm border-t">
+        &copy; 2024 EffectualL - Interactive Science Learning Modules.
+    </footer>
+
+    <script>
+        // --- Tab Management ---
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+            document.querySelectorAll('nav button, .flex button').forEach(b => b.classList.remove('tab-active'));
+            
+            document.getElementById('content-' + tabId).classList.remove('hidden');
+            document.getElementById('tab-' + tabId).classList.add('tab-active');
+
+            if(tabId === 'graph') {
+                initKnowledgeGraph();
+            }
+        }
+
+        // --- Knowledge Graph Logic ---
+        function initKnowledgeGraph() {
+            d3.select("#kg-container").html("");
+
+            const nodes = [
+                { id: 'Human Heart', group: 1 },
+                { id: 'Right Atrium', group: 2 },
+                { id: 'Right Ventricle', group: 2 },
+                { id: 'Left Atrium', group: 2 },
+                { id: 'Left Ventricle', group: 2 },
+                { id: 'Aorta', group: 3 },
+                { id: 'Pulmonary Artery', group: 3 },
+                { id: 'Mitral Valve', group: 4 },
+                { id: 'Tricuspid Valve', group: 4 },
+                { id: 'Sinoatrial Node', group: 5 }
+            ];
+
+            const links = [
+                { source: 'Human Heart', target: 'Right Atrium', value: 2 },
+                { source: 'Human Heart', target: 'Right Ventricle', value: 2 },
+                { source: 'Human Heart', target: 'Left Atrium', value: 2 },
+                { source: 'Human Heart', target: 'Left Ventricle', value: 2 },
+                { source: 'Left Ventricle', target: 'Aorta', value: 2 },
+                { source: 'Right Ventricle', target: 'Pulmonary Artery', value: 2 },
+                { source: 'Left Atrium', target: 'Mitral Valve', value: 1 },
+                { source: 'Right Atrium', target: 'Tricuspid Valve', value: 1 },
+                { source: 'Human Heart', target: 'Sinoatrial Node', value: 1 }
+            ];
+
+            const width = document.getElementById('kg-container').clientWidth;
+            const height = 500;
+
+            const svg = d3.select("#kg-container")
+                .append("svg")
+                .attr("width", width)
+                .attr("height", height);
+
+            const simulation = d3.forceSimulation(nodes)
+                .force("link", d3.forceLink(links).id(d => d.id).distance(100))
+                .force("charge", d3.forceManyBody().strength(-300))
+                .force("center", d3.forceCenter(width / 2, height / 2));
+
+            const link = svg.append("g")
+                .selectAll("line")
+                .data(links)
+                .join("line")
+                .attr("stroke", "#cbd5e1")
+                .attr("stroke-opacity", 0.6)
+                .attr("stroke-width", d => Math.sqrt(d.value) * 2);
+
+            const node = svg.append("g")
+                .selectAll("g")
+                .data(nodes)
+                .join("g")
+                .call(drag(simulation));
+
+            node.append("circle")
+                .attr("r", 10)
+                .attr("fill", d => {
+                    if(d.group === 1) return "#fc5206";
+                    if(d.group === 2) return "#0dcfb2";
+                    if(d.group === 3) return "#0490a1";
+                    return "#012c59";
+                });
+
+            node.append("text")
+                .attr("x", 12)
+                .attr("y", 4)
+                .text(d => d.id);
+
+            simulation.on("tick", () => {
+                link.attr("x1", d => d.source.x)
+                    .attr("y1", d => d.source.y)
+                    .attr("x2", d => d.target.x)
+                    .attr("y2", d => d.target.y);
+
+                node.attr("transform", d => `translate(${d.x},${d.y})`);
+            });
+
+            function drag(simulation) {
+                function dragstarted(event) {
+                    if (!event.active) simulation.alphaTarget(0.3).restart();
+                    event.subject.fx = event.subject.x;
+                    event.subject.fy = event.subject.y;
+                }
+                function dragged(event) {
+                    event.subject.fx = event.x;
+                    event.subject.fy = event.y;
+                }
+                function dragended(event) {
+                    if (!event.active) simulation.alphaTarget(0);
+                    event.subject.fx = null;
+                    event.subject.fy = null;
+                }
+                return d3.drag()
+                    .on("start", dragstarted)
+                    .on("drag", dragged)
+                    .on("end", dragended);
+            }
+        }
+
+        // --- Flashcard Logic ---
+        const cards = [
+            { q: "Which chamber pumps oxygenated blood to the whole body?", a: "The Left Ventricle" },
+            { q: "What is the natural pacemaker of the heart?", a: "The SA (Sinoatrial) Node" },
+            { q: "Which valve is between the left atrium and ventricle?", a: "The Mitral (Bicuspid) Valve" },
+            { q: "Where does the Pulmonary Artery carry blood?", a: "To the Lungs" },
+            { q: "What is the largest artery in the human body?", a: "The Aorta" }
+        ];
+        let currentCardIndex = 0;
+
+        function updateCard() {
+            // Flip back to front when changing card
+            document.getElementById('card-inner').classList.remove('flashcard-flipped');
+            
+            // Wait for flip back transition before changing text
+            setTimeout(() => {
+                document.getElementById('card-question').innerText = cards[currentCardIndex].q;
+                document.getElementById('card-answer').innerText = cards[currentCardIndex].a;
+                document.getElementById('card-counter').innerText = `${currentCardIndex + 1} / ${cards.length}`;
+            }, 100);
+        }
+
+        function toggleCard() {
+            document.getElementById('card-inner').classList.toggle('flashcard-flipped');
+        }
+
+        function nextCard() {
+            currentCardIndex = (currentCardIndex + 1) % cards.length;
+            updateCard();
+        }
+
+        function prevCard() {
+            currentCardIndex = (currentCardIndex - 1 + cards.length) % cards.length;
+            updateCard();
+        }
+
+        // --- Quiz Logic ---
+        const quizData = [
+            {
+                q: "Blood enters the Right Atrium through which major vessels?",
+                options: ["Vena Cava", "Pulmonary Vein", "Aorta", "Coronary Artery"],
+                correct: 0
+            },
+            {
+                q: "Which heart chamber has the thickest muscular wall?",
+                options: ["Right Atrium", "Right Ventricle", "Left Atrium", "Left Ventricle"],
+                correct: 3
+            },
+            {
+                q: "What prevents the backflow of blood into the ventricles?",
+                options: ["Septum", "Semilunar Valves", "AV Nodes", "Atria"],
+                correct: 1
+            },
+            {
+                q: "What is the typical sound of a heartbeat often described as?",
+                options: ["Tic-Toc", "Lub-Dub", "Snap-Pop", "Thump-Bump"],
+                correct: 1
+            },
+            {
+                q: "Which of these carries oxygen-rich blood?",
+                options: ["Pulmonary Artery", "Pulmonary Vein", "Superior Vena Cava", "Right Ventricle"],
+                correct: 1
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+
+        function startQuiz() {
+            document.getElementById('quiz-intro').classList.add('hidden');
+            document.getElementById('quiz-box').classList.remove('hidden');
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const q = quizData[currentQuestion];
+            document.getElementById('quiz-progress').innerText = `Question ${currentQuestion + 1}/${quizData.length}`;
+            document.getElementById('quiz-question').innerText = q.q;
+            
+            const optionsDiv = document.getElementById('quiz-options');
+            optionsDiv.innerHTML = '';
+            
+            q.options.forEach((opt, i) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-4 border-2 border-slate-200 rounded-lg hover:border-cyan-bright transition font-medium";
+                btn.innerText = opt;
+                btn.onclick = () => selectOption(i, btn);
+                optionsDiv.appendChild(btn);
+            });
+            document.getElementById('next-btn').classList.add('hidden');
+        }
+
+        function selectOption(index, btn) {
+            const q = quizData[currentQuestion];
+            const allBtns = document.querySelectorAll('#quiz-options button');
+            allBtns.forEach(b => b.disabled = true);
+
+            if(index === q.correct) {
+                btn.classList.add('bg-green-100', 'border-green-500', 'text-green-700');
+                score++;
+            } else {
+                btn.classList.add('bg-red-100', 'border-red-500', 'text-red-700');
+                allBtns[q.correct].classList.add('bg-green-50', 'border-green-400');
+            }
+            document.getElementById('next-btn').classList.remove('hidden');
+        }
+
+        function handleNextQuestion() {
+            currentQuestion++;
+            if(currentQuestion < quizData.length) {
+                showQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('quiz-box').classList.add('hidden');
+            document.getElementById('quiz-result').classList.remove('hidden');
+            document.getElementById('final-score').innerText = score;
+        }
+
+        // Initial setup
+        updateCard();
+        showTab('sim');
+    </script>
+</body>
+</html>
