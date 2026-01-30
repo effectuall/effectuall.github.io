@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EffectualL - Refraction Module</title>
+    <title>EffectualL - Wave 3D Module</title>
     <!-- Load D3.js for the Knowledge Graph -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
     <!-- Using Lucide for modern icons -->
@@ -132,7 +132,7 @@
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 8px;
-            margin: 15px 0;
+            margin: 5px 0;
         }
 
         .sim-btn {
@@ -288,8 +288,30 @@
 <body>
 
     <main>
+       
         <!-- Simulation Tab -->
         <section id="module" class="tab-content active">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h2 style="font-size: 1.25rem;">Lab Simulation</h2>
+                    <a id="ext-link" href="https://effectuall.github.io/Simulations/Optics_Understanding_Waves" target="_blank" style="color: var(--cyan-dark); text-decoration: none; font-size: 0.8rem; font-weight: 700;">
+                        <i data-lucide="maximize" style="width:14px; vertical-align:middle;"></i> FULLSCREEN
+                    </a>
+                </div>
+
+                <div class="sim-selector">
+                    <button class="sim-btn active" onclick="changeSim('wave3d', this)">Wave 3D</button>
+                    <button class="sim-btn" onclick="changeSim('wave2d', this)">Wave 2D</button>
+                    <button class="sim-btn" onclick="changeSim('equation', this)">Equation</button>
+                </div>
+
+                <div class="iframe-container">
+                    <iframe id="sim-frame" src="https://effectuall.github.io/Simulations/Optics_Understanding_Waves"></iframe>
+                </div>
+            </div>
+        </section>
+        <!-- Simulation Tab -->
+        <!-- <section id="module" class="tab-content active">
             <div class="card">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <h2 style="font-size: 1.25rem;">Interactive 3D Wave Module</h2>
@@ -302,7 +324,7 @@
                     <iframe id="sim-frame" src="https://effectuall.github.io/Simulations/Optics_Understanding_Waves"></iframe>
                 </div>
             </div>
-        </section>
+        </section> -->
 
         <!-- Knowledge Graph Tab -->
         <section id="graph" class="tab-content">
@@ -347,9 +369,9 @@
     <!-- Floating Dock -->
     <nav class="bottom-nav">
         <div class="nav-item">
-            <span class="nav-label">Refraction</span>
+            <span class="nav-label">Lab</span>
             <button class="nav-btn active" onclick="showTab('module', this)">
-                <i data-lucide="compass"></i>
+                <i data-lucide="beaker"></i>
             </button>
         </div>
         <div class="nav-item">
@@ -375,6 +397,20 @@
 
     <script>
          lucide.createIcons();
+
+          const simUrls = {
+            wave3d: "https://effectuall.github.io/Simulations/Optics_Understanding_Waves",
+            wave2d: "https://effectuall.github.io/Simulations/Games/InteractiveWave",
+            equation: "https://effectuall.github.io/Simulations/Games/InteractiveFormula"
+        };
+
+        function changeSim(type, btn) {
+            document.querySelectorAll('.sim-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const url = simUrls[type];
+            document.getElementById('sim-frame').src = url;
+            document.getElementById('ext-link').href = url;
+        }
 
         function showTab(tabId, btn) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
